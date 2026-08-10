@@ -1,10 +1,7 @@
-import type {
-  WorkbenchTab,
-  WorkbenchTabColorId,
-  WorkbenchTabGroupNode,
-  WorkbenchTabRailGroup,
-} from '@activelane/workbench-api'
 import { computed } from 'vue'
+import type { WorkbenchTab, WorkbenchTabColorId } from '../core/workbench/contributions'
+import type { WorkbenchTabGroupNode, WorkbenchTabRailGroup } from '../core/workbench/shell'
+
 import { useWorkbenchRuntime } from './useWorkbenchRuntime'
 
 export function useWorkbenchTabs(group: WorkbenchTabGroupNode) {

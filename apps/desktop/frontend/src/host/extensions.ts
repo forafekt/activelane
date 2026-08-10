@@ -1,7 +1,7 @@
 import { createWorkbenchBuiltinExtensions } from '@activelane/workbench'
+import type { WorkbenchExtensionCatalogEntry } from '@activelane/workbench/extensions'
 import { createExtensionsMarketplaceExtension } from '@activelane/workbench/marketplace'
 import { createActiveLaneThemeExtensions } from '@activelane/workbench/themes'
-import type { WorkbenchExtensionCatalogEntry } from '@activelane/workbench-api'
 import { createMcpInspectorExtension } from '../extensions/mcp-inspector'
 
 function builtin(

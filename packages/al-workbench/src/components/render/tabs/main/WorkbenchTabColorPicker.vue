@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { WorkbenchTabColorId } from '@activelane/workbench-api'
 import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
+import type { WorkbenchTabColorId } from '../../../../core/workbench/contributions'
 import { colorLabel, TAB_COLOR_OPTIONS } from './tabPresentation'
 import { useWorkbenchTabInteractions } from './useWorkbenchTabInteractions'
 
@@ -49,7 +49,7 @@ function swatchClass(color: WorkbenchTabColorId) {
         <span>{{ selectedLabel }}</span>
       </div>
 
-      <div class="wb-tab-color-grid" aria-label="Tab color">
+      <div class="wb-tab-color-grid">
         <button
           v-for="color in TAB_COLOR_OPTIONS"
           :key="color.id"

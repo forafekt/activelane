@@ -3,7 +3,7 @@ import type {
   ActiveLaneCapabilityRecord,
   WorkbenchRuntimeApi,
   WorkbenchTab,
-} from '@activelane/workbench-api'
+} from '@activelane/workbench'
 import { computed, ref } from 'vue'
 
 defineOptions({ name: 'McpInspectorTab' })

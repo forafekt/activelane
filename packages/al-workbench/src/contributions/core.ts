@@ -1,9 +1,8 @@
-import type {
-  MaybePromise,
-  WorkbenchCommandExecutionContext,
-  WorkbenchExtensionDefinition,
-} from '@activelane/workbench-api'
-import { defineWorkbenchExtension } from '@activelane/workbench-api'
+import { defineWorkbenchExtension } from '../core/extensions/helpers'
+import type { WorkbenchExtensionDefinition } from '../core/extensions/types'
+import type { MaybePromise } from '../core/shared/types'
+import type { WorkbenchCommandExecutionContext } from '../core/workbench/contributions'
+
 import { builtinWorkbenchSettings } from '../settings/defaults'
 
 function workbenchCommand(
@@ -412,14 +411,16 @@ export function createWorkbenchCoreContribution(): WorkbenchExtensionDefinition 
               'Open the session picker to restore, duplicate, rename, export, or delete.',
             keywords: ['workspace', 'session', 'tabs'],
           },
-          ...([
-            ['saveAs', 'Save Current Session As...'],
-            ['rename', 'Rename Session'],
-            ['duplicate', 'Duplicate Session'],
-            ['delete', 'Delete Session'],
-            ['export', 'Export Session'],
-            ['import', 'Import Session'],
-          ] as const).map(([id, title]) => ({
+          ...(
+            [
+              ['saveAs', 'Save Current Session As...'],
+              ['rename', 'Rename Session'],
+              ['duplicate', 'Duplicate Session'],
+              ['delete', 'Delete Session'],
+              ['export', 'Export Session'],
+              ['import', 'Import Session'],
+            ] as const
+          ).map(([id, title]) => ({
             id: `workbench.tabs.sessions.${id}.command`,
             title,
             commandId: `workbench.tabs.sessions.${id}`,
@@ -443,13 +444,15 @@ export function createWorkbenchCoreContribution(): WorkbenchExtensionDefinition 
             description: 'Open the template picker to apply, duplicate, export, or delete.',
             keywords: ['template', 'workspace', 'tabs'],
           },
-          ...([
-            ['rename', 'Rename Tab Template'],
-            ['duplicate', 'Duplicate Tab Template'],
-            ['delete', 'Delete Tab Template'],
-            ['export', 'Export Tab Template'],
-            ['import', 'Import Tab Template'],
-          ] as const).map(([id, title]) => ({
+          ...(
+            [
+              ['rename', 'Rename Tab Template'],
+              ['duplicate', 'Duplicate Tab Template'],
+              ['delete', 'Delete Tab Template'],
+              ['export', 'Export Tab Template'],
+              ['import', 'Import Tab Template'],
+            ] as const
+          ).map(([id, title]) => ({
             id: `workbench.tabs.templates.${id}.command`,
             title,
             commandId: `workbench.tabs.templates.${id}`,

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { AlIconButton } from '@activelane/shadcn'
-import type { ExplorerNode, ExplorerProvider, WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import { computed } from 'vue'
+import type { ExplorerNode, ExplorerProvider } from '../../core/explorer/types'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
+
 import WorkbenchExplorerNode from './WorkbenchExplorerNode.vue'
 
 defineOptions({ name: 'WorkbenchExplorerView' })

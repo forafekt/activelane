@@ -1,11 +1,13 @@
+import { WorkbenchSettingsView } from '../../components/settings'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 import type {
-  WorkbenchRuntimeApi,
-  WorkbenchSurfaceDescriptor,
   WorkbenchTab,
   WorkbenchTabRendererContribution,
+} from '../../core/workbench/contributions'
+import type {
+  WorkbenchSurfaceDescriptor,
   WorkbenchTabSurfaceContribution,
-} from '@activelane/workbench-api'
-import { WorkbenchSettingsView } from '../../components/settings'
+} from '../../core/workbench/surfaces'
 
 function buildContext(tab: WorkbenchTab, runtime: WorkbenchRuntimeApi) {
   return {

@@ -15,16 +15,17 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <label class="launcher-search">
+  <div class="launcher-search">
     <Search class="size-5" />
     <input
       :value="modelValue"
       autocomplete="off"
       spellcheck="false"
       placeholder="Search apps, categories, extensions"
+      aria-label="Search apps, categories, extensions"
       @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     >
-  </label>
+  </div>
 </template>
 
 <style scoped>

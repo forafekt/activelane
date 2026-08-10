@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import { computed } from 'vue'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 import { useMarketplace } from '../composables/useMarketplaceStore'
 import type { MarketplaceExtension } from '../types/marketplace'
 import { extensionIcon, primaryAction, statusLabel, statusTone } from './MarketplaceShared'

@@ -1,8 +1,9 @@
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 import type {
-  WorkbenchRuntimeApi,
   WorkbenchSurfaceDescriptor,
   WorkbenchSurfaceLifecycleEvent,
-} from '@activelane/workbench-api'
+} from '../../core/workbench/surfaces'
+
 import { canInvokeSurfaceCapability, canUseSurfaceBridge } from '../services/surfacePermissions'
 import { isOriginAllowed, resolveSurfaceUrl } from '../utils/origins'
 import {

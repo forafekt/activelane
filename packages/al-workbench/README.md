@@ -1,38 +1,25 @@
 # @activelane/workbench
 
-Host-agnostic Vue shell for the ActiveLane workbench platform.
+Vue Workbench runtime and product shell for ActiveLane.
 
-Responsibilities:
+The package owns runtime composition, extension activation, commands, menus, tabs, panes,
+settings, explorer state, server-extension state, persistence, and the Vue shell that renders
+those domains. Application hosts provide capabilities; Workbench does not import Wails or
+generated Go bindings.
 
-- activity rail
-- sidebar pane
-- tab groups and recursive split layout
-- inspector pane
-- command palette shell
-- contribution-driven settings UI
-- workbench UI styling and rendering
+## Public entrypoints
 
-Non-responsibilities:
+- `@activelane/workbench` — Vue shell, runtime injection, built-in extensions, and the small application-composition API.
+- `@activelane/workbench/extensions` — extension-author contribution contracts and definition helpers.
+- `@activelane/workbench/marketplace` — optional first-party extension marketplace contribution.
+- `@activelane/workbench/themes` — built-in ActiveLane theme contributions.
+- `@activelane/workbench/styles.css` — Workbench styling.
 
-- product features
-- capture logic
-- editor logic
-- host APIs
-- extension lifecycle implementation
+Desktop capabilities flow from Go through generated Wails bindings into the desktop frontend's
+native capability implementation, then into `createNativeWorkbenchHost`. Generic Workbench code
+depends only on those explicit capability interfaces.
 
-Those live in runtime, SDK, and host adapter packages.
+Workbench imports semantic icons directly from `@activelane/icons` and generic UI primitives
+directly from `@activelane/shadcn`; it does not re-export either package.
 
-Settings are rendered from the canonical runtime settings registry. Core workbench settings are registered by the built-in workbench extension, and extension settings appear automatically from manifest or activation contributions.
-
-## Design System Conventions
-
-- Workbench chrome must use semantic tokens from `packages/al-workbench/src/styles/index.css`
-  such as `---surface`, `---panel`, `---focus-ring`, `---selected`, and
-  `---elevation-*`.
-- Extension-specific UI belongs in contributed surfaces, not core shell components.
-- Shell components should keep host-specific behavior out of shared workbench code. Desktop title
-  bars, native menu affordances, and OS-specific density live under host apps.
-- Prefer scoped component styles for local layout and states. Add global CSS only for shared
-  workbench primitives or design-system token mapping.
-- Use `@activelane/icons` directly for workbench icons. `@activelane/shadcn` provides controls and
-  overlays, not icon exports.
+The canonical frontend architecture is documented in the repository's `ARCHITECTURE.md`.

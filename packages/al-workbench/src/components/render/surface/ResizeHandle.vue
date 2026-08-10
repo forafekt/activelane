@@ -114,7 +114,6 @@ watch(
       )
     "
     :aria-pressed="isPressed"
-    :aria-hovered="isHovered"
   >
     <span
       aria-hidden="true"

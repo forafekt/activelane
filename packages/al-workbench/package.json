@@ -24,6 +24,10 @@
     "./themes": {
       "types": "./dist/themes/index.d.ts",
       "import": "./dist/themes/index.js"
+    },
+    "./extensions": {
+      "types": "./dist/extensions/index.d.ts",
+      "import": "./dist/extensions/index.js"
     }
   },
   "sideEffects": [
@@ -31,9 +35,9 @@
   ],
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5173 & vite build --watch",
-    "build": "pnpm build:types && vite build",
+    "build": "vite build && pnpm build:types",
     "build:types": "pnpm exec vue-tsc -p tsconfig.build.json",
-    "test": "pnpm run build && node --test tests/*.mjs",
+    "test": "pnpm exec tsx --test tests/*.mjs",
     "typecheck": "pnpm exec vue-tsc -p tsconfig.app.json --noEmit && pnpm exec tsc -p tsconfig.node.json --noEmit"
   },
   "peerDependencies": {
@@ -42,8 +46,6 @@
   "dependencies": {
     "@activelane/icons": "workspace:*",
     "@activelane/shadcn": "workspace:*",
-    "@activelane/workbench-api": "workspace:*",
-    "@vueuse/core": "^13.9.0",
     "vue": "^3.5.30"
   },
   "devDependencies": {
@@ -52,14 +54,9 @@
     "@types/node": "^24.12.2",
     "@vitejs/plugin-vue": "^6.0.6",
     "@vue/tsconfig": "^0.9.1",
-    "npm-run-all2": "^8.0.4",
     "tailwindcss": "^4.2.2",
     "typescript": "~6.0.0",
-    "unplugin-auto-import": "^21.0.0",
-    "unplugin-vue-components": "^32.1.0",
     "vite": "^8.0.8",
-    "vite-plugin-vue-devtools": "^8.1.1",
-    "vitest": "^2.0.5",
     "vue-tsc": "^3.2.6"
   },
   "keywords": [

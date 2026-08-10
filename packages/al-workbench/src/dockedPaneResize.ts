@@ -1,4 +1,4 @@
-import type { WorkbenchPaneState, WorkbenchShellApi } from '@activelane/workbench-api'
+import type { WorkbenchPaneState, WorkbenchShellApi } from './core/workbench/shell'
 
 export type DockedPaneId = 'sidebar' | 'inspector' | 'bottomPanel'
 

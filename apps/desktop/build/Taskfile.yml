@@ -222,7 +222,6 @@ tasks:
     cmds:
       - pnpm --filter @activelane/icons build
       - pnpm --filter @activelane/shadcn build
-      - pnpm --filter @activelane/workbench-api build
       - pnpm --filter @activelane/workbench build
 
   frontend:dev:npm:

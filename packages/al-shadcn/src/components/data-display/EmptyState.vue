@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { IconComponent } from '../../componentTypes'
 import { cn } from '../../lib/utils'
-import type { IconComponent } from '../../types'
 import Button from '../ui/Button.vue'
 
 defineOptions({ name: 'AlEmptyState' })

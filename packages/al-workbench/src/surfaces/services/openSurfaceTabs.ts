@@ -1,10 +1,10 @@
+import type { Component } from 'vue'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
+import type { OpenWorkbenchTabOptions } from '../../core/workbench/contributions'
 import type {
-  OpenWorkbenchTabOptions,
-  WorkbenchRuntimeApi,
   WorkbenchSurfaceDescriptor,
   WorkbenchSurfaceSandboxOptions,
-} from '@activelane/workbench-api'
-import type { Component } from 'vue'
+} from '../../core/workbench/surfaces'
 
 type SurfaceTabOptions = Omit<OpenWorkbenchTabOptions, 'kind' | 'title'> &
   Partial<Pick<OpenWorkbenchTabOptions, 'kind' | 'title'>>

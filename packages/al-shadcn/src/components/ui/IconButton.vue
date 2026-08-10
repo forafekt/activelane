@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IconComponent } from '../../types'
+import type { IconComponent } from '../../componentTypes'
 import Button from './Button.vue'
 
 defineOptions({ name: 'AlIconButton' })

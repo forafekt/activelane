@@ -1,5 +1,5 @@
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import { reactive } from 'vue'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 import type { LauncherWorkspace, LauncherWorkspaceService } from '../types'
 
 const WORKSPACE_STORAGE_KEY = 'workspaces'

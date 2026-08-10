@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { WorkbenchRuntimeApi, WorkbenchTab } from '@activelane/workbench-api'
 import { computed } from 'vue'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
+import type { WorkbenchTab } from '../../core/workbench/contributions'
+
 import { useMarketplace } from '../composables/useMarketplaceStore'
 import { formatDate, statusLabel, statusTone } from './MarketplaceShared'
 

@@ -1,6 +1,6 @@
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import type { InjectionKey } from 'vue'
 import { inject, provide } from 'vue'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
 
 export const WORKBENCH_RUNTIME_SYMBOL: InjectionKey<WorkbenchRuntimeApi> = Symbol(
   'WORKBENCH_RUNTIME_SYMBOL',

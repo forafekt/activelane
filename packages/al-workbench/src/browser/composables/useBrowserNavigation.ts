@@ -1,8 +1,8 @@
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import type { ComputedRef } from 'vue'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 import { navigateBrowserTab } from '../browserCommands'
-import { openWorkbenchBrowser } from '../browserRegistry'
+import { openWorkbenchBrowser } from '../browserService'
 import type { BrowserNavigationState, BrowserTabInput } from '../types'
 import { DEFAULT_BROWSER_HOME_URL, DEFAULT_SEARCH_PROVIDER_URL } from '../utils/url'
 

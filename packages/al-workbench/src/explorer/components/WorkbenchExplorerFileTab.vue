@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { AlBadge } from '@activelane/shadcn'
-import type { WorkbenchRuntimeApi, WorkbenchTab } from '@activelane/workbench-api'
 import { computed } from 'vue'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
+import type { WorkbenchTab } from '../../core/workbench/contributions'
 
 defineOptions({ name: 'WorkbenchExplorerFileTab' })
 

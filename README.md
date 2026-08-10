@@ -32,7 +32,6 @@ go vet ./...
 ```text
 apps/desktop/              Go + Wails v3 application and Vue entry point
 packages/al-workbench/     Host-agnostic ActiveLane Workbench UI
-packages/al-workbench-api/ Shared runtime and host capability contracts
 packages/al-shadcn/        Shared Vue component system
 packages/al-icons/         Shared icon exports
 ```

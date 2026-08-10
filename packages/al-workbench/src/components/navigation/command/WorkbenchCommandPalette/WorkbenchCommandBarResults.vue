@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { WorkbenchCommandSearchItem } from '@activelane/workbench-api'
+import type { WorkbenchCommandSearchItem } from '../../../../core/workbench/commands'
 
 defineOptions({ name: 'WorkbenchCommandBarResults' })
 

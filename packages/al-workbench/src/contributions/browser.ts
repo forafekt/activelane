@@ -1,12 +1,12 @@
 import { getIcon } from '@activelane/icons'
-import type { WorkbenchExtensionDefinition } from '@activelane/workbench-api'
-import { defineWorkbenchExtension } from '@activelane/workbench-api'
 import {
   browserSettings,
   createBrowserCommandPalette,
   createBrowserCommands,
   createBrowserTabRenderer,
 } from '../browser'
+import { defineWorkbenchExtension } from '../core/extensions/helpers'
+import type { WorkbenchExtensionDefinition } from '../core/extensions/types'
 
 export function createWorkbenchBrowserContribution(): WorkbenchExtensionDefinition {
   return defineWorkbenchExtension({

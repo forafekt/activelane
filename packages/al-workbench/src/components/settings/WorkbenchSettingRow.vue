@@ -161,7 +161,7 @@ function displayValue(value: unknown) {
       />
 
       <div v-else-if="setting.type === 'multi-select'" class="grid w-full gap-2">
-        <label
+        <div
           v-for="option in setting.options"
           :key="String(option.value)"
           class="flex items-center gap-2 text-sm"
@@ -172,7 +172,7 @@ function displayValue(value: unknown) {
             @update:model-value="toggleMultiSelect(option.value, Boolean($event))"
           />
           <span>{{ option.label }}</span>
-        </label>
+        </div>
       </div>
 
       <AlTextarea

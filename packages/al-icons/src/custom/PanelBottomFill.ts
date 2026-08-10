@@ -8,7 +8,7 @@ export default defineComponent({
 
   emits: [],
 
-  setup(props, { emit }) {
+  setup() {
     //     <svg
     //   xmlns="http://www.w3.org/2000/svg"
     //   width="24"

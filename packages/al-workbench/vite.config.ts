@@ -1,44 +1,24 @@
 import { fileURLToPath, URL } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    vue(),
-    Components({
-      dirs: ['src/components'],
-      deep: true,
-      dts: true,
-    }),
-    AutoImport({
-      dts: true,
-    }),
-  ],
+  plugins: [tailwindcss(), vue()],
   build: {
-    emptyOutDir: false,
+    emptyOutDir: true,
     lib: {
       entry: {
         index: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
-        'marketplace/index': fileURLToPath(
-          new URL('./src/marketplace/index.ts', import.meta.url),
-        ),
+        'marketplace/index': fileURLToPath(new URL('./src/marketplace/index.ts', import.meta.url)),
         'themes/index': fileURLToPath(new URL('./src/themes/index.ts', import.meta.url)),
+        'extensions/index': fileURLToPath(new URL('./src/extensions/index.ts', import.meta.url)),
       },
       name: 'ActiveLaneWorkbench',
       formats: ['es'],
     },
     rollupOptions: {
-      external: [
-        'vue',
-        '@activelane/shadcn',
-        '@activelane/icons',
-        '@activelane/workbench-api',
-        '@activelane/workbench-api/vue',
-      ],
+      external: ['vue', '@activelane/shadcn', '@activelane/icons'],
       output: {
         globals: {
           vue: 'Vue',

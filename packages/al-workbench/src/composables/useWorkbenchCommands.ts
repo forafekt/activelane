@@ -1,5 +1,5 @@
-import type { WorkbenchCommandSearchItem } from '@activelane/workbench-api'
 import { computed, nextTick, ref, watch } from 'vue'
+import type { WorkbenchCommandSearchItem } from '../core/workbench/commands'
 import { useWorkbenchRuntime } from './useWorkbenchRuntime'
 
 let sharedState: ReturnType<typeof createWorkbenchCommandsState> | null = null

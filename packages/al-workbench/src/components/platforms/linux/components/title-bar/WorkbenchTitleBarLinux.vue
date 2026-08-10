@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-// import { useWorkbenchWindowChrome } from '../host/windowChrome.ts'
 import WorkbenchCommandCenter from '../../../shared/components/title-bar/WorkbenchCommandCenter.vue'
 import WorkbenchLayoutControls from '../../../shared/components/title-bar/WorkbenchLayoutControls.vue'
 import WorkbenchMenuBar from '../../../shared/components/title-bar/WorkbenchMenuBar.vue'
 import WorkbenchNavigationControls from '../../../shared/components/title-bar/WorkbenchNavigationControls.vue'
 import WorkbenchWindowControls from '../../../shared/components/title-bar/WorkbenchWindowControls.vue'
+import type { WorkbenchWindowChrome } from '../../../windowChrome'
 
 defineOptions({ name: 'WorkbenchTitleBarLinux' })
 
 const props = defineProps<{
-  chrome: any
+  chrome: WorkbenchWindowChrome
 }>()
 
-// const chrome = useWorkbenchWindowChrome()
 const titleBarClasses = computed(() => ({
   'workbench-title-bar-linux': true,
   'workbench-title-bar-linux--maximized': props.chrome.state.maximized,

@@ -1,6 +1,8 @@
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
-import { createNativeWorkbenchHost } from '@activelane/workbench-api'
-import { createExtensionRuntime } from '@activelane/workbench-api/vue'
+import {
+  createNativeWorkbenchHost,
+  createVueExtensionRuntime,
+  type WorkbenchRuntimeApi,
+} from '@activelane/workbench'
 import { createNativeCapabilities } from '../services/native'
 import { createDesktopExtensionCatalog } from './extensions'
 import { createDesktopInitialShellState } from './shellState'
@@ -15,7 +17,7 @@ export async function createDesktopPlatform(): Promise<DesktopPlatformRuntime> {
     capabilities: createNativeCapabilities(),
   })
 
-  const runtime = await createExtensionRuntime({
+  const runtime = await createVueExtensionRuntime({
     host,
     extensions: createDesktopExtensionCatalog(),
     initialState: createDesktopInitialShellState(),

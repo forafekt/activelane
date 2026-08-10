@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import type { WorkbenchTabSession, WorkbenchTabTemplate } from '@activelane/workbench-api'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
+import type {
+  WorkbenchTabSession,
+  WorkbenchTabTemplate,
+} from '../../../../core/workbench/tabWorkspace'
 
 defineOptions({ name: 'WorkbenchTabWorkspaceDialog' })
 
@@ -174,6 +177,15 @@ function applyShared(replace: boolean) {
   open.value = false
 }
 
+function setOpen(value: boolean) {
+  open.value = value
+}
+
+function selectItem(item: Item) {
+  selectedId.value = item.id
+  name.value = item.name
+}
+
 onMounted(() => {
   window.addEventListener('activelane:tab-workspace-dialog', onRequest)
 })
@@ -184,7 +196,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Dialog :open="open" @update:open="open = $event">
+  <Dialog :open="open" @update:open="setOpen">
     <DialogContent class="sm:max-w-[44rem]">
       <DialogHeader>
         <DialogTitle>{{ title }}</DialogTitle>
@@ -199,7 +211,7 @@ onUnmounted(() => {
             type="button"
             class="wb-tab-workspace-dialog__item"
             :class="{ 'wb-tab-workspace-dialog__item--active': item.id === selectedId }"
-            @click="selectedId = item.id; name = item.name"
+            @click="selectItem(item)"
           >
             <span>{{ item.name }}</span>
             <small>{{ workspaceStats(item) }} · {{ formatDate(item.updatedAt) }}</small>
@@ -240,7 +252,7 @@ onUnmounted(() => {
         <textarea
           v-model="importJson"
           class="wb-tab-workspace-dialog__textarea"
-          placeholder="{ &quot;schema&quot;: &quot;activelane.workbench.tabs.shared-set&quot;, ... }"
+          placeholder='{ "schema": "activelane.workbench.tabs.shared-set", ... }'
           aria-label="Shared tab set JSON"
         />
         <p v-if="error" class="wb-tab-workspace-dialog__error">{{ error }}</p>

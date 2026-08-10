@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-// import { normalizeOperatingSystem } from '../host/windowChrome.ts'
 import WorkbenchTitleBarLinux from '../../../linux/components/title-bar/WorkbenchTitleBarLinux.vue'
 import WorkbenchTitleBarMacOS from '../../../mac/components/title-bar/WorkbenchTitleBarMacOS.vue'
+import type { WorkbenchWindowChrome } from '../../../windowChrome'
 import WorkbenchTitleBarWindows from '../../../windows/components/title-bar/WorkbenchTitleBarWindows.vue'
 
 defineOptions({ name: 'WorkbenchTitleBar' })
 
 const props = defineProps<{
   platform?: string
-  chrome: any
+  chrome: WorkbenchWindowChrome
 }>()
 
 const operatingSystem = computed(() => props.platform ?? props.chrome.os ?? 'linux')

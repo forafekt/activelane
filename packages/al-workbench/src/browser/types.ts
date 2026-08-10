@@ -1,8 +1,5 @@
-import type {
-  WorkbenchRuntimeApi,
-  WorkbenchTab,
-  WorkbenchTabInput,
-} from '@activelane/workbench-api'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
+import type { WorkbenchTab, WorkbenchTabInput } from '../core/workbench/contributions'
 
 export const WORKBENCH_BROWSER_TAB_KIND = 'browser'
 

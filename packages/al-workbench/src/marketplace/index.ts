@@ -1,11 +1,12 @@
 import { getIcons } from '@activelane/icons'
+import { defineWorkbenchExtension } from '../core/extensions/helpers'
 import type {
-  WorkbenchCommandExecutionContext,
   WorkbenchExtensionContext,
   WorkbenchExtensionDefinition,
-  WorkbenchRuntimeApi,
-} from '@activelane/workbench-api'
-import { defineWorkbenchExtension } from '@activelane/workbench-api'
+} from '../core/extensions/types'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
+import type { WorkbenchCommandExecutionContext } from '../core/workbench/contributions'
+
 import ActivityIcon from './components/ActivityIcon.vue'
 import MarketplaceExtensionDetailsView from './components/MarketplaceExtensionDetailsView.vue'
 import MarketplaceInspectorPanel from './components/MarketplaceInspectorPanel.vue'

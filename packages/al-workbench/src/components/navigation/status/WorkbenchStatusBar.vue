@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ResolvedWorkbenchStatusBarItem } from '@activelane/workbench-api'
-import { resolveStatusBarItems } from '@activelane/workbench-api'
 import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
+import type { ResolvedWorkbenchStatusBarItem } from '../../../core/workbench/zones'
+import { resolveStatusBarItems } from '../../../core/workbench/zones'
 
 defineOptions({ name: 'WorkbenchStatusBar' })
 

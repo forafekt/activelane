@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type {
-  WorkbenchResolvedMenuCommandItem,
-  WorkbenchResolvedMenuItem,
-} from '@activelane/workbench-api'
 import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import { useWorkbenchMenus } from '../../../composables/useWorkbenchMenus'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
+import type {
+  WorkbenchResolvedMenuCommandItem,
+  WorkbenchResolvedMenuItem,
+} from '../../../core/menus/menuContracts'
 
 defineOptions({ name: 'WorkbenchGlobalMenuLauncher' })
 

@@ -3,11 +3,11 @@ export {
   createBrowserCommands,
   navigateBrowserTab,
 } from './browserCommands'
+export { createBrowserTabRenderer } from './browserRegistry'
 export {
-  createBrowserTabRenderer,
   getBrowserEngine,
   openWorkbenchBrowser,
   resolveBrowserEngine,
-} from './browserRegistry'
+} from './browserService'
 export { browserSettings } from './browserSettings'
 export type * from './types'

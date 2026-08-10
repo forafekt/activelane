@@ -1,5 +1,5 @@
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import { computed } from 'vue'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
 
 export function useWorkbenchHostChrome(runtime: WorkbenchRuntimeApi) {
   const desktopChrome = computed(() => runtime.host.kind === 'desktop')

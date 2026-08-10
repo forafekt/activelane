@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import type { WorkbenchTab, WorkbenchTabGroupNode } from '@activelane/workbench-api'
 import { computed } from 'vue'
-import { createTabContext, useWorkbenchMenus } from '../../../../composables/useWorkbenchMenus'
+import { useWorkbenchMenus } from '../../../../composables/useWorkbenchMenus'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
+import type { WorkbenchTab } from '../../../../core/workbench/contributions'
+import type { WorkbenchTabGroupNode } from '../../../../core/workbench/shell'
+import { createTabContext } from '../../../../runtime/menus/menuRegistry'
+
 import { useWorkbenchTabInteractions } from './useWorkbenchTabInteractions'
 
 defineOptions({ name: 'WorkbenchTabContextMenu' })

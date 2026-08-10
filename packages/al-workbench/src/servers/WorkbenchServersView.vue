@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { WorkbenchRuntimeApi, WorkbenchTab } from '@activelane/workbench-api'
 import { computed } from 'vue'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
+import type { WorkbenchTab } from '../core/workbench/contributions'
+
 import { useServerRuntime } from './useServerRuntime'
 
 defineOptions({ name: 'WorkbenchServersView' })
@@ -23,9 +25,7 @@ const [AlScrollArea, AlBadge, AlButton, AlEmptyState, AlSection, AlStatBlock] =
 const { servers, startServer, stopServer, restartServer } = useServerRuntime(props.runtime)
 
 const runningCount = computed(
-  () =>
-    servers.value.filter((server) => server.status === 'running' || server.status === 'ready')
-      .length,
+  () => servers.value.filter((server) => server.status === 'running').length,
 )
 
 function uptime(server: (typeof servers.value)[number]) {

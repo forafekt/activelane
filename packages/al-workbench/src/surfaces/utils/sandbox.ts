@@ -1,4 +1,4 @@
-import type { WorkbenchSurfaceSandboxOptions } from '@activelane/workbench-api'
+import type { WorkbenchSurfaceSandboxOptions } from '../../core/workbench/surfaces'
 
 const SANDBOX_TOKEN_BY_OPTION: Record<keyof WorkbenchSurfaceSandboxOptions, string> = {
   allowDownloads: 'allow-downloads',

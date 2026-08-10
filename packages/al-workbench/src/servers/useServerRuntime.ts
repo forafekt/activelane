@@ -1,9 +1,6 @@
-import type {
-  ExtensionLogEntry,
-  ServerRuntimeStatusSnapshot,
-  WorkbenchRuntimeApi,
-} from '@activelane/workbench-api'
 import { onBeforeUnmount, ref } from 'vue'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
+import type { ExtensionLogEntry, ServerRuntimeStatusSnapshot } from '../core/serverRuntime'
 
 export function useServerRuntime(runtime: WorkbenchRuntimeApi) {
   const servers = ref<ServerRuntimeStatusSnapshot[]>(

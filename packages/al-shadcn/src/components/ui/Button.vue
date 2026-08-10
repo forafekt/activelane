@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
+import type { IconComponent } from '../../componentTypes'
 import { cn } from '../../lib/utils'
 import { buttonVariants } from '../../lib/variants'
-import type { IconComponent } from '../../types'
 
 defineOptions({ name: 'AlButton' })
 

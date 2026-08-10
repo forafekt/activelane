@@ -1,4 +1,4 @@
-import type { WorkbenchSurfaceDescriptor } from '@activelane/workbench-api'
+import type { WorkbenchSurfaceDescriptor } from '../../core/workbench/surfaces'
 
 export function getDeclaredSurfacePermissions(surface: WorkbenchSurfaceDescriptor) {
   return new Set([...(surface.permissions ?? []), ...(surface.capabilities ?? [])])

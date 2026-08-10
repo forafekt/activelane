@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import type {
-  WorkbenchTabIndicator as Indicator,
-  WorkbenchTabGroupNode,
-  WorkbenchTabRailGroup,
-} from '@activelane/workbench-api'
 import { computed, nextTick, ref } from 'vue'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
+import type { WorkbenchTabGroupNode, WorkbenchTabRailGroup } from '../../../../core/workbench/shell'
+import type { WorkbenchTabIndicator as Indicator } from '../../../../core/workbench/tabWorkspace'
+
 import { tabColorClass } from './tabPresentation'
 import { useWorkbenchTabInteractions } from './useWorkbenchTabInteractions'
 import WorkbenchTabIndicator from './WorkbenchTabIndicator.vue'
@@ -210,6 +208,7 @@ function runDynamicAction(actionId: string) {
 <template>
   <ContextMenu>
     <ContextMenuTrigger as-child>
+      <!-- biome-ignore lint/a11y/useSemanticElements: this draggable composite contains an inline text input and cannot be a button. -->
       <div
         role="button"
         tabindex="0"

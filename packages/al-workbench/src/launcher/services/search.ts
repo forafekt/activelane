@@ -1,4 +1,5 @@
-import type { WorkbenchApplicationContribution } from '@activelane/workbench-api'
+import type { WorkbenchApplicationContribution } from '../../core/workbench/contributions'
+
 import type { LauncherSearchResult } from '../types'
 
 function normalize(value: string) {

@@ -2,7 +2,7 @@ import type {
   ActiveLaneExtensionManifest,
   WorkbenchExtensionManifest,
   WorkbenchRuntimeExtensionRecord,
-} from '@activelane/workbench-api'
+} from '../../core/extensions/types'
 
 export type MarketplaceExtensionStatus =
   | 'available'

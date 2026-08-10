@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { WorkbenchRuntimeApi, WorkbenchTab } from '@activelane/workbench-api'
 import { computed, watch } from 'vue'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
+import type { WorkbenchTab } from '../../core/workbench/contributions'
+
 import { updateBrowserTabInput } from '../browserTabs'
 import { useBrowserNavigation } from '../composables/useBrowserNavigation'
 import type { BrowserNavigationState, BrowserTabInput, WorkbenchBrowserTab } from '../types'

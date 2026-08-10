@@ -1,9 +1,6 @@
-import {
-  createFileOpenIntent,
-  type ExplorerNode,
-  type FileOpenIntent,
-  type WorkbenchRuntimeApi,
-} from '@activelane/workbench-api'
+import type { ExplorerNode } from '../../core/explorer/types'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
+import { createFileOpenIntent, type FileOpenIntent } from '../../core/workbench/fileOpeners'
 
 export const EXPLORER_FILE_TAB_KIND = 'workbench.explorer.file'
 

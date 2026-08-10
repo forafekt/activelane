@@ -1,10 +1,11 @@
 import { getIcon } from '@activelane/icons'
+import type { MaybePromise } from '../core/shared/types'
 import type {
-  MaybePromise,
   WorkbenchCommandContribution,
   WorkbenchCommandExecutionContext,
-} from '@activelane/workbench-api'
-import { openWorkbenchBrowser } from './browserRegistry'
+} from '../core/workbench/contributions'
+
+import { openWorkbenchBrowser } from './browserService'
 import { getActiveBrowserTab, postBrowserCommand, updateActiveBrowserTabInput } from './browserTabs'
 import { nextBrowserFrameKey } from './utils/storage'
 import {

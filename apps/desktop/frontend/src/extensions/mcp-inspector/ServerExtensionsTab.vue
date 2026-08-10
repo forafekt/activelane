@@ -5,8 +5,8 @@ import type {
   ServerExtensionHandle,
   WorkbenchRuntimeApi,
   WorkbenchTab,
-} from '@activelane/workbench-api'
-import { createWorkbenchRuntimeHttpClient } from '@activelane/workbench-api'
+} from '@activelane/workbench'
+import { createWorkbenchRuntimeHttpClient } from '@activelane/workbench'
 import { computed, onMounted, ref } from 'vue'
 
 defineOptions({ name: 'ServerExtensionsTab' })
@@ -117,9 +117,11 @@ async function restartExtension(serverId: string) {
               </dd>
             </div>
             <div>
-              <dt>Entrypoints</dt>
+              <dt>Server</dt>
               <dd>
-                {{ record.manifest.server?.entrypoints?.map((entry) => `${entry.id}:${entry.kind}`).join(', ') || record.manifest.server?.entry || 'simulated' }}
+                {{ record.manifest.server
+                    ? `${record.manifest.server.id}:${record.manifest.server.mode}`
+                    : 'none' }}
               </dd>
             </div>
             <div>

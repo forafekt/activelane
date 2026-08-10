@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { AlIconButton } from '@activelane/shadcn'
-import { getWorkbenchIcon, getWorkbenchIcons } from '../../../../../icons'
-
-// import { getWorkbenchIcon, getWorkbenchIcons } from '@activelane/workbench/icons'
-// import type { DesktopWindowChrome } from '../host/windowChrome'
+import { getWorkbenchIcon, getWorkbenchIcons } from '../../../../../workbenchIcons'
+import type { WorkbenchWindowChrome } from '../../../windowChrome'
 
 const [MinimizeWindow, CloseWindow] = getWorkbenchIcons([['MinimizeWindow'], ['CloseWindow']])
 
 defineOptions({ name: 'WorkbenchWindowControls' })
 
 const props = defineProps<{
-  chrome: any
+  chrome: WorkbenchWindowChrome
 }>()
 
 function minimizeWindow() {

@@ -12,7 +12,7 @@ test('workbench contribution normalization keeps component references non-reacti
     import {
       normalizeWorkbenchContribution,
       normalizeWorkbenchTabOptions,
-    } from './packages/al-workbench-api/src/workbench/normalizeComponents.ts'
+    } from './packages/al-workbench/src/core/workbench/normalizeComponents.ts'
 
     const activityIcon = { name: 'ActivityIcon' }
     const toolbarIcon = { name: 'ToolbarIcon' }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { WorkbenchActivityContribution } from '@activelane/workbench-api'
 import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
+import type { WorkbenchActivityContribution } from '../../../../core/workbench/contributions'
 
 defineOptions({ name: 'WorkbenchActivityItem' })
 

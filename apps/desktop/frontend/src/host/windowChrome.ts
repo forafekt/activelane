@@ -23,8 +23,8 @@ export function useDesktopWindowChrome() {
     state.fullscreen = await workbenchWindow.IsFullscreen()
   })
 
-  function handleTitleBarDoubleClick(event: MouseEvent) {
-    if ((event.target as HTMLElement | null)?.closest('[data-desktop-no-drag]')) return
+  function handleTitleBarDoubleClick(event?: MouseEvent) {
+    if ((event?.target as HTMLElement | null)?.closest('[data-desktop-no-drag]')) return
     if (os === 'macos') {
       void toggleFullscreen()
       return

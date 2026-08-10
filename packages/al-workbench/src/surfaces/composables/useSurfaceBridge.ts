@@ -1,5 +1,5 @@
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import { inject, provide } from 'vue'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 import { WorkbenchSurfaceBridge } from '../bridge/surfaceBridge'
 
 const SURFACE_BRIDGE_SYMBOL = Symbol('ActiveLaneSurfaceBridge')

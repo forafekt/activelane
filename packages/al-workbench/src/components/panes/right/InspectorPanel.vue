@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cn } from '@activelane/shadcn'
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
+import type { WorkbenchRuntimeApi } from '../../../core/runtime/types'
 import PanelHeader from './PanelHeader.vue'
 
 defineOptions({ name: 'InspectorPanel' })

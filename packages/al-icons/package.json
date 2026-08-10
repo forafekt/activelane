@@ -15,14 +15,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    },
-    "./lucide": {
-      "types": "./dist/lucide.d.ts",
-      "import": "./dist/lucide.js"
     }
   },
   "scripts": {
-    "build": "pnpm build:types && vite build",
+    "build": "vite build && pnpm build:types",
     "build:types": "pnpm exec tsc -p tsconfig.build.json",
     "typecheck": "pnpm exec tsc -p tsconfig.app.json --noEmit && pnpm exec tsc -p tsconfig.node.json --noEmit"
   },
@@ -34,20 +30,11 @@
     "vue": "^3.5.30"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.2.2",
     "@tsconfig/node24": "^24.0.4",
     "@types/node": "^24.12.2",
-    "@vitejs/plugin-vue": "^6.0.6",
     "@vue/tsconfig": "^0.9.1",
-    "npm-run-all2": "^8.0.4",
-    "tailwindcss": "^4.2.2",
     "typescript": "~6.0.0",
-    "unplugin-auto-import": "^21.0.0",
-    "unplugin-vue-components": "^32.1.0",
-    "vite": "^8.0.8",
-    "vite-plugin-vue-devtools": "^8.1.1",
-    "vitest": "^2.0.5",
-    "vue-tsc": "^3.2.6"
+    "vite": "^8.0.8"
   },
   "license": "ISC",
   "packageManager": "pnpm@11.12.0"

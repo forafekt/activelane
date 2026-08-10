@@ -1,5 +1,7 @@
-import type { WorkbenchPartContribution, WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import { computed } from 'vue'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
+import type { WorkbenchPartContribution } from '../core/workbench/contributions'
+
 import { useWorkbenchRuntime } from './useWorkbenchRuntime'
 
 const builtinParts: WorkbenchPartContribution[] = [

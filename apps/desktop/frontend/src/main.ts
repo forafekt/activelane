@@ -1,4 +1,3 @@
-// renderer/main.ts
 import '@activelane/workbench/styles.css'
 import { provideWorkbenchRuntime, WorkbenchPlugin } from '@activelane/workbench'
 

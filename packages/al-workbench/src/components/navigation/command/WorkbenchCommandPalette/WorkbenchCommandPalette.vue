@@ -161,6 +161,7 @@ onUnmounted(() => {
 
 <template>
   <Teleport to="body">
+    <!-- biome-ignore lint/a11y/noStaticElementInteractions: the backdrop dismisses the modal only on direct pointer interaction. -->
     <div v-if="isOpen" class="wb-command-palette-layer" role="presentation" @mousedown.self="close">
       <section
         ref="paletteRef"

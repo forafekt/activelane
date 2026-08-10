@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { WorkbenchLayoutNode, WorkbenchTab } from '@activelane/workbench-api'
 import { computed } from 'vue'
-import { WorkbenchExtensionBoundary } from '../../../components/render/surface'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
+import type { WorkbenchTab } from '../../../core/workbench/contributions'
+import type { WorkbenchLayoutNode } from '../../../core/workbench/shell'
+
 import InspectorPanel from './InspectorPanel.vue'
 
 defineOptions({ name: 'WorkbenchInspectorPane' })

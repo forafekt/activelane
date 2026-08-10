@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { getIcons } from '@activelane/icons'
 import { AlIconButton } from '@activelane/shadcn'
-import type { WorkbenchApplicationContribution } from '@activelane/workbench-api'
 import { computed } from 'vue'
+import type { WorkbenchApplicationContribution } from '../../core/workbench/contributions'
 import { resolveLauncherIcon } from './iconResolver'
 
 const [Pin, PinOff] = getIcons(['Pin', 'PinOff'])
@@ -25,7 +25,9 @@ const icon = computed(() => resolveLauncherIcon(props.app.icon))
 </script>
 
 <template>
-  <article
+  <!-- biome-ignore lint/a11y/useSemanticElements: the composite launch target contains a separate pin button, so it cannot itself be a button. -->
+  <div
+    role="button"
     class="launcher-app-card"
     :class="{ 'launcher-app-card--active': active }"
     tabindex="0"
@@ -47,7 +49,7 @@ const icon = computed(() => resolveLauncherIcon(props.app.icon))
       variant="ghost"
       @click.stop="pinned ? emit('unpin', app.id) : emit('pin', app.id)"
     />
-  </article>
+  </div>
 </template>
 
 <style scoped>

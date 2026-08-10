@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AlButton, AlInput } from '@activelane/shadcn'
-import type { WorkbenchCommandContribution } from '@activelane/workbench-api'
+import type { WorkbenchCommandContribution } from '../../core/workbench/contributions'
 
 defineOptions({ name: 'SettingsCommandRows' })
 

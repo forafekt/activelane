@@ -1,8 +1,7 @@
-import {
-  defineWorkbenchExtension,
-  type WorkbenchComponent,
-  type WorkbenchExtensionDefinition,
-} from '@activelane/workbench-api'
+import { defineWorkbenchExtension } from '../core/extensions/helpers'
+import type { WorkbenchExtensionDefinition } from '../core/extensions/types'
+import type { WorkbenchComponent } from '../core/workbench/ui'
+
 import WorkbenchExplorerFileTab from '../explorer/components/WorkbenchExplorerFileTab.vue'
 import WorkbenchExplorerView from '../explorer/components/WorkbenchExplorerView.vue'
 import { createFilesystemExplorerProvider } from '../explorer/services/filesystemProvider'

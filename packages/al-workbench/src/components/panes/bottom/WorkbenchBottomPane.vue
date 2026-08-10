@@ -77,22 +77,6 @@ watch(
       </div>
 
       <div class="wb-shell__bottom-panel-actions">
-        <!-- Extension actions, TODO: Add this to runtime -->
-
-        <!-- Extension elipsis dropdown menu actions, TODO: Add this to runtime -->
-
-        <!-- vertical divider -->
-        <div v-if="views.length" class="wb-shell__bottom-panel-actions-divider"></div>
-        <AlIconButton
-          label="Toggle fullscreen"
-          :icon="runtime.workbench.ui.getIcon('Fullscreen')"
-          size="icon-xs"
-          variant="ghost"
-          @click="() => {
-
-            // TODO: Add this to runtime
-          }"
-        />
         <AlIconButton
           label="Close bottom pane"
           :icon="runtime.workbench.ui.getIcon('X')"

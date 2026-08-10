@@ -1,5 +1,5 @@
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import { computed, onMounted, ref } from 'vue'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 import { marketplaceCatalog } from '../services/backendMarketplaceCatalog'
 import type {
   MarketplaceExtension,

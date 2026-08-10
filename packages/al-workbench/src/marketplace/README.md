@@ -10,8 +10,6 @@ First-party extension management surface for the ActiveLane workbench. The marke
 - `src/components/*` contains the sidebar, main marketplace tab, details view, inspector panel, and shared display helpers.
 - `src/types/marketplace.ts` defines marketplace-specific UI models.
 
-Compatibility re-exports remain in `src/services/catalog.ts`, `src/types/catalog.ts`, and `src/composables/useMarketplace.ts`.
-
 ## Boundaries
 
 - Core workbench features belong in `@activelane/workbench`.

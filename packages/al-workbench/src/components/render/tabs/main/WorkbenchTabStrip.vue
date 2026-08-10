@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { WorkbenchTabGroupNode } from '@activelane/workbench-api'
 import { computed, ref } from 'vue'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
 import { useWorkbenchTabs } from '../../../../composables/useWorkbenchTabs'
+import type { WorkbenchTabGroupNode } from '../../../../core/workbench/shell'
 import { useWorkbenchTabInteractions } from './useWorkbenchTabInteractions'
 import WorkbenchTabContextMenu from './WorkbenchTabContextMenu.vue'
 import WorkbenchTabGroupHeader from './WorkbenchTabGroupHeader.vue'

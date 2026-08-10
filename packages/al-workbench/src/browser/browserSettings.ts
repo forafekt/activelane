@@ -1,4 +1,4 @@
-import type { WorkbenchSettingDefinition } from '@activelane/workbench-api'
+import type { WorkbenchSettingDefinition } from '../core/workbench/settings'
 
 export const browserSettings: WorkbenchSettingDefinition[] = [
   {

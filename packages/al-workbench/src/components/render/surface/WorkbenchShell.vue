@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import type {
-  WorkbenchRegisteredContributions,
-  WorkbenchRuntimeApi,
-  WorkbenchShellApi,
-} from '@activelane/workbench-api'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { createLegacyWorkbenchRuntime } from '../../../compat'
 import { provideWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 import { useWorkbenchShellKeybindings } from '../../../composables/useWorkbenchShellKeybindings'
 import { useWorkbenchShellSettings } from '../../../composables/useWorkbenchShellSettings'
+import type { WorkbenchRuntimeApi } from '../../../core/runtime/types'
 import {
   createApplicationRegistryService,
   LauncherOverlay,
@@ -23,8 +18,6 @@ defineOptions({ name: 'WorkbenchShell' })
 const props = withDefaults(
   defineProps<{
     runtime: WorkbenchRuntimeApi
-    store?: WorkbenchShellApi
-    registry?: WorkbenchRegisteredContributions
     topBar?: boolean
   }>(),
   {
@@ -34,18 +27,12 @@ const props = withDefaults(
 
 const [SidebarProvider] = props.runtime.workbench.ui.getComponents(['SidebarProvider'])
 
-const activeRuntime = computed(() => {
-  if (props.runtime) return props.runtime
-  if (props.store && props.registry)
-    return createLegacyWorkbenchRuntime(props.store, props.registry)
-  throw new Error('WorkbenchShell requires either a runtime or legacy store and registry props.')
-})
-
-provideWorkbenchRuntime(activeRuntime.value)
-provideLauncher(createApplicationRegistryService(activeRuntime.value))
-const surfaceBridge = provideSurfaceBridge(activeRuntime.value)
+provideWorkbenchRuntime(props.runtime)
+const launcher = createApplicationRegistryService(props.runtime)
+provideLauncher(launcher)
+const surfaceBridge = provideSurfaceBridge(props.runtime)
 const hostRef = ref<HTMLElement | null>(null)
-const shellRuntime = activeRuntime.value
+const shellRuntime = props.runtime
 
 const sidebarOpen = computed({
   get: () => !shellRuntime.workbench.state.sidebar.collapsed,
@@ -73,6 +60,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  launcher.dispose()
   surfaceBridge.dispose()
 })
 </script>

@@ -1,4 +1,4 @@
-import type { WorkbenchTabColorId } from '@activelane/workbench-api'
+import type { WorkbenchTabColorId } from '../../../../core/workbench/contributions'
 
 export const TAB_COLOR_OPTIONS: Array<{ id: WorkbenchTabColorId; label: string }> = [
   { id: 'default', label: 'Default' },

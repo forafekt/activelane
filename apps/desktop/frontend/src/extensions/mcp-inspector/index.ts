@@ -3,7 +3,7 @@ import {
   defineWorkbenchExtension,
   registerCapability,
   type WorkbenchExtensionDefinition,
-} from '@activelane/workbench-api'
+} from '@activelane/workbench/extensions'
 import McpInspectorSidebar from './McpInspectorSidebar.vue'
 import McpInspectorTab from './McpInspectorTab.vue'
 import ServerExtensionsTab from './ServerExtensionsTab.vue'
@@ -30,13 +30,12 @@ export function createMcpInspectorExtension(): WorkbenchExtensionDefinition {
       keywords: ['mcp', 'capabilities', 'tools', 'resources', 'server extensions'],
       activationEvents: ['onStartup'],
       server: {
-        entrypoints: [
-          {
-            id: 'browser-worker-demo',
-            kind: 'worker',
-            restart: 'never',
-          },
-        ],
+        id: 'browser-worker-demo',
+        label: 'MCP Inspector Worker',
+        mode: 'worker',
+        runtime: 'node',
+        startup: 'auto',
+        restart: { policy: 'never', maxRestarts: 0, windowMs: 60_000, backoffMs: 0 },
       },
       permissions: {
         filesystem: 'none',

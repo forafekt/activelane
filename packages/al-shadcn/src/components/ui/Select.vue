@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
+import type { SelectOption } from '../../componentTypes'
 import { cn } from '../../lib/utils'
-import type { SelectOption } from '../../types'
 
 const ChevronDown = getIcon('ChevronDown')
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { WorkbenchApplicationContribution } from '@activelane/workbench-api'
+import type { WorkbenchApplicationContribution } from '../../core/workbench/contributions'
+
 import LauncherAppCard from './LauncherAppCard.vue'
 
 defineOptions({ name: 'LauncherAppGrid' })

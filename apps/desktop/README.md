@@ -6,8 +6,8 @@ ActiveLane Workbench.
 
 Native filesystem operations are implemented by `WorkspaceService` in Go and
 consumed through generated Wails bindings by `frontend/src/services/native.ts`.
-The rest of the Workbench depends only on host capability contracts from
-`@activelane/workbench-api`.
+The desktop frontend adapts those bindings to the host capability contracts exposed by
+`@activelane/workbench`; Workbench itself remains independent of Wails.
 
 From the repository root, install dependencies once and launch the app:
 

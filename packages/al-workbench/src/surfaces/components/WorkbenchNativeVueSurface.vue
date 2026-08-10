@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { WorkbenchSurfaceDescriptor, WorkbenchTab } from '@activelane/workbench-api'
 import { computed, onErrorCaptured, ref, watch } from 'vue'
 import { useWorkbenchRuntime } from '../../composables/useWorkbenchRuntime'
+import type { WorkbenchTab } from '../../core/workbench/contributions'
+import type { WorkbenchSurfaceDescriptor } from '../../core/workbench/surfaces'
 
 defineOptions({ name: 'WorkbenchNativeVueSurface' })
 

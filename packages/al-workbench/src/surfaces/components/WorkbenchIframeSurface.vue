@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import type { WorkbenchTab } from '../../core/workbench/contributions'
 import type {
   WorkbenchSurfaceDescriptor,
   WorkbenchSurfaceLifecycleEvent,
-  WorkbenchTab,
-} from '@activelane/workbench-api'
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+} from '../../core/workbench/surfaces'
+
 import { useSurfaceBridge } from '../composables/useSurfaceBridge'
 import { canUseSurfaceBridge } from '../services/surfacePermissions'
 import { resolveSurfaceSandbox } from '../utils/sandbox'

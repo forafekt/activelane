@@ -1,5 +1,5 @@
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import { onBeforeUnmount, onMounted } from 'vue'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
 
 function isEditableTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) return false

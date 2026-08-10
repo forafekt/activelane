@@ -1,19 +1,19 @@
+import { evaluateWorkbenchContextExpression } from '../../core/menus/context'
 import type {
   ActiveLaneOperatingSystem,
   ActiveLaneRuntimePlatform,
-  WorkbenchMenuItemContribution,
   WorkbenchMenuPlacement,
   WorkbenchMenuResolveContext,
-  WorkbenchRegisteredContributions,
   WorkbenchResolvedMenuGroup,
   WorkbenchResolvedMenuItem,
+} from '../../core/menus/menuContracts'
+import { WorkbenchApplicationMenuId } from '../../core/menus/menuContracts'
+import type {
+  WorkbenchMenuItemContribution,
   WorkbenchTab,
   WorkbenchTabContext,
-} from '@activelane/workbench-api'
-import {
-  evaluateWorkbenchContextExpression,
-  WorkbenchApplicationMenuId,
-} from '@activelane/workbench-api'
+} from '../../core/workbench/contributions'
+import type { WorkbenchRegisteredContributions } from '../../core/workbench/shell'
 
 const placementAliases: Record<string, WorkbenchMenuPlacement> = {
   topBar: 'workbench/top-bar',

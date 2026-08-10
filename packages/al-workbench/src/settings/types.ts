@@ -8,7 +8,7 @@ export type {
   WorkbenchSettingsImportResult,
   WorkbenchSettingsService,
   WorkbenchSettingType,
-} from '@activelane/workbench-api'
+} from '../core/workbench/settings'
 
 export interface WorkbenchSettingsCategory {
   id: string

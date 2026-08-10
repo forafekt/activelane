@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
-import type { WorkbenchSurfaceDescriptor, WorkbenchTab } from '@activelane/workbench-api'
-
 import { computed } from 'vue'
+import type { WorkbenchTab } from '../../core/workbench/contributions'
+import type { WorkbenchSurfaceDescriptor } from '../../core/workbench/surfaces'
 
 const AlertTriangle = getIcon('AlertTriangle')
 

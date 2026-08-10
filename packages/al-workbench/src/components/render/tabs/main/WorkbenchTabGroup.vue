@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { WorkbenchTabGroupNode } from '@activelane/workbench-api'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
 import { useWorkbenchTabs } from '../../../../composables/useWorkbenchTabs'
+import type { WorkbenchTabGroupNode } from '../../../../core/workbench/shell'
 import { WorkbenchSurfaceRenderer } from '../../surface/index.ts'
 import { provideWorkbenchTabInteractions } from './useWorkbenchTabInteractions'
 import WorkbenchTabInteractionDialogs from './WorkbenchTabInteractionDialogs.vue'
@@ -40,7 +40,9 @@ function wakeActiveTab() {
 </script>
 
 <template>
+  <!-- biome-ignore lint/a11y/useSemanticElements: the tab group is a structural section, not a form fieldset. -->
   <section
+    role="group"
     data-workbench-tab-group="true"
     :data-active-group-id="runtime.workbench.state.activeGroupId"
     :data-active-tab-id="activeTab?.id"
@@ -54,6 +56,7 @@ function wakeActiveTab() {
     />
 
     <div :data-surface-id="activeTab?.surfaceId" class="wb-tab-group__content">
+      <!-- biome-ignore lint/a11y/noStaticElementInteractions: capture handlers observe engagement within arbitrary extension content. -->
       <div
         v-if="activeTab && !activeTab.hibernation?.hibernated && !tabInteractions.isProtectionLocked(activeTab)"
         data-workbench-surface-render

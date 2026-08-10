@@ -1,10 +1,11 @@
+import { reactive, watch } from 'vue'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 import type {
   WorkbenchApplicationContribution,
   WorkbenchCommandContribution,
   WorkbenchCommandPaletteContribution,
-  WorkbenchRuntimeApi,
-} from '@activelane/workbench-api'
-import { reactive, watch } from 'vue'
+} from '../../core/workbench/contributions'
+
 import type { ApplicationRegistryService } from '../types'
 import { searchLauncherApps } from './search'
 import { createWorkspaceSwitcherService } from './workspaces'
@@ -292,6 +293,7 @@ export function createApplicationRegistryService(
       state.selectedIndex = (state.selectedIndex + delta + apps.length) % apps.length
     },
     workspace,
+    dispose() {},
   }) as ApplicationRegistryService
 
   if (!runtime.registry.commands.some((command) => command.id === 'workbench.launcher.showApps')) {
@@ -321,7 +323,14 @@ export function createApplicationRegistryService(
   }
 
   syncGeneratedCommands()
-  watch(() => runtime.registry.apps.map((app) => app.id).join('\n'), syncGeneratedCommands)
+  const stopWatchingApps = watch(
+    () => runtime.registry.apps.map((app) => app.id).join('\n'),
+    syncGeneratedCommands,
+  )
+  service.dispose = () => {
+    stopWatchingApps()
+    if (runtime.applications === service) runtime.applications = undefined
+  }
   runtime.applications = service
 
   return service

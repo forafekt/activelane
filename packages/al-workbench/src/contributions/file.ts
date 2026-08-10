@@ -1,13 +1,14 @@
+import { defineWorkbenchExtension } from '../core/extensions/helpers'
+import type { WorkbenchExtensionDefinition } from '../core/extensions/types'
+import type { WorkbenchFileHandle } from '../core/host/types'
 import type {
   WorkbenchCommandContribution,
   WorkbenchCommandExecutionContext,
-  WorkbenchComponent,
-  WorkbenchExtensionDefinition,
-  WorkbenchFileHandle,
   WorkbenchMenuItemContribution,
   WorkbenchTab,
-} from '@activelane/workbench-api'
-import { defineWorkbenchExtension } from '@activelane/workbench-api'
+} from '../core/workbench/contributions'
+import type { WorkbenchComponent } from '../core/workbench/ui'
+
 import WorkbenchTextFileEditor from '../file/WorkbenchTextFileEditor.vue'
 
 export const WORKBENCH_TEXT_FILE_TAB_KIND = 'workbench.file.text'

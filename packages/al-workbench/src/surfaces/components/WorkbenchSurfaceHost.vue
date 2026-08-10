@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import type { WorkbenchSurfaceDescriptor, WorkbenchTab } from '@activelane/workbench-api'
 import { computed, watchEffect } from 'vue'
 import { useWorkbenchRuntime } from '../../composables/useWorkbenchRuntime'
+import type { WorkbenchTab } from '../../core/workbench/contributions'
+import type { WorkbenchSurfaceDescriptor } from '../../core/workbench/surfaces'
+
 import WorkbenchIframeSurface from './WorkbenchIframeSurface.vue'
 import WorkbenchNativeVueSurface from './WorkbenchNativeVueSurface.vue'
 import WorkbenchShadowDomSurface from './WorkbenchShadowDomSurface.vue'

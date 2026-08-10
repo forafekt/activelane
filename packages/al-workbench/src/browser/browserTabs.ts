@@ -1,4 +1,6 @@
-import type { WorkbenchRuntimeApi, WorkbenchTab } from '@activelane/workbench-api'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
+import type { WorkbenchTab } from '../core/workbench/contributions'
+
 import {
   type BrowserNavigationState,
   type BrowserTabInput,

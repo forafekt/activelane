@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { WorkbenchTabIndicator as Indicator } from '@activelane/workbench-api'
 import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
+import type { WorkbenchTabIndicator as Indicator } from '../../../../core/workbench/tabWorkspace'
 
 defineOptions({ name: 'WorkbenchTabIndicator' })
 

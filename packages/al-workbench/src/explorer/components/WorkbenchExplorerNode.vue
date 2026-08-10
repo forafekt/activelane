@@ -1,24 +1,9 @@
 <script setup lang="ts">
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@activelane/shadcn'
-import type {
-  ExplorerNode,
-  FileOpenIntent,
-  ResolvedFileOpener,
-  WorkbenchRuntimeApi,
-} from '@activelane/workbench-api'
 import { computed, onMounted, ref } from 'vue'
+import type { ExplorerNode } from '../../core/explorer/types'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
+import type { FileOpenIntent, ResolvedFileOpener } from '../../core/workbench/fileOpeners'
+
 import { openExplorerFileInfo, openExplorerNode } from '../services/openExplorerNode'
 
 defineOptions({ name: 'WorkbenchExplorerNode' })
@@ -183,13 +168,18 @@ function properties() {
           @keydown="onKeydown"
           @focus="runtime.explorer.focus(node, providerId)"
         >
-          <span class="explorer-node__twisty" @click.stop="toggle">
+          <button
+            type="button"
+            class="explorer-node__twisty"
+            aria-label="Toggle folder"
+            @click.stop="toggle"
+          >
             <Loader2 v-if="nodeState?.loading" class="explorer-node__spinner" />
             <ChevronRight
               v-else-if="!node.isLeaf && node.collapsible !== false"
               :class="{ 'explorer-node__chevron--open': expanded }"
             />
-          </span>
+          </button>
           <component :is="Icon" class="explorer-node__icon" />
           <span class="explorer-node__label">{{ node.label }}</span>
           <span v-if="node.description" class="explorer-node__description">

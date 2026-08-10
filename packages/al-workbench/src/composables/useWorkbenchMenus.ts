@@ -1,9 +1,10 @@
-import type { WorkbenchTabContext } from '@activelane/workbench-api'
+import type { WorkbenchTabContext } from '../core/workbench/contributions'
+
 import {
   createTabContext,
   resolveGlobalMenuGroups,
   resolveTabContextMenu,
-} from '../menus/menuResolution'
+} from '../runtime/menus/menuRegistry'
 import { useWorkbenchRuntime } from './useWorkbenchRuntime'
 
 export { createTabContext }

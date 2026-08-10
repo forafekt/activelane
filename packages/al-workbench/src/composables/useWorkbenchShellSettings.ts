@@ -1,6 +1,6 @@
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import type { Ref } from 'vue'
 import { onBeforeUnmount, onMounted, watch } from 'vue'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
 
 export function useWorkbenchShellSettings(
   runtime: WorkbenchRuntimeApi,

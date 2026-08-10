@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { AlButton } from '@activelane/shadcn'
-import type { WorkbenchSurfaceDescriptor, WorkbenchTab } from '@activelane/workbench-api'
 import { createApp, getCurrentInstance, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import type { WorkbenchTab } from '../../core/workbench/contributions'
+import type { WorkbenchSurfaceDescriptor } from '../../core/workbench/surfaces'
 
 defineOptions({ name: 'WorkbenchShadowDomSurface' })
 

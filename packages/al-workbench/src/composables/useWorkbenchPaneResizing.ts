@@ -1,5 +1,5 @@
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
 import { computed, ref } from 'vue'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
 import { beginDockedPaneResize, dockedPaneResizeAxis } from '../dockedPaneResize'
 
 export function useWorkbenchPaneResizing(runtime: WorkbenchRuntimeApi) {

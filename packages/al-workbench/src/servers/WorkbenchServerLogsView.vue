@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { WorkbenchRuntimeApi, WorkbenchTab } from '@activelane/workbench-api'
 import { computed, onMounted, watch } from 'vue'
+import type { WorkbenchRuntimeApi } from '../core/runtime/types'
+import type { WorkbenchTab } from '../core/workbench/contributions'
+
 import { useServerLogs, useServerRuntime } from './useServerRuntime'
 
 defineOptions({ name: 'WorkbenchServerLogsView' })

@@ -1,13 +1,16 @@
+import type { Ref } from 'vue'
+import { computed, inject, provide, reactive, ref } from 'vue'
+import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
+import {
+  createProtectionMetadata,
+  verifyProtectionSecret,
+} from '../../../../core/runtime/workbenchStore/protection'
 import type {
   WorkbenchTab,
   WorkbenchTabColorId,
-  WorkbenchTabGroupNode,
   WorkbenchTabProtectionMetadata,
-  WorkbenchTabRailGroup,
-} from '@activelane/workbench-api'
-import { createProtectionMetadata, verifyProtectionSecret } from '@activelane/workbench-api'
-import { computed, inject, provide, type Ref, reactive, ref } from 'vue'
-import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
+} from '../../../../core/workbench/contributions'
+import type { WorkbenchTabGroupNode, WorkbenchTabRailGroup } from '../../../../core/workbench/shell'
 
 type TabTarget = { kind: 'tab'; id: string }
 type GroupTarget = { kind: 'group'; id: string }

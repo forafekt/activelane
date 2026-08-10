@@ -28,7 +28,7 @@ const emit = defineEmits<{
       <textarea
         :value="importDraft"
         class="settings-json-transfer__textarea"
-        placeholder="{ &quot;workbench.appearance.density&quot;: &quot;compact&quot; }"
+        placeholder='{ "workbench.appearance.density": "compact" }'
         @input="emit('update:importDraft', ($event.target as HTMLTextAreaElement).value)"
       />
       <div class="flex items-center gap-2">

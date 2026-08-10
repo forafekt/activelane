@@ -8,7 +8,7 @@ export default defineComponent({
 
   emits: [],
 
-  setup(props, { emit }) {
+  setup() {
     return () =>
       h(
         'svg',

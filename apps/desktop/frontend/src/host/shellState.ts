@@ -1,4 +1,4 @@
-import type { WorkbenchShellState } from '@activelane/workbench-api'
+import type { WorkbenchShellState } from '@activelane/workbench'
 
 export function createDesktopInitialShellState(): Partial<WorkbenchShellState> {
   const devTerminalBottomPanel = import.meta.env.DEV

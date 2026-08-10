@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { WorkbenchLayoutNode, WorkbenchSplitNode } from '@activelane/workbench-api'
 import { computed, ref } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
-import { WorkbenchTabGroup } from '../tabs/main'
+import type { WorkbenchLayoutNode, WorkbenchSplitNode } from '../../../core/workbench/shell'
+
+import WorkbenchTabGroup from '../tabs/main/WorkbenchTabGroup.vue'
 import ResizeHandle from './ResizeHandle.vue'
 
 defineOptions({ name: 'WorkbenchSplitLayout' })

@@ -4,7 +4,7 @@ import type {
   WorkbenchFileSystemEntry,
   WorkbenchHostCapabilities,
   WorkbenchNotificationOptions,
-} from '@activelane/workbench-api'
+} from '@activelane/workbench'
 import { Clipboard, Dialogs, System, Window as WailsWindow } from '@wailsio/runtime'
 import {
   ReadDirectory,

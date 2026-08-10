@@ -1,9 +1,10 @@
 import { getIcons } from '@activelane/icons'
+import { defineWorkbenchExtension } from '../core/extensions/helpers'
 import type {
   WorkbenchExtensionContext,
   WorkbenchExtensionDefinition,
-} from '@activelane/workbench-api'
-import { defineWorkbenchExtension } from '@activelane/workbench-api'
+} from '../core/extensions/types'
+
 import WorkbenchServerLogsView from '../servers/WorkbenchServerLogsView.vue'
 import WorkbenchServersView from '../servers/WorkbenchServersView.vue'
 

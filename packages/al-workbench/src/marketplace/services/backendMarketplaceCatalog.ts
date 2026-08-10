@@ -1,18 +1,21 @@
+import type { ActiveLaneCapabilityRecord } from '../../core/capabilities/types'
 import type {
-  ActiveLaneCapabilityRecord,
-  ActiveLaneSettingsContribution,
   InstalledExtensionRecord,
   MarketplaceExtensionRecord,
   RegistryExtensionRecord,
-  WorkbenchRuntimeApi,
   WorkbenchRuntimeExtensionRecord,
-  WorkbenchSettingDefinition,
-} from '@activelane/workbench-api'
+} from '../../core/extensions/types'
 import {
   createWorkbenchApiHttpClient,
   createWorkbenchRuntimeHttpClient,
   WorkbenchApiHttpError,
-} from '@activelane/workbench-api'
+} from '../../core/runtime/httpClient'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
+import type {
+  ActiveLaneSettingsContribution,
+  WorkbenchSettingDefinition,
+} from '../../core/workbench/settings'
+
 import type {
   MarketplaceCategory,
   MarketplaceExtension,

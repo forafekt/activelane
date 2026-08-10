@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { WorkbenchRuntimeApi } from '@activelane/workbench-api'
+import type { WorkbenchRuntimeApi } from '@activelane/workbench'
 import { computed } from 'vue'
 
 defineOptions({ name: 'McpInspectorSidebar' })

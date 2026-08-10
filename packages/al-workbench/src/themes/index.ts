@@ -1,8 +1,6 @@
-import type {
-  WorkbenchExtensionDefinition,
-  WorkbenchThemeContribution,
-} from '@activelane/workbench-api'
-import { defineWorkbenchExtension } from '@activelane/workbench-api'
+import { defineWorkbenchExtension } from '../core/extensions/helpers'
+import type { WorkbenchExtensionDefinition } from '../core/extensions/types'
+import type { WorkbenchThemeContribution } from '../core/workbench/themes'
 
 type ThemeTokens = WorkbenchThemeContribution['tokens']
 

@@ -1,18 +1,8 @@
 <script setup lang="ts">
-// import {
-//   AlBadge,
-//   AlButton,
-//   AlCard,
-//   AlEmptyState,
-//   AlKeyValueList,
-//   AlSection,
-//   AlSectionHeader,
-//   AlSeparator,
-//   AlStatBlock,
-//   AlTabs,
-// } from '@activelane/shadcn'
-import type { WorkbenchRuntimeApi, WorkbenchTab } from '@activelane/workbench-api'
 import { computed, ref } from 'vue'
+import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
+import type { WorkbenchTab } from '../../core/workbench/contributions'
+
 import { useMarketplace } from '../composables/useMarketplaceStore'
 import type { MarketplaceContributions, MarketplaceExtension } from '../types/marketplace'
 import {

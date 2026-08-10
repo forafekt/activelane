@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { WorkbenchTab } from '@activelane/workbench-api'
 import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
+import type { WorkbenchTab } from '../../../../core/workbench/contributions'
 import { tabColorClass } from './tabPresentation'
 import WorkbenchTabIndicator from './WorkbenchTabIndicator.vue'
 
@@ -57,6 +57,7 @@ const computedClass = computed(() => {
   <ContextMenu>
     <ContextMenuTrigger as-child>
       <div
+        tabindex="0"
         class="wb-tab"
         :class="computedClass"
         :data-tab-id="tab.id"
@@ -80,8 +81,13 @@ const computedClass = computed(() => {
         >
           <Pin v-if="tab.pinned" class="size-4" />
           <component :is="tab.icon" v-else-if="tab.icon" class="size-4" />
-          <span v-if="tab.dirty" class="wb-tab__dirty" aria-label="Unsaved changes" />
-          <span v-if="tab.preview" class="wb-tab__preview-dot" aria-label="Preview tab" />
+          <span v-if="tab.dirty" class="wb-tab__dirty" role="img" aria-label="Unsaved changes" />
+          <span
+            v-if="tab.preview"
+            class="wb-tab__preview-dot"
+            role="img"
+            aria-label="Preview tab"
+          />
           <span class="wb-tab__title">{{ tab.title }}</span>
           <span v-if="tab.indicators?.length" class="wb-tab__indicators">
             <WorkbenchTabIndicator

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
-import { getWorkbenchIcon } from '../../../icons'
+import { getWorkbenchIcon } from '../../../workbenchIcons'
 
 defineOptions({ name: 'WorkbenchLayoutControls' })
 
