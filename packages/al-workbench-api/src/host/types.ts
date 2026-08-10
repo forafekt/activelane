@@ -53,6 +53,9 @@ export interface WorkbenchFileSystemEntry {
 }
 
 export interface WorkbenchHostCapabilities {
+  lifecycle?: {
+    closeWindow?: () => Promise<void>
+  }
   config?: {
     apiBaseUrl?: string
   }
@@ -91,12 +94,6 @@ export interface WorkbenchHostCapabilities {
     >
     revealInFileManager?: (path: string) => Promise<void>
   }
-  alx?: {
-    available: boolean
-    run?: (input: ActiveLaneAlxRunRequest) => Promise<ActiveLaneAlxRunResult>
-    selectDirectory?: () => Promise<string | undefined>
-    selectPackage?: () => Promise<string | undefined>
-  }
   network?: {
     fetch?: typeof fetch
   }
@@ -113,72 +110,6 @@ export interface WorkbenchHostCapabilities {
     enable?: (extensionId: string) => Promise<InstalledExtensionRecord | undefined>
     disable?: (extensionId: string) => Promise<InstalledExtensionRecord | undefined>
     discover?: () => Promise<WorkbenchExtensionDefinition[]>
-  }
-}
-
-export type ActiveLaneAlxCommand =
-  | 'scaffold'
-  | 'validate'
-  | 'package'
-  | 'publish'
-  | 'install'
-  | 'uninstall'
-  | 'enable'
-  | 'disable'
-  | 'inspect'
-  | 'list-installed'
-  | 'list-local'
-  | 'list-registry'
-  | 'registry-list'
-  | 'registry-add'
-  | 'registry-export'
-  | 'registry-import'
-  | 'yank'
-  | 'block'
-  | 'run'
-
-export interface ActiveLaneAlxRunRequest {
-  command: ActiveLaneAlxCommand
-  cwd?: string
-  registryUrl?: string
-  storeDir?: string
-  extensionDir?: string
-  manifestPath?: string
-  packagePath?: string
-  outDir?: string
-  outFile?: string
-  extensionId?: string
-  version?: string
-  search?: string
-  dryRun?: boolean
-  autoValidate?: boolean
-  scaffold?: {
-    directory: string
-    id: string
-    displayName: string
-    description?: string
-    publisher?: string
-    name?: string
-  }
-  argv?: string[]
-}
-
-export interface ActiveLaneAlxLogEntry {
-  level: 'info' | 'warning' | 'error' | 'success'
-  message: string
-}
-
-export interface ActiveLaneAlxRunResult<T = unknown> {
-  ok: boolean
-  command: ActiveLaneAlxCommand
-  startedAt: string
-  completedAt: string
-  logs: ActiveLaneAlxLogEntry[]
-  data?: T
-  error?: {
-    message: string
-    code?: string
-    issues?: Array<{ path: string; message: string }>
   }
 }
 

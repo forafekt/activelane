@@ -19,7 +19,6 @@ const DEFAULT_EXCLUDES = new Set([
   '.nuxt',
   '.output',
   '.cache',
-  '.electron',
   'out',
   'tmp',
   '.DS_Store',

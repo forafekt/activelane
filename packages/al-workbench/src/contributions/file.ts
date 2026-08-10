@@ -151,7 +151,7 @@ async function clearRecent(context: WorkbenchCommandExecutionContext) {
 }
 
 const disabledImplementationPath =
-  'Implementation path: add the missing workspace/profile/file mutation host API, route it through validated Electron IPC where needed, then replace this disabled command with that contract.'
+  'Implementation path: add the missing workspace/profile/file mutation host capability, then replace this disabled command with that contract.'
 
 function disabledFileCommand(id: string, title: string, description: string) {
   return fileCommand(
@@ -358,23 +358,21 @@ const commands: WorkbenchCommandContribution[] = [
   fileCommand(
     'workbench.file.closeWindow',
     'Close Window',
-    ({ runtime }) => {
-      const desktop = (
-        window as Window & { activeLaneDesktop?: { window?: { close?: () => Promise<unknown> } } }
-      ).activeLaneDesktop
-      void (desktop?.window?.close?.() ?? runtime.commands.execute('workbench.tab.close'))
-    },
+    ({ runtime }) =>
+      void (
+        runtime.host.capabilities.lifecycle?.closeWindow?.() ??
+        runtime.commands.execute('workbench.tab.close')
+      ),
     { icon: 'PanelTopClose' },
   ),
   fileCommand(
     'workbench.file.exit',
     'Exit',
-    ({ runtime }) => {
-      const desktop = (
-        window as Window & { activeLaneDesktop?: { window?: { close?: () => Promise<unknown> } } }
-      ).activeLaneDesktop
-      void (desktop?.window?.close?.() ?? runtime.commands.execute('workbench.tab.close'))
-    },
+    ({ runtime }) =>
+      void (
+        runtime.host.capabilities.lifecycle?.closeWindow?.() ??
+        runtime.commands.execute('workbench.tab.close')
+      ),
     { icon: 'LogOut' },
   ),
 ]

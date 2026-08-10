@@ -5,7 +5,7 @@ import { WorkbenchShell } from './components/render/surface'
 
 export { provideWorkbenchRuntime, useWorkbenchRuntime } from './composables/useWorkbenchRuntime'
 export { createWorkbenchBuiltinExtensions } from './contributions'
-export { createDesktopNativeMenuSnapshot } from './runtime/menus'
+export { createDesktopNativeMenuSnapshot, resolveApplicationMenus } from './runtime/menus'
 export { WorkbenchShell }
 
 const installComponents: [string, Component][] = [

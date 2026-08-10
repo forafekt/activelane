@@ -12,10 +12,7 @@ const props = defineProps<{
   chrome: any
 }>()
 
-// const operatingSystem = computed(() => normalizeOperatingSystem(window.activeLaneWorkbench.platform))
-const operatingSystem = computed(
-  () => props.platform ?? props.chrome.os ?? (window as any).activeLaneDesktop.os,
-)
+const operatingSystem = computed(() => props.platform ?? props.chrome.os ?? 'linux')
 const titleBarComponent = computed(() => {
   if (operatingSystem.value === 'macos') return WorkbenchTitleBarMacOS
   if (operatingSystem.value === 'windows') return WorkbenchTitleBarWindows

@@ -130,7 +130,7 @@ export interface MarketplaceExtension {
   hostCompatibility: string[]
   lifecycleState?: string
   logs: Array<{ level: string; message: string; timestamp: string }>
-  packageType?: 'builtin' | 'marketplace' | 'local' | 'alx' | 'npm' | 'url' | 'mock'
+  packageType?: 'builtin' | 'marketplace' | 'local' | 'npm' | 'url' | 'mock'
 }
 
 export interface MarketplaceCategory {

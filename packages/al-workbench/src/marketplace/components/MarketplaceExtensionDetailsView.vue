@@ -153,7 +153,9 @@ async function runPrimary(item: MarketplaceExtension) {
                 <AlBadge v-if="extension.publisher.verified" tone="success"
                   >Verified Publisher</AlBadge
                 >
-                <AlBadge v-if="extension.packageType === 'alx'" tone="info">Local Package</AlBadge>
+                <AlBadge v-if="extension.packageType === 'local'" tone="info"
+                  >Local Package</AlBadge
+                >
               </div>
               <p class="m-0 mt-1 text-sm text-muted-foreground">
                 {{ extension.publisher.displayName }}

@@ -356,10 +356,7 @@ function makeExtension(
     hostCompatibility: ['webapp', 'desktop', 'local backend'],
     lifecycleState: installed ? (installed.enabled ? 'inactive' : 'installed') : 'available',
     logs: [],
-    packageType:
-      installed?.installSource === 'local' || installed?.installSource === 'alx'
-        ? 'alx'
-        : marketplace.package.type,
+    packageType: installed?.installSource === 'local' ? 'local' : marketplace.package.type,
   }
 }
 

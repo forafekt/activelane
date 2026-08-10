@@ -24,7 +24,7 @@ export function getBrowserEngine(kind: BrowserEngineKind) {
 export function resolveBrowserEngine(runtime: WorkbenchRuntimeApi, requested?: BrowserEngineKind) {
   const configured =
     requested ??
-    runtime.settings.get<BrowserEngineKind>('workbench.browser.defaultEngine', 'webview')
+    runtime.settings.get<BrowserEngineKind>('workbench.browser.defaultEngine', 'iframe')
 
   if (runtime.host.kind === 'desktop' && configured === 'webview') {
     return getAvailableEngine('webview') ?? getAvailableEngine('iframe')

@@ -8,7 +8,7 @@ export class WebviewBrowserEngine implements BrowserEngine {
   readonly kind = 'webview'
 
   isAvailable() {
-    return typeof window !== 'undefined' && 'activeLaneDesktop' in window
+    return false
   }
 
   createDefaultPermissions(): BrowserPermissionPolicy {

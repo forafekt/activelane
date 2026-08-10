@@ -165,7 +165,7 @@ export interface ActiveLaneExtensionManifest
 }
 
 export interface ExtensionPackageRef {
-  type: 'builtin' | 'marketplace' | 'local' | 'npm' | 'url' | 'mock' | 'alx'
+  type: 'builtin' | 'marketplace' | 'local' | 'npm' | 'url' | 'mock'
   source: string
   integrity?: string
 }
@@ -208,7 +208,7 @@ export interface InstalledExtensionRecord {
   version: string
   enabled: boolean
   state?: ExtensionInstallState
-  installSource: 'marketplace' | 'local' | 'builtin' | 'mock' | 'alx'
+  installSource: 'marketplace' | 'local' | 'builtin' | 'mock'
   installedAt: string
   updatedAt: string
   manifest: ActiveLaneExtensionManifest

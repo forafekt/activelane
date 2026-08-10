@@ -11,6 +11,6 @@ Extensions should integrate through existing Workbench contribution points:
 - Add browser tab context menu actions with `tabContextMenu` and `contexts: { tabKinds: ["browser"] }`.
 - Customize defaults through settings: `workbench.browser.homeUrl`, `workbench.browser.searchProviderUrl`, `workbench.browser.defaultEngine`, and `workbench.browser.defaultStorageMode`.
 
-Desktop hosts use Electron `webview` when available. Web and extension hosts
+Desktop hosts may provide a native webview when available. Web hosts
 fall back to the iframe engine, which is intentionally limited by browser CSP
 and frame policy enforcement.

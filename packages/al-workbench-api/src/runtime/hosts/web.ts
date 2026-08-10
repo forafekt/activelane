@@ -44,7 +44,7 @@ async function openLocalFile() {
   return new Promise<WorkbenchFileHandle | null>((resolve) => {
     const input = document.createElement('input')
     input.type = 'file'
-    input.accept = '.alx,application/json'
+    input.accept = 'application/json'
     input.style.display = 'none'
     input.addEventListener(
       'change',

@@ -1,15 +1,7 @@
 packages:
   - "packages/*"
-  - "apps/*"
-  - "extensions/*"
-  - "services/*"
+  - "apps/**/*"
 allowBuilds:
-  '@vscode/vsce-sign': true
-  better-sqlite3: true
-  electron: true
   esbuild: true
-  keytar: true
   maplibre-gl: true
-  node-pty: true
-  simple-git-hooks: true
   vue-demi: true
