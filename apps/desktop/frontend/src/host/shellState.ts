@@ -10,8 +10,8 @@ export function createDesktopInitialShellState(): Partial<WorkbenchShellState> {
     : undefined
 
   return {
-    activeActivityId: 'home.activity',
-    activeSidebarViewId: 'home.sidebar',
+    activeActivityId: 'workbench.explorer',
+    activeSidebarViewId: 'workbench.explorer.view',
     bottomPanel: devTerminalBottomPanel,
     inspector: {
       collapsed: true,

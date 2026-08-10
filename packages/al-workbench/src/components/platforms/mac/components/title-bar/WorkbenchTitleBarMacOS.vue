@@ -23,7 +23,7 @@ function handleDoubleClick() {
 </script>
 
 <template>
-  <!-- biome-ignore lint/a11y/noStaticElementInteractions: <explanation> -->
+  <!-- biome-ignore lint/a11y/noStaticElementInteractions: native title bars use double-click to toggle maximize. -->
   <header
     class="workbench-title-bar-macos"
     :class="titleBarClasses"
@@ -53,7 +53,7 @@ function handleDoubleClick() {
   gap: 0.25rem;
   overflow: visible;
   border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--background) 94%, var(--muted));
+  background: var(--shell-chrome-surface, var(--titlebar));
   padding: 0 0.375rem 0 0;
 }
 

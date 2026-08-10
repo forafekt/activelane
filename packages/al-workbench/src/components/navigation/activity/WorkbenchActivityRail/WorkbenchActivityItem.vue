@@ -85,8 +85,8 @@ const icon = computed(() =>
   height: 2.35rem;
   align-items: center;
   justify-content: center;
-  border: 1px inset transparent;
-  border-radius: var(--radius);
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
@@ -101,6 +101,16 @@ const icon = computed(() =>
 .wb-activity-item--active {
   color: var(--text-primary);
   background: var(--hover);
+}
+
+.wb-activity-item--active::before {
+  position: absolute;
+  inset-block: 0.5rem;
+  left: -0.375rem;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--focus-ring);
+  content: "";
 }
 
 .wb-activity-item--active {

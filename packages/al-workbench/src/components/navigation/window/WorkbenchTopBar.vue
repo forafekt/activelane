@@ -66,10 +66,11 @@ const canGoForward = computed(() => runtime.workbench.state.navigation.forward.l
   height: 2.375rem;
   min-height: 0;
   gap: 0.375rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--titlebar);
-  box-shadow: var(--elevation-1);
-  backdrop-filter: blur(18px) saturate(1.08);
+  /* border-bottom: 1px solid var(--border); */
+  background: transparent;
+  /* background: var(--shell-chrome-surface); */
+  /* box-shadow: 0 1px 0 color-mix(in srgb, var(--foreground) 3%, transparent); */
+  /* backdrop-filter: blur(18px) saturate(1.08); */
   padding: 0 0.5rem;
 }
 

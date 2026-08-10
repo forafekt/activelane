@@ -15,15 +15,7 @@ const [AlEmptyState, AlIconButton] = runtime.workbench.ui.getComponents([
   'AlIconButton',
 ])
 
-const views = computed(() => [
-  ...runtime.registry.bottomPaneViews,
-  // ...runtime.registry.sidebarViews.map((item) => ({
-  //   id: item.id,
-  //   title: item.title,
-  //   icon: runtime.registry.activityRail.find((activity) => activity.id === item.activityId)?.icon,
-  //   component: item.component,
-  // })),
-])
+const views = computed(() => [...runtime.registry.bottomPaneViews])
 const activeView = computed(() => {
   const activeViewId = runtime.workbench.state.bottomPanel.activeViewId
   return views.value.find((view) => view.id === activeViewId) ?? views.value[0] ?? null
@@ -112,9 +104,7 @@ watch(
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  border-top: 1px solid var(--border);
-  background: var(--panel);
-  box-shadow: var(--elevation-2);
+  background: var(--pane-surface);
 }
 
 .wb-shell__bottom-panel-header {
@@ -122,15 +112,9 @@ watch(
   align-items: stretch;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
-  background: var(--surface-raised);
+  background: var(--toolbar-surface);
+  backdrop-filter: blur(14px) saturate(1.06);
   min-height: 2.25rem;
-}
-
-.wb-shell__bottom-panel-actions-divider {
-  width: 1px;
-  height: 1.5rem;
-  background: var(--border);
-  margin-inline: 0.25rem;
 }
 
 .wb-shell__bottom-panel-actions {
@@ -146,6 +130,8 @@ watch(
   min-width: 0;
   align-items: stretch;
   overflow-x: auto;
+  gap: 0.25rem;
+  padding: 0.25rem;
 }
 
 .wb-shell__bottom-panel-tab,
@@ -154,28 +140,30 @@ watch(
   align-items: center;
   justify-content: center;
   border: 0;
-  /* border-right: 1px solid var(--border); */
-  /* background: transparent; */
+  border-radius: 0.375rem;
+  background: transparent;
   color: var(--muted-foreground);
 }
 
 .wb-shell__bottom-panel-tab {
   gap: 0.375rem;
-  min-width: 8rem;
+  min-width: 6rem;
   max-width: 14rem;
   padding: 0 0.75rem;
   font-size: 0.8125rem;
-  font-weight: 100;
+  font-weight: 500;
   cursor: pointer;
 }
 
 .wb-shell__bottom-panel-tab:hover,
 .wb-shell__bottom-panel-close:hover {
-  color: var(--primary);
+  background: var(--tab-hover);
+  color: var(--text-primary);
 }
 
 .wb-shell__bottom-panel-tab--active {
   color: var(--foreground);
+  background: var(--selected);
   box-shadow: inset 0 -2px 0 var(--ring);
 }
 

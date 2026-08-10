@@ -156,7 +156,7 @@ function executeAction(id: string) {
     <ScrollArea
       orientation="horizontal"
       class="w-full"
-      content-class="flex flex-row"
+      content-class="flex flex-row items-end gap-1 p-2"
       role="tablist"
       aria-label="Open tabs"
     >
@@ -256,20 +256,10 @@ function executeAction(id: string) {
 .wb-tab-strip {
   display: flex;
   min-width: 0;
-  min-height: 2rem;
+  min-height: 2.25rem;
   border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--panel) 86%, transparent);
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--foreground) 4%, transparent);
-}
-
-.wb-tab-strip__scroller {
-  display: flex;
-  min-width: 0;
-  flex: 1;
-  flex-direction: row;
-  /* overflow-x: hidden;
-  overflow-y: hidden; */
-  /* scrollbar-width: thin; */
+  background: var(--toolbar-surface);
+  backdrop-filter: blur(14px) saturate(1.06);
 }
 
 .wb-tab-strip__actions {
@@ -277,9 +267,9 @@ function executeAction(id: string) {
   align-items: center;
   flex: 0 0 auto;
   gap: 0.0625rem;
-  border-left: 1px solid var(--border);
+  box-shadow: -1px 0 0 color-mix(in srgb, var(--border) 72%, transparent);
   padding: 0 0.25rem;
-  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  background: color-mix(in srgb, var(--toolbar-surface) 94%, transparent);
 }
 
 .wb-tab-strip__filter {
@@ -287,7 +277,7 @@ function executeAction(id: string) {
   height: 1.5rem;
   border: 1px solid var(--border);
   border-radius: 0.375rem;
-  background: var(--background);
+  background: var(--pane-inset);
   padding: 0 0.5rem;
   color: var(--text-primary);
   font-size: 0.75rem;

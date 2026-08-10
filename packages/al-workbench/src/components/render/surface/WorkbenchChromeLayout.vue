@@ -32,7 +32,8 @@ const {
   sidebarStyle,
   inspectorStyle,
   bottomPanelStyle,
-  bottomResizeCornerStyle,
+  leftBottomResizeCornerStyle,
+  rightBottomResizeCornerStyle,
   leftResizeHandleState,
   rightResizeHandleState,
   bottomResizeHandleState,
@@ -52,68 +53,101 @@ const commandBarVisible = layout.commandBarVisible
 const sidebarOpen = computed(() => !runtime.workbench.state.sidebar.collapsed)
 const inspectorOpen = computed(() => !runtime.workbench.state.inspector.collapsed)
 const bottomPanelOpen = computed(() => runtime.workbench.state.bottomPanel.open)
+
+function nudgeSidebar(delta: number) {
+  runtime.workbench.setSidebarSize(runtime.workbench.state.sidebar.size + delta)
+  void runtime.workbench.persist()
+}
+
+function nudgeInspector(delta: number) {
+  runtime.workbench.setInspectorSize(runtime.workbench.state.inspector.size - delta)
+  void runtime.workbench.persist()
+}
+
+function nudgeBottomPanel(delta: number) {
+  runtime.workbench.setBottomPanelHeight(runtime.workbench.state.bottomPanel.height - delta)
+  void runtime.workbench.persist()
+}
 </script>
 
 <template>
   <WorkbenchTopBar v-if="topBar" :command-bar="commandBarVisible" />
 
-  <section class="wb-shell__workbench-row">
+  <section class="wb-shell__workbench-row" data-workbench-part="workspaceFrame">
     <aside v-if="activityRailVisible" class="wb-shell__rail" data-workbench-part="activityRail">
       <WorkbenchActivityRail />
     </aside>
 
-    <section class="wb-shell__body">
-      <WorkbenchSidebarPane v-if="sidebarOpen" class="wb-shell__sidebar" :style="sidebarStyle" />
-      <ResizeHandle
-        v-if="sidebarOpen"
-        orientation="horizontal"
-        :hovered="leftResizeHandleState.hovered"
-        :pressed="leftResizeHandleState.pressed"
-        @pointerdown.prevent="beginSidebarResize"
-      />
-
-      <section class="wb-shell__main">
-        <WorkbenchSplitLayout :node="runtime.workbench.state.layout" />
+    <section class="wb-shell__body" data-workbench-part="paneWorkspace">
+      <section class="wb-shell__pane-row">
+        <WorkbenchSidebarPane
+          v-if="sidebarOpen"
+          class="wb-shell__sidebar wb-structural-pane"
+          :style="sidebarStyle"
+        />
         <ResizeHandle
-          orientation="vertical"
-          :hovered="bottomResizeHandleState.hovered"
-          :pressed="bottomResizeHandleState.pressed"
-          @pointerdown.prevent="beginBottomResize"
+          v-if="sidebarOpen"
+          orientation="horizontal"
+          :hovered="leftResizeHandleState.hovered"
+          :pressed="leftResizeHandleState.pressed"
+          @pointerdown.prevent="beginSidebarResize"
+          @nudge="nudgeSidebar"
         />
-        <button
-          type="button"
-          class="wb-shell__resize-corner wb-shell__resize-corner--left"
-          :style="bottomResizeCornerStyle"
-          aria-label="Resize sidebar and bottom panel"
-          @pointerdown.prevent="beginCornerResize($event, 'sidebar')"
-          @pointerup="isLeftBottomPressed = false"
-          @mouseenter="isLeftBottomHovered = true"
-          @mouseleave="isLeftBottomHovered = false"
+
+        <section class="wb-shell__main">
+          <WorkbenchSplitLayout :node="runtime.workbench.state.layout" />
+        </section>
+
+        <ResizeHandle
+          v-if="inspectorOpen"
+          class="wb-shell__inspector-resize"
+          orientation="horizontal"
+          :hovered="rightResizeHandleState.hovered"
+          :pressed="rightResizeHandleState.pressed"
+          @pointerdown.prevent="beginInspectorResize"
+          @nudge="nudgeInspector"
         />
-        <button
-          type="button"
-          class="wb-shell__resize-corner wb-shell__resize-corner--right"
-          :style="bottomResizeCornerStyle"
-          aria-label="Resize inspector and bottom panel"
-          @pointerdown.prevent="beginCornerResize($event, 'inspector')"
-          @pointerup="isRightBottomPressed = false"
-          @mouseenter="isRightBottomHovered = true"
-          @mouseleave="isRightBottomHovered = false"
+        <WorkbenchInspectorPane
+          v-if="inspectorOpen"
+          class="wb-shell__inspector wb-structural-pane"
+          :style="inspectorStyle"
         />
-        <WorkbenchBottomPane v-if="bottomPanelOpen" :style="bottomPanelStyle" />
       </section>
 
       <ResizeHandle
-        v-if="inspectorOpen"
-        orientation="horizontal"
-        :hovered="rightResizeHandleState.hovered"
-        :pressed="rightResizeHandleState.pressed"
-        @pointerdown.prevent="beginInspectorResize"
+        v-if="bottomPanelOpen"
+        orientation="vertical"
+        :hovered="bottomResizeHandleState.hovered"
+        :pressed="bottomResizeHandleState.pressed"
+        @pointerdown.prevent="beginBottomResize"
+        @nudge="nudgeBottomPanel"
       />
-      <WorkbenchInspectorPane
-        v-if="inspectorOpen"
-        class="wb-shell__inspector"
-        :style="inspectorStyle"
+      <button
+        v-if="sidebarOpen && bottomPanelOpen"
+        type="button"
+        class="wb-shell__resize-corner wb-shell__resize-corner--left"
+        :style="leftBottomResizeCornerStyle"
+        aria-label="Resize sidebar and bottom panel"
+        @pointerdown.prevent="beginCornerResize($event, 'sidebar')"
+        @pointerup="isLeftBottomPressed = false"
+        @mouseenter="isLeftBottomHovered = true"
+        @mouseleave="isLeftBottomHovered = false"
+      />
+      <button
+        v-if="inspectorOpen && bottomPanelOpen"
+        type="button"
+        class="wb-shell__resize-corner wb-shell__resize-corner--right"
+        :style="rightBottomResizeCornerStyle"
+        aria-label="Resize inspector and bottom panel"
+        @pointerdown.prevent="beginCornerResize($event, 'inspector')"
+        @pointerup="isRightBottomPressed = false"
+        @mouseenter="isRightBottomHovered = true"
+        @mouseleave="isRightBottomHovered = false"
+      />
+      <WorkbenchBottomPane
+        v-if="bottomPanelOpen"
+        class="wb-structural-pane"
+        :style="bottomPanelStyle"
       />
     </section>
   </section>
@@ -127,19 +161,31 @@ const bottomPanelOpen = computed(() => runtime.workbench.state.bottomPanel.open)
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+  gap: var(--shell-inset, 0.375rem);
+  padding: var(--shell-inset, 0.375rem) var(--shell-inset, 0.375rem) var(--shell-inset, 0.375rem) 0;
+  background: var(--workbench-background);
 }
 
 .wb-shell__rail {
-  position: sticky;
-  top: 0;
-  left: 0;
+  position: relative;
   height: 100%;
   z-index: 10;
-  border-right: 1px solid var(--border);
-  background: var(--activity);
+  flex: 0 0 auto;
+  background: var(--workbench-background);
+  /* box-shadow: inset -1px 0 color-mix(in srgb, var(--border) 52%, transparent); */
 }
 
 .wb-shell__body {
+  display: flex;
+  position: relative;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.wb-shell__pane-row {
   display: flex;
   flex: 1;
   min-width: 0;
@@ -162,7 +208,7 @@ const bottomPanelOpen = computed(() => runtime.workbench.state.bottomPanel.open)
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  background: var(--editor);
+  background: transparent;
 }
 
 .wb-shell__resize-corner {
@@ -187,5 +233,13 @@ const bottomPanelOpen = computed(() => runtime.workbench.state.bottomPanel.open)
 
 .wb-shell__resize-corner--right {
   right: 0;
+}
+
+@media (max-width: 760px) {
+  .wb-shell__inspector,
+  .wb-shell__inspector-resize,
+  .wb-shell__resize-corner--right {
+    display: none;
+  }
 }
 </style>

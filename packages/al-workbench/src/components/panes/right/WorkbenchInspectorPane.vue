@@ -74,18 +74,13 @@ const panels = computed(() =>
         title="No inspector panels"
         description="Extensions can contribute constextual inspector surfaces for the active tab kind."
       />
-      <!-- <footer class="absolute bottom-0 left-0 right-0">
-        <div class="p-4"><AlAIChatTextbox /></div>
-      </footer> -->
     </div>
   </InspectorPanel>
 </template>
 
 <style scoped>
 .wb-inspector-pane {
-  border-left: 1px solid var(--border);
-  background: var(--panel);
-  box-shadow: var(--elevation-1);
+  background: var(--pane-surface);
 }
 
 .wb-inspector-pane__content {

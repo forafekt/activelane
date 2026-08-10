@@ -17,7 +17,7 @@ const runtime = useWorkbenchRuntime()
 // const [AlResizeHandle] = runtime.workbench.ui.getComponents(['AlResizeHandle'])
 
 const hostRef = ref<HTMLElement | null>(null)
-const HANDLE_SIZE = 0
+const HANDLE_SIZE = 6
 
 const style = computed(() =>
   props.node.kind === 'split'
@@ -77,6 +77,20 @@ function beginResize(event: PointerEvent, split: WorkbenchSplitNode, index: numb
   window.addEventListener('pointermove', move)
   window.addEventListener('pointerup', end)
 }
+
+function nudgeSplit(split: WorkbenchSplitNode, index: number, pixels: number) {
+  const element = hostRef.value
+  if (!element) return
+  const size = split.orientation === 'horizontal' ? element.clientWidth : element.clientHeight
+  const ratios = split.ratios.slice()
+  const delta = pixels / Math.max(1, size)
+  const pairTotal = (ratios[index] ?? 0.5) + (ratios[index + 1] ?? 0.5)
+  const minimum = Math.min(0.18, 72 / Math.max(1, size))
+  ratios[index] = Math.max(minimum, Math.min(pairTotal - minimum, (ratios[index] ?? 0.5) + delta))
+  ratios[index + 1] = pairTotal - ratios[index]
+  runtime.workbench.setSplitRatios(split.id, ratios)
+  void runtime.workbench.persist()
+}
 </script>
 
 <template>
@@ -84,14 +98,12 @@ function beginResize(event: PointerEvent, split: WorkbenchSplitNode, index: numb
 
   <section v-else ref="hostRef" class="wb-split-layout" :style="style">
     <template v-for="(child, index) in node.children" :key="child.id">
-      <WorkbenchSplitLayout
-        :node="child"
-        :class="node.orientation === 'horizontal' ? 'border-r' : 'border-b'"
-      />
+      <WorkbenchSplitLayout :node="child" />
       <ResizeHandle
         v-if="index < node.children.length - 1"
         :orientation="node.orientation === 'horizontal' ? 'horizontal' : 'vertical'"
         @pointerdown.prevent="beginResize($event, node, index)"
+        @nudge="nudgeSplit(node, index, $event)"
       />
     </template>
   </section>

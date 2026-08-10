@@ -46,7 +46,7 @@ function wakeActiveTab() {
     data-workbench-tab-group="true"
     :data-active-group-id="runtime.workbench.state.activeGroupId"
     :data-active-tab-id="activeTab?.id"
-    class="wb-tab-group"
+    class="wb-tab-group wb-structural-pane"
     :class="{ 'wb-tab-group--active': runtime.workbench.state.activeGroupId === group.id }"
     @mousedown="runtime.workbench.setActiveGroup(group.id)"
   >
@@ -123,7 +123,7 @@ function wakeActiveTab() {
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  background: var(--editor);
+  background: var(--pane-surface);
 }
 
 .wb-tab-group__content,
@@ -136,9 +136,10 @@ function wakeActiveTab() {
 .wb-tab-group__surface {
   width: 100%;
   height: 100%;
+  background: var(--editor-surface);
 }
 
 .wb-tab-group--active {
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--focus-ring) 18%, transparent);
+  border-color: color-mix(in srgb, var(--focus-ring) 30%, var(--border));
 }
 </style>

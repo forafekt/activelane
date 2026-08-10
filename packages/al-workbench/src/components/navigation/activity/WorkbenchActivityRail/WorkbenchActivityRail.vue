@@ -20,7 +20,6 @@ const [AlIconButton] = runtime.workbench.ui.getComponents(['AlIconButton'])
 const activities = useWorkbenchActivities()
 const chrome = useWorkbenchHostChrome(runtime)
 const items = activities.items
-const showGlobalMenuInActivityLauncher = chrome.showGlobalMenuInActivityLauncher
 const draggingId = ref<string | null>(null)
 
 const railClass = computed(() => ['wb-activity-bar', props.class].filter(Boolean).join(' '))
@@ -51,22 +50,6 @@ function handleDrop(targetActivityId: string) {
       />
     </div>
 
-    <!-- <AlIconButton
-      label="Show apps"
-      :icon="runtime.workbench.ui.getIcon('LayoutGrid')"
-      variant="ghost"
-      size="icon"
-      class="mt-auto"
-      @click="runtime.commands.execute('workbench.launcher.showApps')"
-    /> -->
-    <!-- <AlIconButton
-      label="Focus command bar"
-      :icon="runtime.workbench.ui.getIcon('Command')"
-      variant="ghost"
-      size="icon"
-      class="mt-1"
-      @click="runtime.workbench.setCommandPaletteOpen(true)"
-    /> -->
     <AlIconButton
       label="Open settings"
       :icon="runtime.workbench.ui.getIcon('Settings')"
@@ -85,10 +68,8 @@ function handleDrop(targetActivityId: string) {
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
-  /* border-right: 1px solid var(--border); */
-  background: var(--panel);
+  background: transparent;
   padding-top: 0.375rem;
-  /* box-shadow: inset -1px 0 0 var(--border); */
 }
 
 .wb-activity-bar__items {

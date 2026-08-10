@@ -89,7 +89,7 @@ onUnmounted(() => {
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  background: var(--background);
+  background: var(--window-background);
 }
 
 .wb-shell-container {
@@ -97,6 +97,7 @@ onUnmounted(() => {
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+  background: var(--window-background);
 }
 
 .wb-shell-container > :deep(*) {
@@ -112,15 +113,8 @@ onUnmounted(() => {
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  /* user-select: none; */
+  background: var(--window-background);
   font-size: var(--font-size, 13px);
-
-  /* color: var(--text-primary);
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--titlebar) 92%, transparent),
-    var(--surface) 11rem
-  ); */
 }
 
 .wb-shell[data-density="comfortable"] {

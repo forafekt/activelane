@@ -11,9 +11,7 @@ const [ScrollArea] = props.runtime.workbench.ui.getComponents(['ScrollArea'])
 </script>
 
 <template>
-  <aside
-    :class="cn('grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)] bg-surface-1', $props.class)"
-  >
+  <aside :class="cn('grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)]', $props.class)">
     <PanelHeader :title="title">
       <template v-if="$slots.actions" #actions> <slot name="actions" /> </template>
     </PanelHeader>

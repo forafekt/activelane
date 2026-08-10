@@ -1,132 +1,118 @@
 <script setup lang="ts">
-import { cn } from '@activelane/shadcn'
-import { computed, ref, watch } from 'vue'
-
 defineOptions({ name: 'ResizeHandle' })
 
 const props = withDefaults(
   defineProps<{
-    intersection?:
-      | 'bottom-left-corner'
-      | 'bottom-right-corner'
-      | 'top-left-corner'
-      | 'top-right-corner'
-      | undefined
     orientation?: 'horizontal' | 'vertical'
-    interactive?: boolean
-    class?: string
-    horizontalWidth?: `w-${number}`
-    verticalHeight?: `h-${number}`
-    color?: string
     pressed?: boolean
     hovered?: boolean
   }>(),
-  {
-    orientation: 'horizontal',
-    interactive: false,
-    horizontalWidth: 'w-0',
-    verticalHeight: 'h-0',
-    color: undefined,
-  },
+  { orientation: 'horizontal' },
 )
 
-const tagName = computed(() => (props.interactive ? 'button' : 'div'))
+const emit = defineEmits<{
+  nudge: [delta: number]
+}>()
 
-const isPressed = ref(props.pressed ?? false)
-const isHovered = ref(props.hovered ?? false)
-
-// function handleMouseDown() {
-//   isPressed.value = true
-// }
-
-// function handleMouseUp() {
-//   isPressed.value = false
-// }
-
-// function handleMouseEnter() {
-//   isHovered.value = true
-// }
-
-// function handleMouseLeave() {
-//   isHovered.value = false
-// }
-
-watch(
-  () => props.pressed,
-  (newVal) => {
-    isPressed.value = newVal
-  },
-)
-
-watch(
-  () => props.hovered,
-  (newVal) => {
-    isHovered.value = newVal
-  },
-)
-
-// const orientationComponentClass = computed(() => {
-//   if (props.intersection) {
-//     const base = 'absolute bottom-0 z-120 w-12 h-12 border-0 padding-0 bg-transparent cursor-move'
-//     if (props.intersection === 'bottom-left-corner') {
-//       return base + ' left-0'
-//     }
-//     if (props.intersection === 'bottom-right-corner') {
-//       return base + ' right-0'
-//     }
-//     if (props.intersection === 'top-left-corner') {
-//       return base + ' top-0 left-0'
-//     }
-//     if (props.intersection === 'top-right-corner') {
-//       return base + ' top-0 right-0'
-//     }
-//   }
-
-//   if (props.orientation === 'horizontal') {
-//     return `z-11 h-full ${props.horizontalWidth} cursor-col-resize`
-//   }
-
-//   return `z-10 ${props.verticalHeight} w-full cursor-row-resize`
-// })
-
-// const orientationSpanClass = computed(() => {
-//   if (props.intersection) {
-//     return `inset-y-0 ${props.intersection.includes('right') ? 'right-0' : 'left-0'} w-px -translate-y-6/2 group-hover:w-[6px]`
-//   }
-
-//   return props.orientation === 'horizontal'
-//     ? 'inset-y-0 left-1/2 w-px -translate-x-1/2 group-hover:w-[6px]'
-//     : 'inset-x-0 top-1/2 h-px -translate-y-1/2 group-hover:h-[6px]'
-// })
+function handleKeydown(event: KeyboardEvent) {
+  const negative = props.orientation === 'horizontal' ? 'ArrowLeft' : 'ArrowUp'
+  const positive = props.orientation === 'horizontal' ? 'ArrowRight' : 'ArrowDown'
+  if (event.key !== negative && event.key !== positive) return
+  event.preventDefault()
+  const amount = event.shiftKey ? 32 : 8
+  emit('nudge', event.key === negative ? -amount : amount)
+}
 </script>
 
 <template>
-  <component
-    :is="tagName"
-    :type="tagName === 'button' ? 'button' : undefined"
-    :aria-orientation="orientation"
-    :class="
-      cn(
-        'group relative shrink-0 border-0 bg-transparent p-0 m-0 text-border transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-        orientation === 'horizontal' ? `z-11 h-full ${props.horizontalWidth} cursor-col-resize` : `z-10 ${props.verticalHeight} w-full cursor-row-resize`,
-        isPressed || isHovered ? 'text-primary' : 'hover:text-primary',
-        $props.class,
-      )
-    "
-    :aria-pressed="isPressed"
+  <!-- biome-ignore lint/a11y/useSemanticElements: an adjustable separator must remain keyboard-focusable. -->
+  <button
+    type="button"
+    class="wb-resize-handle"
+    :class="[
+      `wb-resize-handle--${orientation}`,
+      { 'wb-resize-handle--active': pressed || hovered },
+    ]"
+    role="separator"
+    :aria-orientation="orientation === 'horizontal' ? 'vertical' : 'horizontal'"
+    :aria-valuenow="0"
+    :aria-label="orientation === 'horizontal' ? 'Resize panes horizontally' : 'Resize panes vertically'"
+    @keydown="handleKeydown"
   >
-    <span
-      aria-hidden="true"
-      :class="
-        cn(
-          'absolute transition-colors',
-          orientation === 'horizontal'
-            ? 'inset-y-0 left-1/2 w-px -translate-x-1/2 group-hover:w-[6px]'
-            : 'inset-x-0 top-1/2 h-px -translate-y-1/2 group-hover:h-[6px]',
-          isPressed || isHovered ? 'bg-primary' : 'hover:bg-primary',
-          (isPressed || isHovered) ? (orientation === 'horizontal' ? 'w-1.5' : 'h-1.5') : '',
-        )
-      "
-    />
-  </component>
+    <span aria-hidden="true" />
+  </button>
 </template>
+
+<style scoped>
+.wb-resize-handle {
+  position: relative;
+  z-index: 20;
+  flex: 0 0 var(--workbench-gap);
+  border: 0;
+  border-radius: calc(var(--pane-radius) / 2);
+  background: transparent;
+  padding: 0;
+  color: var(--resize-handle);
+  touch-action: none;
+}
+
+.wb-resize-handle--horizontal {
+  width: var(--workbench-gap);
+  height: 100%;
+  cursor: col-resize;
+}
+
+.wb-resize-handle--vertical {
+  width: 100%;
+  height: var(--workbench-gap);
+  cursor: row-resize;
+}
+
+.wb-resize-handle span {
+  position: absolute;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0;
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease,
+    background-color 120ms ease;
+}
+
+.wb-resize-handle--horizontal span {
+  inset-block: 0.5rem;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%) scaleX(0.5);
+}
+
+.wb-resize-handle--vertical span {
+  inset-inline: 0.5rem;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%) scaleY(0.5);
+}
+
+.wb-resize-handle:hover,
+.wb-resize-handle--active {
+  color: var(--resize-handle-active);
+}
+
+.wb-resize-handle:hover span,
+.wb-resize-handle--active span,
+.wb-resize-handle:focus-visible span {
+  opacity: 1;
+  transform: translate(-50%, 0) scaleX(1);
+}
+
+.wb-resize-handle--vertical:hover span,
+.wb-resize-handle--vertical.wb-resize-handle--active span,
+.wb-resize-handle--vertical:focus-visible span {
+  transform: translate(0, -50%) scaleY(1);
+}
+
+.wb-resize-handle:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+</style>

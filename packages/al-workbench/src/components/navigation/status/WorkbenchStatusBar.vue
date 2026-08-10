@@ -81,19 +81,19 @@ function activate(item: ResolvedWorkbenchStatusBarItem) {
 
 <style scoped>
 .wb-status-bar {
-  position: sticky;
-  bottom: 0;
-  left: 0;
+  flex: 0 0 1.65rem;
   z-index: 10;
   display: flex;
   width: 100%;
-  max-height: 1.65rem;
+  height: 1.65rem;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid var(--border);
-  background: color-mix(in srgb, var(--titlebar) 92%, transparent);
+  /* border-top: 1px solid color-mix(in srgb, var(--border) 72%, transparent); */
+  /* background: var(--shell-chrome-surface); */
+  background: var(--workbench-background);
   color: var(--text-muted);
-  box-shadow: 0 -1px 0 color-mix(in srgb, var(--foreground) 3%, transparent);
+  /* box-shadow: 0 -1px 0 color-mix(in srgb, var(--foreground) 3%, transparent); */
+  /* backdrop-filter: blur(14px) saturate(1.06); */
 }
 
 .wb-status-bar__group {
@@ -109,7 +109,7 @@ function activate(item: ResolvedWorkbenchStatusBarItem) {
   align-items: center;
   gap: 0.375rem;
   border: 0;
-  border-radius: 0;
+  border-radius: 0.25rem;
   background: transparent;
   padding: 0.2rem 0.55rem;
   color: inherit;
@@ -117,7 +117,7 @@ function activate(item: ResolvedWorkbenchStatusBarItem) {
 }
 
 .wb-status-bar__button:hover {
-  background: var(--muted-foreground);
+  background: var(--hover);
   color: var(--text-primary);
 }
 

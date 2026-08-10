@@ -20,7 +20,19 @@ export function useWorkbenchPaneResizing(runtime: WorkbenchRuntimeApi) {
     height: `${runtime.workbench.state.bottomPanel.height}px`,
   }))
 
-  const bottomResizeCornerStyle = computed(() => ({
+  const bottomResizeOffset = computed(() =>
+    runtime.workbench.state.bottomPanel.open
+      ? `${runtime.workbench.state.bottomPanel.height}px`
+      : '0px',
+  )
+
+  const leftBottomResizeCornerStyle = computed(() => ({
+    left: `${runtime.workbench.state.sidebar.size}px`,
+    bottom: bottomResizeOffset.value,
+  }))
+
+  const rightBottomResizeCornerStyle = computed(() => ({
+    right: `${runtime.workbench.state.inspector.size}px`,
     bottom: runtime.workbench.state.bottomPanel.open
       ? `${runtime.workbench.state.bottomPanel.height}px`
       : '0px',
@@ -87,7 +99,8 @@ export function useWorkbenchPaneResizing(runtime: WorkbenchRuntimeApi) {
     sidebarStyle,
     inspectorStyle,
     bottomPanelStyle,
-    bottomResizeCornerStyle,
+    leftBottomResizeCornerStyle,
+    rightBottomResizeCornerStyle,
     leftResizeHandleState,
     rightResizeHandleState,
     bottomResizeHandleState,

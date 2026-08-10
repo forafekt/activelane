@@ -234,14 +234,13 @@ watchEffect(() => {
 
 <style scoped>
 .wb-sidebar-pane {
-  border-right: 1px solid var(--border);
-  background: var(--panel);
-  box-shadow: var(--elevation-1);
+  background: var(--pane-surface);
 }
 
 .wb-sidebar-pane__header {
   border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  background: var(--toolbar-surface);
+  backdrop-filter: blur(14px) saturate(1.06);
 }
 
 .wb-sidebar-pane__content {

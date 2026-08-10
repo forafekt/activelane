@@ -124,14 +124,14 @@ const computedClass = computed(() => {
   display: flex;
   align-items: stretch;
   flex: 0 0 auto;
-  width: clamp(7rem, 18vw, 14rem);
+  width: clamp(6.75rem, 17vw, 13rem);
   max-width: 14rem;
-  min-height: 2rem;
-  border-right: 1px solid var(--border);
-  border-top: 2px solid transparent;
-  border-left: 3px solid transparent;
+  min-height: 1.75rem;
+  border: 1px solid color-mix(in srgb, var(--border) 62%, transparent);
+  /* border-bottom: 0; */
+  border-radius: 0.375rem;
   color: var(--text-muted);
-  background: transparent;
+  background: var(--tab-surface);
   transition:
     background-color 120ms ease,
     color 120ms ease,
@@ -139,27 +139,27 @@ const computedClass = computed(() => {
 }
 
 .wb-tab-color--blue {
-  border-left-color: color-mix(in srgb, var(--focus-ring) 82%, transparent);
+  box-shadow: inset 2px 0 color-mix(in srgb, var(--focus-ring) 82%, transparent);
 }
 
 .wb-tab-color--green {
-  border-left-color: color-mix(in srgb, var(--success) 82%, transparent);
+  box-shadow: inset 2px 0 color-mix(in srgb, var(--success) 82%, transparent);
 }
 
 .wb-tab-color--amber {
-  border-left-color: color-mix(in srgb, var(--warning) 82%, transparent);
+  box-shadow: inset 2px 0 color-mix(in srgb, var(--warning) 82%, transparent);
 }
 
 .wb-tab-color--rose {
-  border-left-color: color-mix(in srgb, var(--destructive) 72%, transparent);
+  box-shadow: inset 2px 0 color-mix(in srgb, var(--destructive) 72%, transparent);
 }
 
 .wb-tab-color--violet {
-  border-left-color: color-mix(in srgb, var(--accent) 82%, var(--focus-ring));
+  box-shadow: inset 2px 0 color-mix(in srgb, var(--accent) 82%, var(--focus-ring));
 }
 
 .wb-tab-color--slate {
-  border-left-color: color-mix(in srgb, var(--text-muted) 70%, transparent);
+  box-shadow: inset 2px 0 color-mix(in srgb, var(--text-muted) 70%, transparent);
 }
 
 .wb-tab--pinned {
@@ -168,15 +168,16 @@ const computedClass = computed(() => {
 }
 
 .wb-tab--active {
-  border-top-color: var(--focus-ring);
+  border-color: color-mix(in srgb, var(--focus-ring) 36%, var(--border));
+  border-bottom: 0;
   color: var(--text-primary);
   background: var(--tab-active);
-  box-shadow: var(--elevation-1);
+  box-shadow: 0 -1px 0 color-mix(in srgb, var(--foreground) 5%, transparent);
 }
 
 .wb-tab:hover {
   color: var(--text-primary);
-  background: var(--hover);
+  background: var(--tab-hover);
 }
 
 .wb-tab--drop-target::before {
@@ -256,6 +257,7 @@ const computedClass = computed(() => {
   align-self: center;
   margin-right: 0.125rem;
   opacity: 0;
+  transition: opacity 120ms ease;
 }
 
 .wb-tab:hover .wb-tab__close,

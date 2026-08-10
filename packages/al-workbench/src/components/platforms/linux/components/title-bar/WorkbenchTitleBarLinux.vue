@@ -25,8 +25,10 @@ function handleDoubleClick() {
 </script>
 
 <template>
-  <!-- biome-ignore lint/a11y/noStaticElementInteractions: <explanation> -->
+  <!-- biome-ignore lint/a11y/noStaticElementInteractions: native title bars use double-click to toggle maximize. -->
   <header
+    data-wails-drag
+    style="--wails-draggable: drag;"
     ref="titleBar"
     class="workbench-title-bar-linux"
     :class="titleBarClasses"
@@ -58,9 +60,9 @@ function handleDoubleClick() {
   min-height: 0;
   gap: 0.25rem;
   overflow: visible;
-  border-bottom: 1px solid var(---subtle-border, var(--border));
-  background: var(---titlebar, color-mix(in srgb, var(--background) 94%, var(--muted)));
-  box-shadow: var(---elevation-1, var(--shadow-sm));
+  /* border-bottom: 1px solid color-mix(in srgb, var(--subtle-border) 72%, transparent); */
+  background: var(--workbench-background);
+  /* box-shadow: 0 1px 0 color-mix(in srgb, var(--foreground) 3%, transparent); */
   backdrop-filter: blur(18px) saturate(1.08);
   padding: 0 0 0 0.5rem;
 }

@@ -15,7 +15,7 @@ defineProps<{
   <header
     :class="
       cn(
-        'flex min-h-11 items-center justify-between gap-3 border-b border-border bg-surface-glass px-3 py-2 backdrop-blur-xl',
+        'wb-pane-toolbar flex min-h-10 items-center justify-between gap-3 border-b border-border px-3 py-1.5',
         sticky && 'sticky top-0 z-50',
         $props.class,
       )
