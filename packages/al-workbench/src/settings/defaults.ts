@@ -2,6 +2,17 @@ import type { WorkbenchSettingDefinition } from './types'
 
 export const builtinWorkbenchSettings: WorkbenchSettingDefinition[] = [
   {
+    id: 'workbench.layout.activityRail.expanded',
+    label: 'Expanded Activity Rail',
+    description: 'Shows labels beside activities and browser tabs in the activity rail.',
+    category: 'Activity Bar',
+    subcategory: 'Layout',
+    type: 'boolean',
+    defaultValue: false,
+    tags: ['rail', 'navigation', 'tabs', 'compact'],
+    integration: { status: 'wired' },
+  },
+  {
     id: 'files.autoSave',
     label: 'Auto Save',
     description: 'Automatically saves writable file editor tabs after edits.',

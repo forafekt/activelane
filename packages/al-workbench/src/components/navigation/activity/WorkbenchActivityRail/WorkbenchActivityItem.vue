@@ -8,6 +8,7 @@ defineOptions({ name: 'WorkbenchActivityItem' })
 const props = defineProps<{
   item: WorkbenchActivityContribution
   draggingId?: string | null
+  expanded?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -52,9 +53,10 @@ const icon = computed(() =>
         class="wb-activity-item"
         :class="{
           'wb-activity-item--active': active,
+          'wb-activity-item--expanded': expanded,
           'wb-activity-item--drop-target': draggingId && draggingId !== item.id,
         }"
-        :title="item.title"
+        :title="expanded ? undefined : item.title"
         draggable="true"
         @click="emit('activate', item.id)"
         @dragstart="emit('dragstart', item.id)"
@@ -64,6 +66,7 @@ const icon = computed(() =>
       >
         <component :is="icon" v-if="icon" class="size-5" />
         <span v-else class="text-xs font-semibold">{{ item.title.slice(0, 1) }}</span>
+        <span v-if="expanded" class="wb-activity-item__label">{{ item.title }}</span>
         <span v-if="item.badge" class="wb-activity-item__badge">{{ item.badge.value }}</span>
       </button>
     </ContextMenuTrigger>
@@ -95,6 +98,21 @@ const icon = computed(() =>
     border-color 120ms ease,
     color 120ms ease,
     transform 120ms ease;
+}
+
+.wb-activity-item--expanded {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 0.625rem;
+  padding-inline: 0.625rem;
+}
+
+.wb-activity-item__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8125rem;
 }
 
 .wb-activity-item:hover,
