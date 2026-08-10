@@ -1,0 +1,54 @@
+/* ActiveLane workbench chrome tokens are intentionally semantic so host shells and
+   extension surfaces can evolve without binding to individual palette values. */
+/* .wb-shell {
+  --surface: var(--surface, var(--background));
+  --surface-raised: var(--surface-raised, var(--card));
+  --surface-overlay: var(--surface-overlay, var(--popover));
+  --subtle-border: var(--subtle-border, var(--border));
+  --text-primary: var(--text-primary, var(--foreground));
+  --text-muted: var(--text-muted, var(--muted-foreground));
+  --focus-ring: var(--focus-ring, var(--ring));
+  --activity: var(--activity, var(--sidebar));
+  --sidebar: var(--sidebar-surface, var(--sidebar));
+  --editor: var(--editor-surface, var(--background));
+  --panel: var(--panel-surface, var(--card));
+  --tab-active: var(--tab-active, var(--background));
+  --titlebar: var(--titlebar, var(--background));
+  --hover: var(--hover-surface, var(--muted));
+  --selected: var(--selected-surface, var(--accent));
+  --drag: var(--drag-surface, color-mix(in srgb, var(--primary) 18%, transparent));
+  --preview: var(--preview-surface, color-mix(in srgb, var(--muted) 62%, transparent));
+  --dirty: var(--dirty, var(--warning));
+  --error: var(--error, var(--destructive));
+  --elevation-1: var(--elevation-1, var(--shadow-sm));
+  --elevation-2: var(--elevation-2, var(--shadow-md));
+  --elevation-overlay: var(--elevation-overlay, var(--shadow-lg));
+} */
+
+@import '@activelane/shadcn/styles.css';
+
+.wb-shell,
+:root {
+  --surface: var(--surface, var(--background));
+  --surface-raised: var(--surface-raised, var(--card));
+  --surface-overlay: var(--surface-overlay, var(--popover));
+  --subtle-border: var(--subtle-border, var(--border));
+  --text-primary: var(--text-primary, var(--foreground));
+  --text-muted: var(--text-muted, var(--muted-foreground));
+  --focus-ring: var(--focus-ring, var(--ring));
+  --activity: var(--activity, var(--sidebar));
+  --sidebar: var(--sidebar-surface, var(--sidebar));
+  --editor: var(--editor-surface, var(--background));
+  --panel: var(--panel-surface, var(--card));
+  --tab-active: var(--tab-active, var(--background));
+  --titlebar: var(--titlebar, var(--background));
+  --hover: var(--hover-surface, var(--muted));
+  --selected: var(--selected-surface, var(--accent));
+  --drag: var(--drag-surface, color-mix(in srgb, var(--primary) 18%, transparent));
+  --preview: var(--preview-surface, color-mix(in srgb, var(--muted) 62%, transparent));
+  --dirty: var(--dirty, var(--warning));
+  --error: var(--error, var(--destructive));
+  --elevation-1: var(--elevation-1, var(--shadow-sm));
+  --elevation-2: var(--elevation-2, var(--shadow-md));
+  --elevation-overlay: var(--elevation-overlay, var(--shadow-lg));
+}

@@ -1,0 +1,81 @@
+import type { WorkbenchSettingDefinition } from '@activelane/workbench-api'
+
+export const browserSettings: WorkbenchSettingDefinition[] = [
+  {
+    id: 'workbench.browser.defaultEngine',
+    label: 'Default Browser Engine',
+    description: 'Controls the default engine for new Workbench browser tabs.',
+    category: 'Browser',
+    type: 'enum',
+    defaultValue: 'webview',
+    experimental: true,
+    options: [
+      { label: 'Iframe', value: 'iframe', description: 'Embed web-safe pages in the workbench.' },
+      { label: 'External', value: 'external', description: 'Open URLs outside ActiveLane.' },
+      { label: 'Desktop Webview', value: 'webview', description: 'Reserved for desktop hosts.' },
+      { label: 'Remote', value: 'remote', description: 'Reserved for agent-controlled sessions.' },
+      { label: 'Preview', value: 'preview', description: 'Reserved for extension-host previews.' },
+    ],
+    integration: { status: 'wired' },
+  },
+  {
+    id: 'workbench.browser.defaultStorageMode',
+    label: 'Default Storage Mode',
+    description: 'Controls the session storage policy requested by new browser tabs.',
+    category: 'Browser',
+    type: 'enum',
+    defaultValue: 'workspace',
+    experimental: true,
+    options: [
+      { label: 'Global', value: 'global' },
+      { label: 'Workspace', value: 'workspace' },
+      { label: 'Ephemeral', value: 'ephemeral' },
+    ],
+    integration: {
+      status: 'integration-point',
+      reason:
+        'Iframe storage isolation is browser-origin controlled; future engines can enforce this fully.',
+    },
+  },
+  {
+    id: 'workbench.browser.openLocalhostInBrowser',
+    label: 'Open Localhost In Browser',
+    description: 'Opens localhost and loopback preview URLs in a Workbench browser tab.',
+    category: 'Browser',
+    type: 'boolean',
+    defaultValue: true,
+    experimental: true,
+    integration: { status: 'wired' },
+  },
+  {
+    id: 'workbench.browser.homeUrl',
+    label: 'Home URL',
+    description: 'Default page opened by Browser: New Tab and Browser: Home.',
+    category: 'Browser',
+    type: 'string',
+    defaultValue: 'https://www.google.com',
+    experimental: true,
+    integration: { status: 'wired' },
+  },
+  {
+    id: 'workbench.browser.searchProviderUrl',
+    label: 'Search Provider URL',
+    description:
+      'Search URL template used by the browser address bar. Use {query} as the placeholder.',
+    category: 'Browser',
+    type: 'string',
+    defaultValue: 'https://www.google.com/search?q={query}',
+    experimental: true,
+    integration: { status: 'wired' },
+  },
+  {
+    id: 'workbench.browser.allowExternalNavigation',
+    label: 'Allow External Navigation',
+    description: 'Allows browser surfaces to request explicit navigation outside ActiveLane.',
+    category: 'Browser',
+    type: 'boolean',
+    defaultValue: false,
+    experimental: true,
+    integration: { status: 'wired' },
+  },
+]
