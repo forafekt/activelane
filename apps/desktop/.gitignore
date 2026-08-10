@@ -9,3 +9,74 @@ build/ios/xcode/overlay.json
 build/ios/xcode/gen/
 build/android/overlay.json
 build/android/gen/
+
+# ==============================================================================
+# Wails Specific
+# ==============================================================================
+# Ignore the final production and debug build outputs
+build/bin/
+bin/
+
+# Ignore the frontend build target output folder (adapts to your framework)
+frontend/dist/
+frontend/build/
+frontend/.svelte-kit/
+frontend/.next/
+
+# ==============================================================================
+# Frontend Dependencies & Tooling
+# ==============================================================================
+# Ignore Node modules and package manager locks that cause cross-platform issues
+frontend/node_modules/
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml
+frontend/bun.lockb
+
+# Local environment overrides
+frontend/.env.local
+frontend/.env.*.local
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# ==============================================================================
+# Go (Backend) Specific
+# ==============================================================================
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries and coverage reports
+*.test
+*.out
+c.out
+
+# Dependency directories (uncomment if you strictly use vendoring)
+# vendor/
+
+# ==============================================================================
+# IDEs, Editors, and OS Files
+# ==============================================================================
+# JetBrains (GoLand / WebStorm)
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+
+# Local history / Crash dumps
+.DS_Store
+Thumbs.db
+
+# === Android / Gradle Build Artifacts ===
+.gradle/
+**/build/android/.gradle/
+**/build/android/build/
+

@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
-Name=activelane
-Exec=activelane
-Icon=activelane
+Name=ActiveLane
+Exec=ActiveLane
+Icon=ActiveLane
 Categories=Development;
 Terminal=false
 Keywords=wails

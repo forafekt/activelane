@@ -1,7 +1,7 @@
 version: '3'
 
 vars:
-  APP_NAME: "activelane"
+  APP_NAME: "ActiveLane"
   BIN_DIR: "bin"
   PACKAGE_MANAGER: "pnpm"
   VITE_PORT: '{{.WAILS_VITE_PORT | default 9245}}'
