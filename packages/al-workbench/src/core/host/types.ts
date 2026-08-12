@@ -123,3 +123,28 @@ export interface WorkbenchHostAdapter {
   server?: ActiveLaneServerRuntime
   capabilities: WorkbenchHostCapabilities
 }
+
+export type WorkbenchPlatform = 'macos' | 'windows' | 'linux' | 'web'
+export type WorkbenchNativePlatform = Exclude<WorkbenchPlatform, 'web'>
+
+export interface WorkbenchWindowHost {
+  readonly state: Readonly<{
+    maximized: boolean
+    fullscreen: boolean
+  }>
+  minimize(): Promise<void>
+  toggleMaximize(): Promise<void>
+  close(): Promise<void>
+  handleTitleBarDoubleClick(event?: MouseEvent): void
+}
+
+/** UI-facing environment supplied by the embedding application. */
+export type WorkbenchHost =
+  | {
+      readonly platform: 'web'
+      readonly window?: never
+    }
+  | {
+      readonly platform: WorkbenchNativePlatform
+      readonly window: WorkbenchWindowHost
+    }

@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import type { WorkbenchRuntimeApi } from '@activelane/workbench'
+import type { WorkbenchHost, WorkbenchRuntimeApi } from '@activelane/workbench'
+import { WorkbenchShell } from '@activelane/workbench'
 import { onUnmounted } from 'vue'
-import { useDesktopWindowChrome } from './host/windowChrome'
 
 defineOptions({ name: 'App' })
 
 const props = defineProps<{
   runtime: WorkbenchRuntimeApi
-  provideWorkbenchRuntime: (runtime: WorkbenchRuntimeApi) => void
+  host: WorkbenchHost
 }>()
-
-props.provideWorkbenchRuntime(props.runtime)
-const chrome = useDesktopWindowChrome()
 
 onUnmounted(() => {
   void props.runtime.dispose()
@@ -19,9 +16,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <workbench-shell :runtime="runtime" :top-bar="false">
-    <template #titlebar>
-      <workbench-title-bar :chrome="chrome" :platform="chrome.os" />
-    </template>
-  </workbench-shell>
+  <WorkbenchShell :runtime="runtime" :host="host" />
 </template>

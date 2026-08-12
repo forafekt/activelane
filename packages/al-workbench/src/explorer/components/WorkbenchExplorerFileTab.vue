@@ -13,6 +13,7 @@ const props = defineProps<{
 const File = props.runtime.workbench.ui.getIcon('File')
 const Copy = props.runtime.workbench.ui.getIcon('Copy')
 const ExternalLink = props.runtime.workbench.ui.getIcon('ExternalLink')
+const [AlBadge] = props.runtime.workbench.ui.getComponents(['AlBadge'])
 
 const path = computed(() => String(props.tab.input?.path ?? props.tab.input?.uri ?? ''))
 const size = computed(() =>

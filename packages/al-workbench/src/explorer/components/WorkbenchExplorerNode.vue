@@ -23,6 +23,32 @@ const ExternalLink = props.runtime.workbench.ui.getIcon('ExternalLink')
 const Info = props.runtime.workbench.ui.getIcon('Info')
 const AppWindow = props.runtime.workbench.ui.getIcon('AppWindow')
 
+const [
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+] = props.runtime.workbench.ui.getComponents([
+  'ContextMenu',
+  'ContextMenuContent',
+  'ContextMenuLabel',
+  'ContextMenuSeparator',
+  'ContextMenuItem',
+  'ContextMenuTrigger',
+  'Dialog',
+  'DialogContent',
+  'DialogDescription',
+  'DialogHeader',
+  'DialogTitle',
+])
+
 const pickerOpen = ref(false)
 const pickerIntent = ref<FileOpenIntent | null>(null)
 const providerId = computed(() => props.node.providerId ?? '')
@@ -167,19 +193,16 @@ function properties() {
           @dblclick="activate"
           @keydown="onKeydown"
           @focus="runtime.explorer.focus(node, providerId)"
+          @click.stop="toggle"
+          aria-label="Toggle folder"
         >
-          <button
-            type="button"
-            class="explorer-node__twisty"
-            aria-label="Toggle folder"
-            @click.stop="toggle"
-          >
+          <div class="explorer-node__twisty">
             <Loader2 v-if="nodeState?.loading" class="explorer-node__spinner" />
             <ChevronRight
               v-else-if="!node.isLeaf && node.collapsible !== false"
               :class="{ 'explorer-node__chevron--open': expanded }"
             />
-          </button>
+          </div>
           <component :is="Icon" class="explorer-node__icon" />
           <span class="explorer-node__label">{{ node.label }}</span>
           <span v-if="node.description" class="explorer-node__description">

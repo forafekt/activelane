@@ -1,13 +1,14 @@
 import '@activelane/workbench/styles.css'
-import { provideWorkbenchRuntime, WorkbenchPlugin } from '@activelane/workbench'
 
 import { createApp } from 'vue'
 import App from './App.vue'
+import { useDesktopHost } from './host/desktopHost'
 import { createDesktopPlatform } from './host/platform'
 
 async function start() {
   const runtime = await createDesktopPlatform()
-  createApp(App, { runtime, provideWorkbenchRuntime }).use(WorkbenchPlugin).mount('#app')
+  const host = useDesktopHost()
+  createApp(App, { runtime, host }).mount('#app')
 }
 
 void start().catch((error) => {

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm --dir apps/desktop/frontend dev",
+    "dev": "pnpm dev:desktop",
+    "dev:frontend": "pnpm --dir apps/desktop/frontend dev",
     "dev:desktop": "cd apps/desktop && wails3 dev",
     "check": "biome check .",
     "check:fix": "biome check --write .",

@@ -220,9 +220,7 @@ tasks:
     generates:
       - packages/**/dist/**/*
     cmds:
-      - pnpm --filter @activelane/icons build
-      - pnpm --filter @activelane/shadcn build
-      - pnpm --filter @activelane/workbench build
+      - pnpm --filter 'desktop^...' --if-present run build
 
   frontend:dev:npm:
     dir: frontend

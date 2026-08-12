@@ -2,14 +2,14 @@
 
 Vue Workbench runtime and product shell for ActiveLane.
 
-The package owns runtime composition, extension activation, commands, menus, tabs, panes,
+The package owns runtime composition, extension activation, commands, menus, tabs, layout regions,
 settings, explorer state, server-extension state, persistence, and the Vue shell that renders
 those domains. Application hosts provide capabilities; Workbench does not import Wails or
 generated Go bindings.
 
 ## Public entrypoints
 
-- `@activelane/workbench` — Vue shell, runtime injection, built-in extensions, and the small application-composition API.
+- `@activelane/workbench` — Vue shell, host contracts, runtime composition, and the small application API.
 - `@activelane/workbench/extensions` — extension-author contribution contracts and definition helpers.
 - `@activelane/workbench/marketplace` — optional first-party extension marketplace contribution.
 - `@activelane/workbench/themes` — built-in ActiveLane theme contributions.

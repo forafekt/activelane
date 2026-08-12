@@ -16,6 +16,7 @@ const ChevronRight = props.runtime.workbench.ui.getIcon('ChevronRight')
 const RefreshCw = props.runtime.workbench.ui.getIcon('RefreshCw')
 const FoldVertical = props.runtime.workbench.ui.getIcon('FoldVertical')
 const AlertTriangle = props.runtime.workbench.ui.getIcon('AlertTriangle')
+const AlIconButton = props.runtime.workbench.ui.getComponent('AlIconButton')
 
 const providers = computed(() => props.runtime.explorer.state.providers)
 const providerRootRows = computed<Record<string, ExplorerNode[]>>(() => {

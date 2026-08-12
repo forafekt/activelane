@@ -4,6 +4,7 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "customConditions": ["development"],
     "strict": true,
     "noUnusedParameters": false,
     "noImplicitAny": false,

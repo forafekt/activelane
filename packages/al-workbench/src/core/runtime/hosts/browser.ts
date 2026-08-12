@@ -145,8 +145,8 @@ export function createBrowserHostCapabilities() {
     ...createBrowserWorkbenchHost().capabilities,
     openOptionsPage: async () => {
       const browser = getExtensionApi()
-      await callMaybePromise(() => {
-        browser.runtime.openOptionsPage()
+      await callMaybePromise(async () => {
+        await browser.runtime.openOptionsPage()
       })
     },
   }

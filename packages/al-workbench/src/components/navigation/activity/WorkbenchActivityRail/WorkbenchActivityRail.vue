@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useWorkbenchActivities } from '../../../../composables/useWorkbenchActivities'
-import { useWorkbenchHostChrome } from '../../../../composables/useWorkbenchHostChrome'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
 import type { WorkbenchTab } from '../../../../core/workbench/contributions'
 import type { WorkbenchLayoutNode } from '../../../../core/workbench/shell'
@@ -29,7 +28,6 @@ const [ChevronLeft, ChevronRight, Plus, Settings] = runtime.workbench.ui.getIcon
 ])
 
 const activities = useWorkbenchActivities()
-const chrome = useWorkbenchHostChrome(runtime)
 const items = activities.items
 const draggingId = ref<string | null>(null)
 const expanded = computed(
@@ -88,7 +86,10 @@ function closeTab(tab: WorkbenchTab) {
         @click="toggleExpanded"
       />
     </div>
-    <WorkbenchGlobalMenuLauncher v-if="!chrome.desktopChrome.value" placement="activityLauncher" />
+    <WorkbenchGlobalMenuLauncher
+      v-if="runtime.host.kind !== 'desktop'"
+      placement="activityLauncher"
+    />
     <div class="wb-activity-bar__items">
       <WorkbenchActivityItem
         v-for="item in items"
@@ -139,101 +140,3 @@ function closeTab(tab: WorkbenchTab) {
     </button>
   </nav>
 </template>
-<style scoped>
-.wb-activity-bar {
-  display: flex;
-  width: 3.125rem;
-  height: 100%;
-  flex-direction: column;
-  gap: 0.25rem;
-  background: transparent;
-  padding: 0.375rem 0.375rem 0.5rem;
-  transition: width 160ms ease;
-}
-
-.wb-activity-bar--expanded {
-  width: clamp(16rem, 22vw, 24rem);
-}
-
-.wb-activity-bar__header {
-  display: flex;
-  min-height: 2rem;
-  align-items: center;
-  justify-content: center;
-}
-
-.wb-activity-bar--expanded .wb-activity-bar__header {
-  justify-content: flex-end;
-}
-
-.wb-activity-bar__items {
-  display: flex;
-  min-height: 0;
-  flex: 0 0 auto;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.wb-activity-bar__divider {
-  height: 1px;
-  flex: 0 0 auto;
-  margin: 0.25rem 0.5rem;
-  background: color-mix(in srgb, var(--border) 72%, transparent);
-}
-
-.wb-activity-bar__tabs {
-  min-height: 0;
-  flex: 1;
-}
-
-.wb-activity-bar__tab-list {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.wb-activity-bar__new-tab,
-.wb-activity-bar__settings {
-  display: flex;
-  width: 100%;
-  min-width: 0;
-  height: 2rem;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border: 0;
-  border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--pane-surface-raised) 72%, transparent);
-  padding-inline: 0.5rem;
-  color: var(--text-muted);
-  cursor: pointer;
-}
-
-.wb-activity-bar--expanded .wb-activity-bar__new-tab,
-.wb-activity-bar--expanded .wb-activity-bar__settings {
-  justify-content: flex-start;
-}
-
-.wb-activity-bar__new-tab:hover,
-.wb-activity-bar__settings:hover {
-  background: var(--hover);
-  color: var(--text-primary);
-}
-
-.wb-activity-bar__new-tab:focus-visible,
-.wb-activity-bar__settings:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: -2px;
-}
-
-.wb-activity-bar__new-tab span,
-.wb-activity-bar__settings span {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 0.8125rem;
-}
-</style>

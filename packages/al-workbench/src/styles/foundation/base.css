@@ -1,0 +1,14 @@
+.wb-shell,
+.wb-shell *,
+.wb-shell *::before,
+.wb-shell *::after {
+  box-sizing: border-box;
+}
+
+.wb-shell :where(button, input, textarea, select) {
+  font: inherit;
+}
+
+.wb-shell :where(button, [role="button"]) {
+  -webkit-tap-highlight-color: transparent;
+}

@@ -14,21 +14,24 @@
   ],
   "exports": {
     ".": {
+      "development": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": {
+      "development": "./src/styles/index.css",
+      "default": "./dist/styles.css"
+    }
   },
   "sideEffects": [
-    "./dist/styles.css"
+    "./dist/styles.css",
+    "./src/styles/index.css"
   ],
   "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 3310 & vite build --watch",
     "build": "vite build && pnpm build:types",
-    "build:showcase": "vite build --mode showcase",
-    "build:types": "pnpm exec vue-tsc -p tsconfig.build.json",
-    "typecheck": "pnpm exec vue-tsc -p tsconfig.app.json --noEmit && pnpm exec tsc -p tsconfig.node.json --noEmit",
-    "preview": "vite preview --mode showcase"
+    "build:types": "vue-tsc -p tsconfig.build.json",
+    "test": "tsx --test tests/*.mjs",
+    "typecheck": "vue-tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

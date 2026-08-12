@@ -1,0 +1,20 @@
+.wb-shell {
+  --workbench-gap: var(--pane-gap, 0.375rem);
+  --editor: var(--editor-surface, var(--background));
+  --panel: var(--panel-surface, var(--card));
+  --hover: var(--hover-surface, var(--muted));
+  --selected: var(--selected-surface, var(--accent));
+  --drag: var(--drag-surface, color-mix(in srgb, var(--primary) 18%, transparent));
+  --preview: var(--preview-surface, color-mix(in srgb, var(--muted) 62%, transparent));
+  --workbench-control-radius: 0.375rem;
+  --workbench-transition-fast: 120ms ease;
+}
+
+@media (max-width: 760px), (max-height: 520px) {
+  .wb-shell {
+    --shell-inset: 0.25rem;
+    --pane-gap: 0.25rem;
+    --workbench-gap: 0.25rem;
+    --pane-radius: 0.375rem;
+  }
+}
