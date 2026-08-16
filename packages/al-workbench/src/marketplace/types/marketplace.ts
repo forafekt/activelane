@@ -131,6 +131,24 @@ export interface MarketplaceExtension {
   lifecycleState?: string
   logs: Array<{ level: string; message: string; timestamp: string }>
   packageType?: 'builtin' | 'marketplace' | 'local' | 'npm' | 'url' | 'mock'
+  registryId?: string
+  registryDisplayName?: string
+  compatibility: 'compatible' | 'incompatible'
+  compatibilityReason?: string
+  versionStatus?: 'draft' | 'published' | 'yanked' | 'blocked'
+  integrityState?: 'verified' | 'missing' | 'invalid' | 'mismatch'
+  restartRequired?: boolean
+}
+
+export interface MarketplaceRegistryState {
+  mode: 'none' | 'local-only' | 'connected'
+  publicRegistryEnabled: boolean
+  failures: Array<{
+    registryId: string
+    registryDisplayName: string
+    code: string
+    message: string
+  }>
 }
 
 export interface MarketplaceCategory {

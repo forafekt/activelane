@@ -1,0 +1,8 @@
+go 1.26.5
+
+use (
+	./apps/desktop
+	./go
+)
+
+replace github.com/activelane/activelane/go v0.0.0 => ./go

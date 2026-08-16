@@ -906,10 +906,14 @@ export async function createExtensionRuntime(
     extensions: {
       records,
       discovered,
-      async install(extensionId: string, version?: string) {
+      async install(extensionId: string, version?: string, registryId?: string) {
         const record = records.find((item) => item.extensionId === extensionId)
         const definition = definitions.get(extensionId)
-        const installed = await host.capabilities.extensions?.install?.(extensionId, version)
+        const installed = await host.capabilities.extensions?.install?.(
+          extensionId,
+          version,
+          registryId,
+        )
         if (installed) upsertInstalledRecord(installed)
         if (!record || !definition) return
         if (
@@ -919,9 +923,8 @@ export async function createExtensionRuntime(
           throw new Error('Experimental extensions are disabled in Workbench Settings.')
         }
         record.installed = true
-        record.enabled = true
+        record.enabled = installed?.enabled ?? false
         refreshRecordStatus(record)
-        await runtime.extensions.activate(extensionId)
       },
       async installFromPackage(packageBytes: ArrayBuffer | Uint8Array) {
         const installed = await host.capabilities.extensions?.installFromPackage?.(packageBytes)
@@ -938,21 +941,26 @@ export async function createExtensionRuntime(
       },
       async uninstall(extensionId: string) {
         const record = records.find((item) => item.extensionId === extensionId)
-        if (!record) return
-        const wasActive = record.active
-        await runtime.extensions.deactivate(extensionId)
+        const installedRecord = installedRecords.find((item) => item.extensionId === extensionId)
+        const wasActive = record?.active ?? false
+        const wasEnabled = installedRecord?.enabled ?? record?.enabled ?? false
+        if (record) await runtime.extensions.deactivate(extensionId)
         try {
+          if (wasEnabled) await host.capabilities.extensions?.disable?.(extensionId)
           await host.capabilities.extensions?.uninstall?.(extensionId)
         } catch (error) {
-          if (wasActive) await runtime.extensions.activate(extensionId)
+          if (wasEnabled) await host.capabilities.extensions?.enable?.(extensionId)
+          if (wasActive && record) await runtime.extensions.activate(extensionId)
           throw error
         }
-        record.installed = false
-        record.enabled = false
-        record.active = false
-        record.error = undefined
-        record.surfaceErrors = []
-        refreshRecordStatus(record)
+        if (record) {
+          record.installed = false
+          record.enabled = false
+          record.active = false
+          record.error = undefined
+          record.surfaceErrors = []
+          refreshRecordStatus(record)
+        }
         removeInstalledRecord(extensionId)
       },
       async enable(extensionId: string) {
@@ -984,18 +992,18 @@ export async function createExtensionRuntime(
       },
       async disable(extensionId: string) {
         const record = records.find((item) => item.extensionId === extensionId)
-        if (!record) return
-        const wasActive = record.active
-        await runtime.extensions.deactivate(extensionId)
+        const wasActive = record?.active ?? false
+        if (record) await runtime.extensions.deactivate(extensionId)
         let installed: InstalledExtensionRecord | undefined
         try {
           installed = await host.capabilities.extensions?.disable?.(extensionId)
         } catch (error) {
-          if (wasActive) await runtime.extensions.activate(extensionId)
+          if (wasActive && record) await runtime.extensions.activate(extensionId)
           throw error
         }
-        record.enabled = false
         if (installed) upsertInstalledRecord(installed)
+        if (!record) return
+        record.enabled = false
         refreshRecordStatus(record)
       },
       async listInstalled() {

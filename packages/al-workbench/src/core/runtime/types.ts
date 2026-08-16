@@ -53,7 +53,7 @@ export interface WorkbenchRuntimeApi {
   extensions: {
     records: WorkbenchRuntimeExtensionRecord[]
     discovered: WorkbenchExtensionCatalogEntry[]
-    install: (extensionId: string, version?: string) => Promise<void>
+    install: (extensionId: string, version?: string, registryId?: string) => Promise<void>
     installFromPackage: (packageBytes: ArrayBuffer | Uint8Array) => Promise<void>
     uninstall: (extensionId: string) => Promise<void>
     enable: (extensionId: string) => Promise<void>

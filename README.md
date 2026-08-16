@@ -27,6 +27,32 @@ go test ./...
 go vet ./...
 ```
 
+The root `go.work` composes the reusable `go` module and the Wails `apps/desktop` module. There is no
+repository-root Go module. See [the registry architecture](docs/architecture/registry.md) and
+[ADR 0002](docs/adr/0002-go-module-and-chi-routing.md) for package boundaries and routing decisions.
+
+## Extension registry foundation
+
+The repository also contains a self-hostable Go registry and the `alx` package CLI. The current
+vertical slice validates and deterministically packs `.alx` files, publishes immutable versions,
+searches local or remote registries, resolves namespaces to exactly one configured source, and
+installs exact versions with persisted source and digest records.
+
+```bash
+go run ./go/cmd/registry --allow-publish
+ACTIVELANE_REGISTRY_CONFIG="$PWD/examples/registries.local.json" \
+  go run ./go/cmd/alx pack ./examples/extensions/hello --output /tmp/hello.alx
+ACTIVELANE_REGISTRY_CONFIG="$PWD/examples/registries.local.json" \
+  go run ./go/cmd/alx publish /tmp/hello.alx --registry local
+```
+
+See [docs/guides/registry-workflow.md](docs/guides/registry-workflow.md) for the complete workflow
+and [docs/architecture/registry.md](docs/architecture/registry.md) for boundaries and security
+properties.
+
+The desktop marketplace integration is documented in
+[docs/guides/desktop-registry.md](docs/guides/desktop-registry.md).
+
 ## Structure
 
 ```text
@@ -34,4 +60,8 @@ apps/desktop/              Go + Wails v3 application and Vue entry point
 packages/al-workbench/     Host-agnostic ActiveLane Workbench UI
 packages/al-shadcn/        Shared Vue component system
 packages/al-icons/         Shared icon exports
+go/cmd/registry/          Go registry executable
+go/cmd/alx/               Go extension package and registry CLI
+go/                        Reusable Go module, HTTP API, and command composition roots
+schemas/                   Language-neutral extension and registry configuration contracts
 ```

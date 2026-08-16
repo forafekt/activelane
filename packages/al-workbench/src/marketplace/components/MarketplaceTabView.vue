@@ -133,6 +133,27 @@ async function runPrimary(extension: MarketplaceExtension) {
         <AlStatBlock label="Errors" :value="marketplace.stats.value.errorExtensions" />
       </div>
 
+      <AlCard
+        v-if="marketplace.registryState.value.mode !== 'connected' || marketplace.registryState.value.failures.length"
+        class="grid gap-2 p-4"
+      >
+        <div class="flex flex-wrap items-center gap-2">
+          <AlBadge :tone="marketplace.registryState.value.failures.length ? 'warning' : 'info'">
+            {{ marketplace.registryState.value.mode === 'none' ? 'No registries configured' : marketplace.registryState.value.mode === 'local-only' ? 'Local-only mode' : 'Some registries unavailable' }}
+          </AlBadge>
+          <AlBadge v-if="!marketplace.registryState.value.publicRegistryEnabled" variant="outline">
+            Public registry disabled
+          </AlBadge>
+        </div>
+        <p
+          v-for="failure in marketplace.registryState.value.failures"
+          :key="failure.registryId"
+          class="m-0 text-sm text-muted-foreground"
+        >
+          {{ failure.registryDisplayName }}: {{ failure.message }} ({{ failure.code }})
+        </p>
+      </AlCard>
+
       <AlCard class="grid gap-3 p-3">
         <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_12rem_8rem]">
           <div class="relative">

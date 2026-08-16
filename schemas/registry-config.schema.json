@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://activelane.dev/schemas/registry-config.schema.json",
+  "title": "ActiveLane registry configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "registries"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "const": 1 },
+    "registries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "enabled", "priority", "scopes"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "type": { "enum": ["remote", "directory"] },
+          "url": { "type": "string", "format": "uri" },
+          "path": { "type": "string", "minLength": 1 },
+          "enabled": { "type": "boolean" },
+          "priority": { "type": "integer" },
+          "scopes": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" }
+          }
+        }
+      }
+    }
+  }
+}

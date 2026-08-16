@@ -1,5 +1,5 @@
 import { getIcon } from '@activelane/icons'
-import { type Component, defineComponent, h, VueElement } from 'vue'
+import { type Component, defineComponent, h } from 'vue'
 import type { MarketplaceExtension } from '../types/marketplace'
 
 export function formatCount(value: number) {
@@ -38,28 +38,16 @@ export function statusTone(
 function isIconSvgFile(value: string) {
   return !isIconSvgRemoteUrl(value) && value.endsWith('.svg')
 }
-function isIconSvgCode(value: string) {
-  return value.startsWith('<svg')
-}
 function isIconSvgRemoteUrl(value: string) {
   return value.startsWith('http')
 }
 
 export function extensionIcon(extension: MarketplaceExtension): Component {
   if (extension.icon) {
-    console.log(extension.icon)
     if (isIconSvgFile(extension.icon)) {
       return defineComponent({
         render() {
           return h('img', { src: extension.icon })
-        },
-      })
-    }
-
-    if (isIconSvgCode(extension.icon)) {
-      return defineComponent({
-        render() {
-          return h('div', { is: 'div', innerHTML: extension.icon })
         },
       })
     }
@@ -108,7 +96,9 @@ export function extensionIcon(extension: MarketplaceExtension): Component {
 
 export function primaryAction(extension: MarketplaceExtension) {
   if (extension.installState === 'not-installed')
-    return { label: 'Install', action: 'install' as const, variant: 'default' as const }
+    return extension.compatibility === 'incompatible' || extension.versionStatus === 'yanked'
+      ? { label: 'Unavailable', action: 'details' as const, variant: 'outline' as const }
+      : { label: 'Install', action: 'install' as const, variant: 'default' as const }
   if (extension.status === 'disabled')
     return { label: 'Enable', action: 'enable' as const, variant: 'default' as const }
   if (extension.updateAvailable)

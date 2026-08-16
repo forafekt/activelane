@@ -146,6 +146,13 @@ async function runPrimary(item: MarketplaceExtension) {
                 <AlBadge v-if="extension.packageType === 'local'" tone="info"
                   >Local Package</AlBadge
                 >
+                <AlBadge v-if="extension.registryDisplayName" variant="outline">
+                  {{ extension.registryDisplayName }}
+                </AlBadge>
+                <AlBadge v-if="extension.versionStatus === 'yanked'" tone="warning">Yanked</AlBadge>
+                <AlBadge v-if="extension.compatibility === 'incompatible'" tone="warning">
+                  Incompatible
+                </AlBadge>
               </div>
               <p class="m-0 mt-1 text-sm text-muted-foreground">
                 {{ extension.publisher.displayName }}
@@ -186,6 +193,19 @@ async function runPrimary(item: MarketplaceExtension) {
             </AlButton>
           </div>
         </header>
+
+        <AlCard
+          v-if="extension.restartRequired || extension.compatibilityReason"
+          class="grid gap-1 p-4"
+        >
+          <p v-if="extension.restartRequired" class="m-0 text-sm font-medium">
+            Restart ActiveLane to discover this installed extension. Enablement is saved separately
+            from runtime activation.
+          </p>
+          <p v-if="extension.compatibilityReason" class="m-0 text-sm text-muted-foreground">
+            {{ extension.compatibilityReason }}
+          </p>
+        </AlCard>
         <!--
         <div class="grid gap-3 md:grid-cols-4">
           <AlStatBlock label="Rating" :value="extension.rating.average.toFixed(1)" :delta="`${extension.rating.count} reviews`" />
@@ -338,6 +358,10 @@ async function runPrimary(item: MarketplaceExtension) {
                     :items="[
                       { key: 'id', label: 'Identifier', value: extension.id },
                       { key: 'publisher', label: 'Publisher', value: extension.publisher.displayName },
+                      { key: 'registry', label: 'Registry', value: extension.registryDisplayName || extension.registryId || 'Unknown' },
+                      { key: 'compatibility', label: 'Compatibility', value: extension.compatibility },
+                      { key: 'verification', label: 'Package verification', value: extension.integrityState || (extension.installState === 'installed' ? 'verified at install' : 'not installed') },
+                      { key: 'installed-version', label: 'Installed version', value: extension.installedVersion || 'Not installed' },
                       { key: 'published', label: 'Published', value: formatDate(extension.firstPublished) },
                       { key: 'categories', label: 'Categories', value: extension.categories.join(', ') },
                       { key: 'tags', label: 'Tags', value: extension.tags.join(', ') },

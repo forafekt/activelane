@@ -78,6 +78,10 @@ export function useMarketplace(options: UseMarketplaceOptions = {}) {
     revision.value
     return marketplaceCatalog.getCategories()
   })
+  const registryState = computed(() => {
+    revision.value
+    return marketplaceCatalog.getRegistryState()
+  })
   const selectedExtension = computed(() => {
     revision.value
     return selectedExtensionId.value
@@ -326,6 +330,7 @@ export function useMarketplace(options: UseMarketplaceOptions = {}) {
     extensions,
     stats,
     categories,
+    registryState,
     selectedExtension,
     featuredExtensions,
     recommendedExtensions,

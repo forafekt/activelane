@@ -3,7 +3,12 @@ import WorkbenchShell from './components/shell/WorkbenchShell.vue'
 
 export { createWorkbenchBuiltinExtensions } from './contributions'
 export type { ActiveLaneCapabilityRecord } from './core/capabilities/types'
-export type { InstalledExtensionRecord } from './core/extensions/types'
+export type {
+  ActiveLaneExtensionManifest,
+  InstalledExtensionRecord,
+  WorkbenchRegistrySearchResponse,
+  WorkbenchRegistryStatusResponse,
+} from './core/extensions/types'
 export type {
   WorkbenchDialogOptions,
   WorkbenchFileHandle,

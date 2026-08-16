@@ -40,6 +40,8 @@ const hostValues = new Set<ActiveLaneHostSupport>([
   'server',
 ])
 const kindValues = new Set<ActiveLaneExtensionKind>(['workbench', 'server'])
+const operatingSystemValues = new Set(['linux', 'darwin', 'windows'] as const)
+const architectureValues = new Set(['amd64', 'arm64', '386'] as const)
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -69,6 +71,29 @@ function readStringArray<T extends string>(
   if (!Array.isArray(value) || value.length === 0) {
     issues.push({ path: key, message: `${key} must be a non-empty array.` })
     return []
+  }
+  const values: T[] = []
+  value.forEach((item, index) => {
+    if (typeof item !== 'string' || !allowed.has(item as T)) {
+      issues.push({ path: `${key}.${index}`, message: `Unsupported ${key} value.` })
+      return
+    }
+    values.push(item as T)
+  })
+  return values
+}
+
+function readOptionalStringArray<T extends string>(
+  source: Record<string, unknown>,
+  key: string,
+  allowed: ReadonlySet<T>,
+  issues: ManifestValidationIssue[],
+) {
+  if (source[key] === undefined) return undefined
+  const value = source[key]
+  if (!Array.isArray(value)) {
+    issues.push({ path: key, message: `${key} must be an array.` })
+    return undefined
   }
   const values: T[] = []
   value.forEach((item, index) => {
@@ -165,6 +190,8 @@ export function normalizeActiveLaneManifest(input: unknown): ManifestValidationR
       : {},
     extensionKind: readStringArray(input, 'extensionKind', kindValues, issues),
     visibility: visibility as ActiveLaneExtensionVisibility,
+    os: readOptionalStringArray(input, 'os', operatingSystemValues, issues),
+    architecture: readOptionalStringArray(input, 'architecture', architectureValues, issues),
   }
   if (input.server !== undefined) {
     const serverResult = normalizeServerExtensionDeclaration(input.server)

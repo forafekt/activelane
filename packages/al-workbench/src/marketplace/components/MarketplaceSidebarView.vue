@@ -35,8 +35,6 @@ const marketplace = useMarketplace({ runtime: props.runtime })
 
 const filteredExtensions = computed(() => marketplace.extensions.value)
 
-console.log({ filteredExtensions: filteredExtensions.value })
-
 async function runPrimary(extension: MarketplaceExtension) {
   const action = primaryAction(extension).action
   if (action === 'details') marketplace.openExtensionDetails(extension)
@@ -136,6 +134,9 @@ function getIsInstalledOrRecommended(item: (typeof items)[number]) {
                       >{{ extension.publisher.displayName }}</a
                     >
                     <span class="text-muted-foreground italic">· v{{ extension.version }}</span>
+                    <span v-if="extension.registryDisplayName" class="text-muted-foreground">
+                      · {{ extension.registryDisplayName }}
+                    </span>
                     <span class="text-muted-foreground"
                       >·
                       {{ extension.pricingModel === 'free' ? 'Free' :
@@ -201,6 +202,9 @@ function getIsInstalledOrRecommended(item: (typeof items)[number]) {
                 >{{ extension.publisher.displayName }}</a
               >
               <span class="text-muted-foreground italic">· v{{ extension.version }}</span>
+              <span v-if="extension.registryDisplayName" class="text-muted-foreground">
+                · {{ extension.registryDisplayName }}
+              </span>
               <span class="text-muted-foreground"
                 >·
                 {{ extension.pricingModel === 'free' ? 'Free' :

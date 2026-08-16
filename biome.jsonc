@@ -19,6 +19,8 @@
       "!**/.turbo",
       "!**/.idea",
       "!**/.DS_Store",
+      "!apps/desktop/frontend/bindings",
+      "!apps/desktop/build",
       "!apps/browser-extension/extension",
       "!apps/browser-extension/extension.zip",
       "!apps/browser-extension/extension.crx",

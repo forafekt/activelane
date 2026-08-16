@@ -1,4 +1,9 @@
-import type { InstalledExtensionRecord, WorkbenchExtensionDefinition } from '../extensions/types'
+import type {
+  InstalledExtensionRecord,
+  WorkbenchExtensionDefinition,
+  WorkbenchRegistrySearchResponse,
+  WorkbenchRegistryStatusResponse,
+} from '../extensions/types'
 import type { ActiveLaneHostKind } from '../runtime/context'
 import type { ActiveLaneServerRuntime } from '../serverRuntime'
 
@@ -102,6 +107,7 @@ export interface WorkbenchHostCapabilities {
     install?: (
       extensionId: string,
       version?: string,
+      registryId?: string,
     ) => Promise<InstalledExtensionRecord | undefined>
     installFromPackage?: (
       packageBytes: ArrayBuffer | Uint8Array,
@@ -110,6 +116,10 @@ export interface WorkbenchHostCapabilities {
     enable?: (extensionId: string) => Promise<InstalledExtensionRecord | undefined>
     disable?: (extensionId: string) => Promise<InstalledExtensionRecord | undefined>
     discover?: () => Promise<WorkbenchExtensionDefinition[]>
+  }
+  registry?: {
+    status: () => Promise<WorkbenchRegistryStatusResponse>
+    search: (query: string) => Promise<WorkbenchRegistrySearchResponse>
   }
 }
 

@@ -1,0 +1,14 @@
+{
+  "$schema": "../schemas/registry-config.schema.json",
+  "version": 1,
+  "registries": [
+    {
+      "id": "local",
+      "type": "remote",
+      "url": "http://127.0.0.1:8787",
+      "enabled": true,
+      "priority": 100,
+      "scopes": ["local"]
+    }
+  ]
+}
