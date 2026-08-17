@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { getIcons } from '@activelane/icons'
+import { getIcon } from '@activelane/icons'
 import { AlIconButton } from '@activelane/shadcn'
 import { computed } from 'vue'
 import type { WorkbenchApplicationContribution } from '../../core/workbench/contributions'
 import { resolveLauncherIcon } from './iconResolver'
 
-const [Pin, PinOff] = getIcons(['Pin', 'PinOff'])
+const Pin = getIcon('lucide.pin')
+const PinOff = getIcon('lucide.pin-off')
 
 defineOptions({ name: 'LauncherAppCard' })
 

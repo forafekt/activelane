@@ -9,7 +9,8 @@ const runtime = useWorkbenchRuntime()
 const interactions = useWorkbenchTabInteractions()
 const passwordRef = ref<HTMLInputElement | null>(null)
 
-const [Eye, EyeOff] = runtime.workbench.ui.getIcons(['Eye', 'EyeOff'])
+const Eye = runtime.workbench.ui.getIcon('lucide.eye')
+const EyeOff = runtime.workbench.ui.getIcon('lucide.eye-off')
 const [
   Dialog,
   DialogContent,

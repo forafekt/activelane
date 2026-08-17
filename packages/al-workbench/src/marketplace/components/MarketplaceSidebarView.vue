@@ -12,13 +12,11 @@ const [AlDropdownMenu, AlInput] = props.runtime.workbench.ui.getComponents([
   'AlDropdownMenu',
   'AlInput',
 ])
-const [Filter, MoreHorizontal, RefreshCcw, Search, X] = props.runtime.workbench.ui.getIcons([
-  'Filter',
-  'MoreHorizontal',
-  'RefreshCcw',
-  'Search',
-  'X',
-])
+const Filter = props.runtime.workbench.ui.getIcon('lucide.filter')
+const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide.ellipsis')
+const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
+const Search = props.runtime.workbench.ui.getIcon('lucide.search')
+const X = props.runtime.workbench.ui.getIcon('lucide.x')
 
 const installedOpen = ref(true)
 const updatesOpen = ref(true)

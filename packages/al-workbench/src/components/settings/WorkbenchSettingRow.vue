@@ -12,7 +12,7 @@ import {
 import { computed, ref } from 'vue'
 import type { WorkbenchSettingEntry } from '../../settings/types'
 
-const RotateCcw = getIcon('RotateCcw')
+const RotateCcw = getIcon('lucide.rotate-ccw')
 
 defineOptions({ name: 'WorkbenchSettingRow' })
 

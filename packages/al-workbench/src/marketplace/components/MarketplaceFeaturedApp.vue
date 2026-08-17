@@ -8,7 +8,8 @@ import { extensionIcon } from './MarketplaceShared'
 const props = defineProps<{ runtime: WorkbenchRuntimeApi; extension: MarketplaceExtension }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
 const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['AlBadge', 'AlButton'])
-const [ArrowRight, BadgeCheck] = props.runtime.workbench.ui.getIcons(['ArrowRight', 'BadgeCheck'])
+const ArrowRight = props.runtime.workbench.ui.getIcon('lucide.arrow-right')
+const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide.badge-check')
 const media = props.extension.gallery.find((item) => item.type === 'image')
 const mediaFailed = ref(false)
 </script>

@@ -8,7 +8,8 @@ const runtime = useWorkbenchRuntime()
 const canGoBack = computed(() => runtime.workbench.state.navigation.back.length > 0)
 const canGoForward = computed(() => runtime.workbench.state.navigation.forward.length > 0)
 
-const [ChevronLeft, ChevronRight] = runtime.workbench.ui.getIcons(['ChevronLeft', 'ChevronRight'])
+const ChevronLeft = runtime.workbench.ui.getIcon('lucide.chevron-left')
+const ChevronRight = runtime.workbench.ui.getIcon('lucide.chevron-right')
 const [AlIconButton] = runtime.workbench.ui.getComponents(['AlIconButton'])
 </script>
 

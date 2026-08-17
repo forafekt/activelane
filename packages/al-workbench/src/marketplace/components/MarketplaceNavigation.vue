@@ -4,13 +4,11 @@ import { type MarketplacePage, useMarketplace } from '../composables/useMarketpl
 
 const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
-const [Compass, Grid2X2, Download, RefreshCcw, WalletCards] = props.runtime.workbench.ui.getIcons([
-  'Compass',
-  'Grid2X2',
-  'Download',
-  'RefreshCcw',
-  'WalletCards',
-])
+const Compass = props.runtime.workbench.ui.getIcon('lucide.compass')
+const Grid2X2 = props.runtime.workbench.ui.getIcon('lucide.grid-2x2')
+const Download = props.runtime.workbench.ui.getIcon('lucide.download')
+const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
+const WalletCards = props.runtime.workbench.ui.getIcon('lucide.wallet-cards')
 const primary: Array<{ id: MarketplacePage; label: string; icon: unknown }> = [
   { id: 'discover', label: 'Discover', icon: Compass },
   { id: 'browse', label: 'Browse', icon: Grid2X2 },

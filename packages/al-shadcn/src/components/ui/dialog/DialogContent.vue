@@ -7,7 +7,7 @@ import type { HTMLAttributes } from 'vue'
 import { cn } from '../../../lib/utils'
 import DialogOverlay from './DialogOverlay.vue'
 
-const X = getIcon('X')
+const X = getIcon('lucide.x')
 
 defineOptions({
   inheritAttrs: false,

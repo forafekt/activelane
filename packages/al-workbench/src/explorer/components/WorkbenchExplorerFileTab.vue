@@ -10,9 +10,9 @@ const props = defineProps<{
   runtime: WorkbenchRuntimeApi
 }>()
 
-const File = props.runtime.workbench.ui.getIcon('File')
-const Copy = props.runtime.workbench.ui.getIcon('Copy')
-const ExternalLink = props.runtime.workbench.ui.getIcon('ExternalLink')
+const File = props.runtime.workbench.ui.getIcon('lucide.file')
+const Copy = props.runtime.workbench.ui.getIcon('lucide.copy')
+const ExternalLink = props.runtime.workbench.ui.getIcon('lucide.external-link')
 const [AlBadge] = props.runtime.workbench.ui.getComponents(['AlBadge'])
 
 const path = computed(() => String(props.tab.input?.path ?? props.tab.input?.uri ?? ''))

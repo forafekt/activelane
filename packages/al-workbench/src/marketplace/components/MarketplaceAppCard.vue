@@ -11,11 +11,9 @@ const props = defineProps<{
 }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
 const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['AlBadge', 'AlButton'])
-const [BadgeCheck, Star, Download] = props.runtime.workbench.ui.getIcons([
-  'BadgeCheck',
-  'Star',
-  'Download',
-])
+const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide.badge-check')
+const Star = props.runtime.workbench.ui.getIcon('lucide.star')
+const Download = props.runtime.workbench.ui.getIcon('lucide.download')
 
 function pricingLabel() {
   const paid = props.extension.plans.filter((plan) => plan.priceMinor > 0)

@@ -15,7 +15,9 @@ const props = defineProps<{
 
 const runtime = useWorkbenchRuntime()
 
-const [Shield, Snowflake, Star] = runtime.workbench.ui.getIcons(['Shield', 'Snowflake', 'Star'])
+const Shield = runtime.workbench.ui.getIcon('lucide.shield')
+const Snowflake = runtime.workbench.ui.getIcon('lucide.snowflake')
+const Star = runtime.workbench.ui.getIcon('lucide.star')
 const [AlButton, AlEmptyState] = runtime.workbench.ui.getComponents(['AlButton', 'AlEmptyState'])
 
 const tabs = useWorkbenchTabs(props.group)

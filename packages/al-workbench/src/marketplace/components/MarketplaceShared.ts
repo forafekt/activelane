@@ -1,4 +1,4 @@
-import { getIcon } from '@activelane/icons'
+import { getIcon, isIconReference } from '@activelane/icons'
 import { type Component, defineComponent, h } from 'vue'
 import type { MarketplaceExtension } from '../types/marketplace'
 
@@ -64,11 +64,10 @@ export function extensionIcon(extension: MarketplaceExtension): Component {
       })
     }
 
-    const fallback = getIcon(extension.icon)
-    if (fallback) return fallback
+    if (isIconReference(extension.icon)) return getIcon(extension.icon)
   }
 
-  return getIcon('Puzzle')
+  return getIcon('lucide.puzzle')
 }
 
 export function primaryAction(extension: MarketplaceExtension) {

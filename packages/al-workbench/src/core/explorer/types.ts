@@ -1,3 +1,4 @@
+import type { IconReference } from '@activelane/icons'
 import type { Disposable, MaybePromise } from '../shared/types'
 
 export interface ExplorerNode {
@@ -5,7 +6,7 @@ export interface ExplorerNode {
   providerId?: string
   label: string
   description?: string
-  icon?: string
+  icon?: IconReference
   uri?: string
   resourceType?: string
   contextValue?: string
@@ -20,7 +21,7 @@ export interface ExplorerNode {
 export interface ExplorerProvider {
   id: string
   title: string
-  icon?: string
+  icon?: IconReference
   order?: number
   canCollapse?: boolean
   getChildren(node?: ExplorerNode): MaybePromise<ExplorerNode[]>

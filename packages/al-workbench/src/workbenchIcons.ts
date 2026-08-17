@@ -1,17 +1,18 @@
-import { getIcons } from '@activelane/icons'
+import { getIcon } from '@activelane/icons'
 
-const [ChevronLeft, ChevronRight] = getIcons(['ChevronLeft', 'ChevronRight'])
-const [Copy, Minus, Square, X] = getIcons(['Copy', 'Minus', 'Square', 'X'])
+const ChevronLeft = getIcon('lucide.chevron-left')
+const ChevronRight = getIcon('lucide.chevron-right')
+const Copy = getIcon('lucide.copy')
+const Minus = getIcon('lucide.minus')
+const Square = getIcon('lucide.square')
+const X = getIcon('lucide.x')
 
-const [PanelLeft, PanelLeftFill, PanelRight, PanelRightFill, PanelBottom, PanelBottomFill] =
-  getIcons([
-    'PanelLeft',
-    'PanelLeftFill',
-    'PanelRight',
-    'PanelRightFill',
-    'PanelBottom',
-    'PanelBottomFill',
-  ])
+const PanelLeft = getIcon('lucide.panel-left')
+const PanelLeftFill = getIcon('lucide.panel-left-dashed')
+const PanelRight = getIcon('lucide.panel-right')
+const PanelRightFill = getIcon('lucide.panel-right-dashed')
+const PanelBottom = getIcon('lucide.panel-bottom')
+const PanelBottomFill = getIcon('lucide.panel-bottom-dashed')
 
 const registry = {
   ChevronLeft,

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { getIcons } from '@activelane/icons'
+import { getIcon } from '@activelane/icons'
 import { AlButton } from '@activelane/shadcn'
 
-const [Download, Upload] = getIcons(['Download', 'Upload'])
+const Download = getIcon('lucide.download')
+const Upload = getIcon('lucide.upload')
 
 defineOptions({ name: 'SettingsJsonTransfer' })
 

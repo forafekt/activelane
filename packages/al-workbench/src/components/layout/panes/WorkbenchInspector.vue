@@ -11,7 +11,7 @@ defineOptions({ name: 'WorkbenchInspector' })
 
 const runtime = useWorkbenchRuntime()
 
-const X = runtime.workbench.ui.getIcon('X')
+const X = runtime.workbench.ui.getIcon('lucide.x')
 
 const [AlEmptyState, AlIconButton] = runtime.workbench.ui.getComponents([
   'AlEmptyState',

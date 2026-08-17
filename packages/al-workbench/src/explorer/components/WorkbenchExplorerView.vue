@@ -12,10 +12,10 @@ const props = defineProps<{
   runtime: WorkbenchRuntimeApi
 }>()
 
-const ChevronRight = props.runtime.workbench.ui.getIcon('ChevronRight')
-const RefreshCw = props.runtime.workbench.ui.getIcon('RefreshCw')
-const FoldVertical = props.runtime.workbench.ui.getIcon('FoldVertical')
-const AlertTriangle = props.runtime.workbench.ui.getIcon('AlertTriangle')
+const ChevronRight = props.runtime.workbench.ui.getIcon('lucide.chevron-right')
+const RefreshCw = props.runtime.workbench.ui.getIcon('lucide.refresh-cw')
+const FoldVertical = props.runtime.workbench.ui.getIcon('lucide.fold-vertical')
+const AlertTriangle = props.runtime.workbench.ui.getIcon('lucide.triangle-alert')
 const AlIconButton = props.runtime.workbench.ui.getComponent('AlIconButton')
 
 const providers = computed(() => props.runtime.explorer.state.providers)
@@ -38,7 +38,7 @@ const providerHiddenCounts = computed<Record<string, number>>(() => {
 })
 
 function providerIcon(provider: ExplorerProvider) {
-  return props.runtime.workbench.ui.getIcon(provider.icon ?? 'FolderTree')
+  return props.runtime.workbench.ui.getIcon(provider.icon ?? 'lucide.folder-tree')
 }
 
 function providerExpanded(provider: ExplorerProvider) {

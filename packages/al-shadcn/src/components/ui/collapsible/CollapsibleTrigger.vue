@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { getIcons } from '@activelane/icons'
+import { getIcon } from '@activelane/icons'
 import type { CollapsibleTriggerProps } from 'reka-ui'
 import { CollapsibleTrigger } from 'reka-ui'
 
-const [ChevronDown, ChevronRight] = getIcons(['ChevronDown', 'ChevronRight'])
+const ChevronDown = getIcon('lucide.chevron-down')
+const ChevronRight = getIcon('lucide.chevron-right')
 
 defineOptions({
   name: 'CollapsibleTrigger',

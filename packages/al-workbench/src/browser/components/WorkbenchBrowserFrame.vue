@@ -5,7 +5,7 @@ import { publishBrowserNavigationState } from '../browserTabs'
 import type { BrowserNavigationState, BrowserTabInput } from '../types'
 import WorkbenchBrowserErrorState from './WorkbenchBrowserErrorState.vue'
 
-const Loader2 = getIcon('Loader2')
+const Loader2 = getIcon('lucide.loader-circle')
 
 defineOptions({ name: 'WorkbenchBrowserFrame' })
 

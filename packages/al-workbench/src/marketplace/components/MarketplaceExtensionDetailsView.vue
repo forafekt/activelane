@@ -16,29 +16,16 @@ const marketplace = useMarketplace({ runtime: props.runtime })
 const activeTab = ref<'overview' | 'integrations' | 'permissions' | 'releases'>('overview')
 const subscription = ref<WorkbenchSubscription>()
 const [AlButton] = props.runtime.workbench.ui.getComponents(['AlButton'])
-const [
-  ArrowLeft,
-  BadgeCheck,
-  Check,
-  ExternalLink,
-  MoreHorizontal,
-  RefreshCcw,
-  Settings2,
-  ShieldCheck,
-  Star,
-  Trash2,
-] = props.runtime.workbench.ui.getIcons([
-  'ArrowLeft',
-  'BadgeCheck',
-  'Check',
-  'ExternalLink',
-  'MoreHorizontal',
-  'RefreshCcw',
-  'Settings2',
-  'ShieldCheck',
-  'Star',
-  'Trash2',
-])
+const ArrowLeft = props.runtime.workbench.ui.getIcon('lucide.arrow-left')
+const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide.badge-check')
+const Check = props.runtime.workbench.ui.getIcon('lucide.check')
+const ExternalLink = props.runtime.workbench.ui.getIcon('lucide.external-link')
+const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide.ellipsis')
+const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
+const Settings2 = props.runtime.workbench.ui.getIcon('lucide.settings-2')
+const ShieldCheck = props.runtime.workbench.ui.getIcon('lucide.shield-check')
+const Star = props.runtime.workbench.ui.getIcon('lucide.star')
+const Trash2 = props.runtime.workbench.ui.getIcon('lucide.trash-2')
 const extension = computed(() => {
   const id = typeof props.tab.input?.extensionId === 'string' ? props.tab.input.extensionId : ''
   return marketplace.getExtension(id) ?? marketplace.selectedExtension.value

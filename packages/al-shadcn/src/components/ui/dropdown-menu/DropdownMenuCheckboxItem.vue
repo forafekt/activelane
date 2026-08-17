@@ -6,7 +6,7 @@ import { DropdownMenuCheckboxItem, DropdownMenuItemIndicator, useForwardPropsEmi
 import type { HTMLAttributes } from 'vue'
 import { cn } from '../../../lib/utils'
 
-const Check = getIcon('Check')
+const Check = getIcon('lucide.check')
 
 const props = defineProps<DropdownMenuCheckboxItemProps & { class?: HTMLAttributes['class'] }>()
 const emits = defineEmits<DropdownMenuCheckboxItemEmits>()

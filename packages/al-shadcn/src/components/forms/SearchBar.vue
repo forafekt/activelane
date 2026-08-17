@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { getIcons } from '@activelane/icons'
+import { getIcon } from '@activelane/icons'
 import { cn } from '../../lib/utils'
 import IconButton from '../ui/IconButton.vue'
 
-const [Search, X] = getIcons(['Search', 'X'])
+const Search = getIcon('lucide.search')
+const X = getIcon('lucide.x')
 
 defineOptions({ name: 'AlSearchBar' })
 

@@ -13,7 +13,8 @@ const records = ref<
 >([])
 const loading = ref(true)
 const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['AlBadge', 'AlButton'])
-const [CreditCard, WalletCards] = props.runtime.workbench.ui.getIcons(['CreditCard', 'WalletCards'])
+const CreditCard = props.runtime.workbench.ui.getIcon('lucide.credit-card')
+const WalletCards = props.runtime.workbench.ui.getIcon('lucide.wallet-cards')
 
 onMounted(async () => {
   const provider = props.runtime.host.capabilities.subscriptions

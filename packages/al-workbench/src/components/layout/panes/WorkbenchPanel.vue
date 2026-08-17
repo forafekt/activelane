@@ -71,7 +71,7 @@ watch(
       <div class="wb-shell__bottom-panel-actions">
         <AlIconButton
           label="Close bottom pane"
-          :icon="runtime.workbench.ui.getIcon('X')"
+          :icon="runtime.workbench.ui.getIcon('lucide.x')"
           size="icon-xs"
           variant="ghost"
           @click="closeBottomPane"

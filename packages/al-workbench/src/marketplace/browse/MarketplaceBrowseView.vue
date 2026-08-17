@@ -7,7 +7,8 @@ import type { MarketplaceSortOption } from '../types/marketplace'
 const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
 const [AlButton, AlSelect] = props.runtime.workbench.ui.getComponents(['AlButton', 'AlSelect'])
-const [Search, X] = props.runtime.workbench.ui.getIcons(['Search', 'X'])
+const Search = props.runtime.workbench.ui.getIcon('lucide.search')
+const X = props.runtime.workbench.ui.getIcon('lucide.x')
 const sortOptions = [
   { label: 'Recommended', value: 'recommended' },
   { label: 'Recently updated', value: 'updated' },

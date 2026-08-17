@@ -1,3 +1,4 @@
+import type { IconReference } from '@activelane/icons'
 import type {
   WorkbenchApplicationMenuId,
   WorkbenchMenuItemKind,
@@ -86,7 +87,7 @@ export type WorkbenchStatusBarAlignment = 'left' | 'right'
 
 export interface WorkbenchStatusBarItemContribution extends WorkbenchContributionBase {
   alignment?: WorkbenchStatusBarAlignment
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   commandId?: string
   label?: string
   tooltip?: string
@@ -95,7 +96,7 @@ export interface WorkbenchStatusBarItemContribution extends WorkbenchContributio
 }
 
 export interface WorkbenchActivityContribution extends WorkbenchContributionBase {
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   badge?: WorkbenchBadge
   defaultSidebarViewId?: string
 }
@@ -141,13 +142,13 @@ export interface WorkbenchApplicationContribution extends WorkbenchContributionB
   name: string
   description?: string
   category?: string
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   keywords?: string[]
   launch: WorkbenchApplicationLaunch
 }
 
 export interface WorkbenchActionContribution extends WorkbenchContributionBase {
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   commandId: string
 }
 
@@ -159,7 +160,7 @@ export interface WorkbenchSidebarViewContribution extends WorkbenchContributionB
 }
 
 export interface WorkbenchBottomPaneContribution extends WorkbenchContributionBase {
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   component: WorkbenchComponent
   placement?: 'bottomPane'
 }
@@ -171,7 +172,7 @@ export interface WorkbenchCommandExecutionContext {
 }
 
 export interface WorkbenchCommandContribution extends WorkbenchContributionBase {
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   shortcut?: string
   secondaryShortcuts?: string[]
   category?: string
@@ -183,7 +184,7 @@ export interface WorkbenchCommandContribution extends WorkbenchContributionBase 
 
 export interface WorkbenchCommandPaletteContribution extends WorkbenchContributionBase {
   commandId: string
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   keywords?: string[]
   category?: string
   description?: string
@@ -230,7 +231,7 @@ export interface WorkbenchTabInput {
 
 export interface WorkbenchTab extends WorkbenchContributionBase {
   kind: string
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   surfaceId?: string
   surface?: WorkbenchSurfaceDescriptor
   closable: boolean
@@ -253,7 +254,7 @@ export interface OpenWorkbenchTabOptions {
   id?: string
   kind: string
   title: string
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   surfaceId?: string
   surface?: WorkbenchSurfaceDescriptor
   closable?: boolean
@@ -298,7 +299,7 @@ export interface WorkbenchMenuItemContribution extends WorkbenchContributionBase
   submenu?: WorkbenchApplicationMenuId
   commandId?: string
   group?: string
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   shortcut?: string
   nativeRole?: WorkbenchNativeMenuRole
   enablement?: string
@@ -318,6 +319,6 @@ export type WorkbenchTabAction = WorkbenchMenuItemContribution
 
 export interface WorkbenchSettingsPageContribution extends WorkbenchContributionBase {
   component: WorkbenchComponent
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   section?: string
 }

@@ -24,12 +24,10 @@ const [AlBadge, AlButton, AlCard, AlKeyValueList, AlSection, AlSectionHeader, Al
     'AlStatBlock',
   ])
 
-const [AlertCircle, Layers3, RefreshCcw, Sparkles] = props.runtime.workbench.ui.getIcons([
-  'AlertCircle',
-  'Layers3',
-  'RefreshCcw',
-  'Sparkles',
-])
+const AlertCircle = props.runtime.workbench.ui.getIcon('lucide.circle-alert')
+const Layers3 = props.runtime.workbench.ui.getIcon('lucide.layers-3')
+const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
+const Sparkles = props.runtime.workbench.ui.getIcon('lucide.sparkles')
 
 const marketplace = useMarketplace({ runtime: props.runtime })
 

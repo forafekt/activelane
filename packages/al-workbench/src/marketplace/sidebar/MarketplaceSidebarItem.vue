@@ -18,10 +18,8 @@ const [AlButton, AlDropdownMenu] = props.runtime.workbench.ui.getComponents([
   'AlButton',
   'AlDropdownMenu',
 ])
-const [BadgeCheck, MoreHorizontal] = props.runtime.workbench.ui.getIcons([
-  'BadgeCheck',
-  'MoreHorizontal',
-])
+const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide.badge-check')
+const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide.ellipsis')
 
 function priceLabel() {
   const paid = props.extension.plans

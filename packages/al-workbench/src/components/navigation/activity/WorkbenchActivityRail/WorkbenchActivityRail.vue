@@ -20,12 +20,10 @@ const [AlIconButton, ScrollArea] = runtime.workbench.ui.getComponents([
   'AlIconButton',
   'ScrollArea',
 ])
-const [ChevronLeft, ChevronRight, Plus, Settings] = runtime.workbench.ui.getIcons([
-  'ChevronLeft',
-  'ChevronRight',
-  'Plus',
-  'Settings',
-])
+const ChevronLeft = runtime.workbench.ui.getIcon('lucide.chevron-left')
+const ChevronRight = runtime.workbench.ui.getIcon('lucide.chevron-right')
+const Plus = runtime.workbench.ui.getIcon('lucide.plus')
+const Settings = runtime.workbench.ui.getIcon('lucide.settings')
 
 const activities = useWorkbenchActivities()
 const items = activities.items

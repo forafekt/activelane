@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getIcons } from '@activelane/icons'
+import { getIcon } from '@activelane/icons'
 import { AlBadge, AlButton } from '@activelane/shadcn'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useWorkbenchRuntime } from '../../composables/useWorkbenchRuntime'
@@ -10,7 +10,8 @@ import LauncherSearch from './LauncherSearch.vue'
 import LauncherSection from './LauncherSection.vue'
 import WorkspaceSwitcher from './WorkspaceSwitcher.vue'
 
-const [LayoutGrid, X] = getIcons(['LayoutGrid', 'X'])
+const LayoutGrid = getIcon('lucide.layout-grid')
+const X = getIcon('lucide.x')
 
 defineOptions({ name: 'LauncherOverlay' })
 

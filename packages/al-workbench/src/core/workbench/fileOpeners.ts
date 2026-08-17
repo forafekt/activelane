@@ -1,3 +1,4 @@
+import type { IconReference } from '@activelane/icons'
 import type { Disposable } from '../shared/types'
 import type { WorkbenchComponent } from './ui'
 
@@ -15,7 +16,7 @@ export interface FileOpenerContribution {
   label: string
   title?: string
   description?: string
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   extensions?: string[]
   mimeTypes?: string[]
   languages?: string[]
@@ -30,7 +31,7 @@ export interface ResolvedFileOpener {
   id: string
   label: string
   description?: string
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   source: 'builtin' | 'system' | 'extension'
   extensionId?: string
   command?: string

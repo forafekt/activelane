@@ -51,16 +51,13 @@ const {
   saveKeybinding,
 } = useWorkbenchSettingsViewModel()
 
-const [Braces, Filter, RotateCcw, Search, Settings2, Command, Keyboard] =
-  runtime.workbench.ui.getIcons([
-    'Braces',
-    'Filter',
-    'RotateCcw',
-    'Search',
-    'Settings2',
-    'Command',
-    'Keyboard',
-  ])
+const Braces = runtime.workbench.ui.getIcon('lucide.braces')
+const Filter = runtime.workbench.ui.getIcon('lucide.filter')
+const RotateCcw = runtime.workbench.ui.getIcon('lucide.rotate-ccw')
+const Search = runtime.workbench.ui.getIcon('lucide.search')
+const Settings2 = runtime.workbench.ui.getIcon('lucide.settings-2')
+const Command = runtime.workbench.ui.getIcon('lucide.command')
+const Keyboard = runtime.workbench.ui.getIcon('lucide.keyboard')
 </script>
 
 <template>

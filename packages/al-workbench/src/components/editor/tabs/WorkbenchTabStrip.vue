@@ -16,11 +16,9 @@ const props = defineProps<{
 
 const runtime = useWorkbenchRuntime()
 
-const [Ellipsis, SplitSquareHorizontal, SplitSquareVertical] = runtime.workbench.ui.getIcons([
-  'Ellipsis',
-  'SquareSplitHorizontal',
-  'SquareSplitVertical',
-])
+const Ellipsis = runtime.workbench.ui.getIcon('lucide.ellipsis')
+const SplitSquareHorizontal = runtime.workbench.ui.getIcon('lucide.square-split-horizontal')
+const SplitSquareVertical = runtime.workbench.ui.getIcon('lucide.square-split-vertical')
 
 const [AlDropdownMenu, AlIconButton, ScrollArea] = runtime.workbench.ui.getComponents([
   'AlDropdownMenu',

@@ -7,18 +7,18 @@ const props = defineProps<{
   runtime: WorkbenchRuntimeApi
   contributions: MarketplaceContributions
 }>()
-const icons = props.runtime.workbench.ui.getIcons([
-  'LayoutGrid',
-  'PanelLeft',
-  'PanelsTopLeft',
-  'PanelRight',
-  'PanelBottom',
-  'TerminalSquare',
-  'Menu',
-  'Settings2',
-  'Activity',
-  'AppWindow',
-])
+const icons = [
+  props.runtime.workbench.ui.getIcon('lucide.layout-grid'),
+  props.runtime.workbench.ui.getIcon('lucide.panel-left'),
+  props.runtime.workbench.ui.getIcon('lucide.panels-top-left'),
+  props.runtime.workbench.ui.getIcon('lucide.panel-right'),
+  props.runtime.workbench.ui.getIcon('lucide.panel-bottom'),
+  props.runtime.workbench.ui.getIcon('lucide.terminal-square'),
+  props.runtime.workbench.ui.getIcon('lucide.menu'),
+  props.runtime.workbench.ui.getIcon('lucide.settings-2'),
+  props.runtime.workbench.ui.getIcon('lucide.activity'),
+  props.runtime.workbench.ui.getIcon('lucide.app-window'),
+]
 const definitions: Array<{
   key: keyof MarketplaceContributions
   title: string

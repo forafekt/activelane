@@ -30,12 +30,10 @@ const editingInline = ref(false)
 const inlineName = ref('')
 const inlineInput = ref<HTMLInputElement | null>(null)
 
-const [ChevronDown, ChevronRight, Lock, Shield] = runtime.workbench.ui.getIcons([
-  'ChevronDown',
-  'ChevronRight',
-  'Lock',
-  'Shield',
-])
+const ChevronDown = runtime.workbench.ui.getIcon('lucide.chevron-down')
+const ChevronRight = runtime.workbench.ui.getIcon('lucide.chevron-right')
+const Lock = runtime.workbench.ui.getIcon('lucide.lock')
+const Shield = runtime.workbench.ui.getIcon('lucide.shield')
 const [
   ContextMenu,
   ContextMenuContent,

@@ -1,3 +1,4 @@
+import type { IconReference } from '@activelane/icons'
 import type { WorkbenchComponent } from '../workbench/ui'
 
 export type ActiveLaneRuntimePlatform = 'web' | 'desktop' | 'browser-extension'
@@ -79,7 +80,7 @@ export interface WorkbenchMenuCommandContribution extends WorkbenchMenuContribut
   menuId?: WorkbenchApplicationMenuId
   location?: string
   commandId: string
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   shortcut?: string
   secondaryShortcuts?: string[]
   nativeRole?: WorkbenchNativeMenuRole
@@ -112,7 +113,7 @@ export interface WorkbenchResolvedMenuCommandItem {
   visible: boolean
   group?: string
   order: number
-  icon?: WorkbenchComponent | string
+  icon?: WorkbenchComponent | IconReference
   shortcut?: string
   nativeRole?: WorkbenchNativeMenuRole
   checked?: boolean

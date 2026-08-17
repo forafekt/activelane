@@ -8,7 +8,7 @@ defineOptions({ name: 'WorkbenchSidebar' })
 
 const runtime = useWorkbenchRuntime()
 
-const ChevronsUpDown = runtime.workbench.ui.getIcon('ChevronsUpDown')
+const ChevronsUpDown = runtime.workbench.ui.getIcon('lucide.chevrons-up-down')
 
 const [
   AlEmptyState,

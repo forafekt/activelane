@@ -13,12 +13,10 @@ const [AlBadge, AlButton, AlInput] = props.runtime.workbench.ui.getComponents([
   'AlButton',
   'AlInput',
 ])
-const [CheckCircle2, Search, Settings2, Trash2] = props.runtime.workbench.ui.getIcons([
-  'CheckCircle2',
-  'Search',
-  'Settings2',
-  'Trash2',
-])
+const CheckCircle2 = props.runtime.workbench.ui.getIcon('lucide.circle-check-big')
+const Search = props.runtime.workbench.ui.getIcon('lucide.search')
+const Settings2 = props.runtime.workbench.ui.getIcon('lucide.settings-2')
+const Trash2 = props.runtime.workbench.ui.getIcon('lucide.trash-2')
 const installed = computed(() =>
   marketplace.installedExtensions.value.filter((item) =>
     `${item.displayName} ${item.publisher.displayName}`

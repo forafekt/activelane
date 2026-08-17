@@ -8,13 +8,11 @@ import WorkbenchTabIndicator from './WorkbenchTabIndicator.vue'
 defineOptions({ name: 'WorkbenchTabItem' })
 
 const runtime = useWorkbenchRuntime()
-const [Lock, Pin, Shield, Snowflake, X] = runtime.workbench.ui.getIcons([
-  'Lock',
-  'Pin',
-  'Shield',
-  'Snowflake',
-  'X',
-])
+const Lock = runtime.workbench.ui.getIcon('lucide.lock')
+const Pin = runtime.workbench.ui.getIcon('lucide.pin')
+const Shield = runtime.workbench.ui.getIcon('lucide.shield')
+const Snowflake = runtime.workbench.ui.getIcon('lucide.snowflake')
+const X = runtime.workbench.ui.getIcon('lucide.x')
 const [AlIconButton, ContextMenu, ContextMenuTrigger] = runtime.workbench.ui.getComponents([
   'AlIconButton',
   'ContextMenu',

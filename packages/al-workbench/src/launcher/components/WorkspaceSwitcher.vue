@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { getIcon, getIcons } from '@activelane/icons'
+import { getIcon } from '@activelane/icons'
 import { AlButton } from '@activelane/shadcn'
 import { useWorkspaceSwitcher } from '../composables/useWorkspaceSwitcher'
 
-const [Check, Plus] = getIcons(['Check', 'Plus'])
+const Check = getIcon('lucide.check')
+const Plus = getIcon('lucide.plus')
 
 defineOptions({ name: 'WorkspaceSwitcher' })
 

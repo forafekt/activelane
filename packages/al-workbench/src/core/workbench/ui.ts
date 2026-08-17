@@ -1,3 +1,4 @@
+import type { IconReference } from '@activelane/icons'
 import type { Disposable } from '../shared/types'
 
 // Opaque UI handles owned by integration packages. The core runtime stores and
@@ -14,12 +15,9 @@ export type WorkbenchUI = {
   getComponents: <const N extends readonly string[]>(
     names: N,
   ) => WorkbenchUIBulkResult<N, WorkbenchComponent>
-  getIcon: (name: string) => WorkbenchIcon | undefined
-  getIcons: <const N extends readonly string[]>(names: N) => WorkbenchUIBulkResult<N, WorkbenchIcon>
+  getIcon: (name: IconReference) => WorkbenchIcon | undefined
   registerComponent: (name: string, component: WorkbenchComponent) => Disposable
-  registerIcon: (name: string, component: WorkbenchIcon) => Disposable
   registerComponents: (entries: [name: string, component: WorkbenchComponent][]) => Disposable
-  registerIcons: (entries: [name: string, component: WorkbenchIcon][]) => Disposable
 }
 
 export function createWorkbenchUIBulkResult<const N extends readonly string[], T>(
@@ -39,7 +37,6 @@ export function createWorkbenchUIBulkResult<const N extends readonly string[], T
 
 export function createWorkbenchUI(overrides: Partial<WorkbenchUI> = {}): WorkbenchUI {
   const components = new Map<string, WorkbenchComponent>()
-  const icons = new Map<string, WorkbenchIcon>()
 
   const removeFrom = <T>(map: Map<string, T>, names: string[]): Disposable => ({
     dispose() {
@@ -58,33 +55,17 @@ export function createWorkbenchUI(overrides: Partial<WorkbenchUI> = {}): Workben
     },
     getComponents: (names) => createWorkbenchUIBulkResult(names, (name) => base.getComponent(name)),
     getIcon: (name) => {
-      const icon = icons.get(name)
-      if (!icon) {
-        console.error(`Could not find icon: ${name}`)
-        return
-      }
-      return icon
+      console.error(`No icon renderer is configured for: ${name}`)
+      return undefined
     },
-    getIcons: (names) => createWorkbenchUIBulkResult(names, (name) => base.getIcon(name)),
     registerComponent(name, component) {
       components.set(name, component)
       return removeFrom(components, [name])
-    },
-    registerIcon(name, component) {
-      icons.set(name, component)
-      return removeFrom(icons, [name])
     },
     registerComponents(entries) {
       for (const [name, component] of entries) components.set(name, component)
       return removeFrom(
         components,
-        entries.map(([name]) => name),
-      )
-    },
-    registerIcons(entries) {
-      for (const [name, component] of entries) icons.set(name, component)
-      return removeFrom(
-        icons,
         entries.map(([name]) => name),
       )
     },

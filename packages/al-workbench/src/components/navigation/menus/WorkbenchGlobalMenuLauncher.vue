@@ -202,7 +202,7 @@ onBeforeUnmount(() => {
     <DropdownMenuTrigger as-child>
       <AlIconButton
         label="Workbench menu"
-        :icon="runtime.workbench.ui.getIcon('Menu')"
+        :icon="runtime.workbench.ui.getIcon('lucide.menu')"
         size="icon"
         variant="ghost"
       />

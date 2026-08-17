@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getIcons } from '@activelane/icons'
+import { getIcon } from '@activelane/icons'
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -16,7 +16,8 @@ import {
 import { cn } from '../../lib/utils'
 import { menuItemClass } from '../../lib/variants'
 
-const [Check, ChevronRight] = getIcons(['Check', 'ChevronRight'])
+const Check = getIcon('lucide.check')
+const ChevronRight = getIcon('lucide.chevron-right')
 
 defineOptions({ name: 'AlDropdownMenu' })
 

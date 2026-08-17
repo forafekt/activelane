@@ -3,7 +3,7 @@ import { getIcon } from '@activelane/icons'
 import type { SelectOption } from '../../componentTypes'
 import { cn } from '../../lib/utils'
 
-const ChevronDown = getIcon('ChevronDown')
+const ChevronDown = getIcon('lucide.chevron-down')
 
 defineOptions({ name: 'AlSelect' })
 

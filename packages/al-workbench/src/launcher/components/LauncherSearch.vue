@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
 
-const Search = getIcon('Search')
+const Search = getIcon('lucide.search')
 
 defineOptions({ name: 'LauncherSearch' })
 

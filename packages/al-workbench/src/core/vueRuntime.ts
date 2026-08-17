@@ -38,8 +38,6 @@ export function createVueWorkbenchUI(overrides: Partial<WorkbenchUI> = {}): Part
     getComponent: (name) => getVueComponent(name as ShadcnName),
     getComponents: getComponentsForWorkbench,
     getIcon: (name) => getIcon(name) as WorkbenchIcon | undefined,
-    getIcons: (names) =>
-      createWorkbenchUIBulkResult(names, (name) => getIcon(name) as WorkbenchIcon | undefined),
     ...overrides,
   }
 }

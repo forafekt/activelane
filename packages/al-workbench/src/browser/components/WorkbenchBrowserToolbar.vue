@@ -13,14 +13,16 @@ import {
 
 defineOptions({ name: 'WorkbenchBrowserToolbar' })
 
-const Copy = getIcon('Copy')
-const ExternalLink = getIcon('ExternalLink')
-const Home = getIcon('House')
-const MoreHorizontal = getIcon('MoreHorizontal')
-const Plus = getIcon('Plus')
-const RotateCcw = getIcon('RotateCcw')
-const Trash2 = getIcon('Trash2')
-const X = getIcon('X')
+const Copy = getIcon('lucide.copy')
+const ArrowLeft = getIcon('lucide.arrow-left')
+const ArrowRight = getIcon('lucide.arrow-right')
+const ExternalLink = getIcon('lucide.external-link')
+const Home = getIcon('lucide.house')
+const MoreHorizontal = getIcon('lucide.ellipsis')
+const Plus = getIcon('lucide.plus')
+const RotateCcw = getIcon('lucide.rotate-ccw')
+const Trash2 = getIcon('lucide.trash-2')
+const X = getIcon('lucide.x')
 
 defineProps<{
   address: string
@@ -50,7 +52,7 @@ const emit = defineEmits<{
   <form class="browser-toolbar" @submit.prevent="emit('navigate')">
     <AlIconButton
       label="Back"
-      :icon="getIcon('ArrowLeft')"
+      :icon="ArrowLeft"
       size="icon-sm"
       variant="ghost"
       :disabled="!canGoBack"
@@ -58,7 +60,7 @@ const emit = defineEmits<{
     />
     <AlIconButton
       label="Forward"
-      :icon="getIcon('ArrowRight')"
+      :icon="ArrowRight"
       size="icon-sm"
       variant="ghost"
       :disabled="!canGoForward"

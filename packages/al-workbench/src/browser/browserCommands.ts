@@ -18,7 +18,7 @@ function command(
   id: string,
   title: string,
   run: (context: WorkbenchCommandExecutionContext) => MaybePromise<void>,
-  icon = getIcon('globe'),
+  icon = getIcon('lucide.globe'),
   shortcut?: string,
 ): WorkbenchCommandContribution {
   return { id, title, category: 'Browser', icon, run, shortcut }
@@ -43,7 +43,7 @@ export function createBrowserCommands(): WorkbenchCommandContribution[] {
           DEFAULT_BROWSER_HOME_URL
         openWorkbenchBrowser(runtime, { url: homeUrl, preview: false })
       },
-      getIcon('Plus'),
+      getIcon('lucide.plus'),
       'Mod+T',
     ),
     command('workbench.browser.openUrl', 'Browser: Open URL', (context) => {
@@ -64,7 +64,7 @@ export function createBrowserCommands(): WorkbenchCommandContribution[] {
           DEFAULT_BROWSER_HOME_URL
         navigateBrowserTab(runtime, homeUrl)
       },
-      getIcon('House'),
+      getIcon('lucide.house'),
     ),
     command('workbench.browser.openLocalhost', 'Browser: Open Localhost', (context) => {
       const value = 'localhost:5173'
@@ -91,7 +91,7 @@ export function createBrowserCommands(): WorkbenchCommandContribution[] {
         }))
         postActiveBrowserMessage(runtime, { type: 'workbench-browser:reload' })
       },
-      getIcon('RotateCcw'),
+      getIcon('lucide.rotate-ccw'),
       'Mod+R',
     ),
     command(
@@ -100,7 +100,7 @@ export function createBrowserCommands(): WorkbenchCommandContribution[] {
       ({ runtime }) => {
         postActiveBrowserMessage(runtime, { type: 'workbench-browser:stop' })
       },
-      getIcon('X'),
+      getIcon('lucide.x'),
     ),
     command(
       'workbench.browser.back',
@@ -108,7 +108,7 @@ export function createBrowserCommands(): WorkbenchCommandContribution[] {
       ({ runtime }) => {
         postActiveBrowserMessage(runtime, { type: 'workbench-browser:back' })
       },
-      getIcon('ArrowLeft'),
+      getIcon('lucide.arrow-left'),
       'Alt+Left',
     ),
     command(
@@ -117,7 +117,7 @@ export function createBrowserCommands(): WorkbenchCommandContribution[] {
       ({ runtime }) => {
         postActiveBrowserMessage(runtime, { type: 'workbench-browser:forward' })
       },
-      getIcon('ArrowRight'),
+      getIcon('lucide.arrow-right'),
       'Alt+Right',
     ),
     command(
@@ -128,7 +128,7 @@ export function createBrowserCommands(): WorkbenchCommandContribution[] {
         if (!tab) return
         window.open(tab.input.url, '_blank', 'noopener,noreferrer')
       },
-      getIcon('ExternalLink'),
+      getIcon('lucide.external-link'),
     ),
     command(
       'workbench.browser.duplicate',
@@ -144,7 +144,7 @@ export function createBrowserCommands(): WorkbenchCommandContribution[] {
           preview: false,
         })
       },
-      getIcon('Copy'),
+      getIcon('lucide.copy'),
     ),
     command(
       'workbench.browser.clearStorage',
@@ -163,7 +163,7 @@ export function createBrowserCommands(): WorkbenchCommandContribution[] {
           tone: 'info',
         })
       },
-      getIcon('Trash2'),
+      getIcon('lucide.trash-2'),
     ),
   ]
 }
