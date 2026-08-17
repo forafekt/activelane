@@ -6,6 +6,7 @@ import type {
 } from '../extensions/types'
 import type { ActiveLaneHostKind } from '../runtime/context'
 import type { ActiveLaneServerRuntime } from '../serverRuntime'
+import type { WorkbenchSubscriptionProvider } from '../entitlements/types'
 
 export interface WorkbenchStorageScope {
   get: <T>(key: string) => Promise<T | undefined>
@@ -101,7 +102,21 @@ export interface WorkbenchHostCapabilities {
   }
   network?: {
     fetch?: typeof fetch
+    request?: (request: {
+      method: string
+      url: string
+      headers?: Record<string, string>
+      body?: string
+    }) => Promise<{
+      status: number
+      statusText: string
+      durationMs: number
+      sizeBytes: number
+      headers: Record<string, string[]>
+      body: string
+    }>
   }
+  subscriptions?: WorkbenchSubscriptionProvider
   extensions?: {
     listInstalled?: () => Promise<InstalledExtensionRecord[]>
     install?: (

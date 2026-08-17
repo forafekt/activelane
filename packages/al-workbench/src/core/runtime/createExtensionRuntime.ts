@@ -60,6 +60,7 @@ import { createWorkbenchUI } from '../workbench/ui'
 import type { ActiveLaneRuntimeContext } from './context'
 import { createRuntimeContext } from './context'
 import { createExplorerService } from './createExplorerService'
+import { createEntitlementService } from '../entitlements/createEntitlementService'
 import { createSettingsService, normalizeManifestSettings } from './createSettingsService'
 import { createThemeService } from './createThemeService'
 import { createWorkbenchStore } from './createWorkbenchStore'
@@ -158,6 +159,7 @@ export async function createExtensionRuntime(
   const explorerStorage =
     options.host.capabilities.storage?.scope('workbench.explorer') ?? createMemoryStorageScope()
   const explorer = await createExplorerService(explorerStorage, reactivity)
+  const entitlements = createEntitlementService(options.host.capabilities.subscriptions)
   const fileOpenerStorage =
     options.host.capabilities.storage?.scope('workbench.fileOpeners') ?? createMemoryStorageScope()
   const ui = createWorkbenchUI(options.ui)
@@ -902,6 +904,7 @@ export async function createExtensionRuntime(
     fileOpeners,
     capabilities: rootCapabilities,
     explorer,
+    entitlements,
     registry,
     extensions: {
       records,
@@ -1016,6 +1019,8 @@ export async function createExtensionRuntime(
         const definition = definitions.get(extensionId)
         if (!record || !definition || !record.installed || !record.enabled || record.active) return
 
+		await entitlements.refresh(extensionId).catch(() => undefined)
+
         const registrar = createRegistrar(extensionId)
         const dynamicDisposables: Disposable[] = []
         const context: WorkbenchExtensionContext = {
@@ -1029,6 +1034,7 @@ export async function createExtensionRuntime(
           commands: runtime.commands,
           capabilities: createCapabilityService(extensionId),
           explorer,
+          entitlements: entitlements.forExtension(extensionId),
           runtime: runtime as WorkbenchRuntimeApi,
           contribute: {
             activityRail: (...items: WorkbenchActivityContribution[]) =>
@@ -1183,6 +1189,7 @@ export async function createExtensionRuntime(
           commands: runtime.commands,
           capabilities: createCapabilityService(extensionId),
           explorer,
+          entitlements: entitlements.forExtension(extensionId),
           runtime: runtime as WorkbenchRuntimeApi,
           contribute: createRegistrar(extensionId),
         })

@@ -69,6 +69,23 @@ func TestSearchPreservesSourceAndPartialFailure(t *testing.T) {
 	}
 }
 
+func TestSearchHidesExtensionsOutsideRegistryNamespaceRoutes(t *testing.T) {
+	service, _ := serviceFixture(t)
+	config, err := registryconfig.Load(service.configPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	config.Registries[0].Scopes = []string{"other"}
+	if err := registryconfig.Save(service.configPath, config); err != nil {
+		t.Fatal(err)
+	}
+
+	response := service.Search(context.Background(), "example")
+	if response.Error != nil || len(response.Items) != 0 {
+		t.Fatalf("items: %+v error: %+v", response.Items, response.Error)
+	}
+}
+
 func TestInstallEnableDisableRestartAndUninstall(t *testing.T) {
 	service, installRoot := serviceFixture(t)
 	installed := service.Install(context.Background(), "local", "@local/example", "1.0.0")

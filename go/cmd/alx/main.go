@@ -380,6 +380,13 @@ func publish(args []string, out io.Writer) error {
 	if e != nil {
 		return e
 	}
+	owner, e := c.Resolve(inspection.Manifest.Publisher)
+	if e != nil {
+		return fmt.Errorf("cannot publish %s: %w", inspection.Manifest.ID, e)
+	}
+	if owner.ID != r.ID {
+		return fmt.Errorf("cannot publish %s to registry %q: namespace %q is routed to registry %q", inspection.Manifest.ID, r.ID, inspection.Manifest.Publisher, owner.ID)
+	}
 	f, e := os.Open(fs.Arg(0))
 	if e != nil {
 		return e

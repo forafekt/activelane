@@ -1,10 +1,10 @@
 import type { WorkbenchExtensionCatalogEntry } from '../core/extensions/types'
 
-import { createWorkbenchBrowserContribution } from './browser'
+// import { createWorkbenchBrowserContribution } from './browser'
 import { createWorkbenchCoreContribution } from './core'
 import { createWorkbenchExplorerContribution } from './explorer'
 import { createWorkbenchFileContribution } from './file'
-import { createWorkbenchServersContribution } from './servers'
+// import { createWorkbenchServersContribution } from './servers'
 
 export function createWorkbenchBuiltinExtensions(): WorkbenchExtensionCatalogEntry[] {
   return [
@@ -20,14 +20,14 @@ export function createWorkbenchBuiltinExtensions(): WorkbenchExtensionCatalogEnt
       definition: createWorkbenchFileContribution(),
       source: 'builtin',
     },
-    {
-      definition: createWorkbenchBrowserContribution(),
-      source: 'builtin',
-    },
-    {
-      definition: createWorkbenchServersContribution(),
-      source: 'builtin',
-    },
+    // {
+    //   definition: createWorkbenchBrowserContribution(),
+    //   source: 'builtin',
+    // },
+    // {
+    //   definition: createWorkbenchServersContribution(),
+    //   source: 'builtin',
+    // },
   ]
 }
 

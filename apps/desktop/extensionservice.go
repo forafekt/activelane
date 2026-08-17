@@ -94,6 +94,10 @@ func (service *ExtensionService) Search(ctx context.Context, query string) Searc
 		}
 
 		for _, extension := range extensions {
+			owner, routeErr := config.Resolve(extension.Publisher)
+			if routeErr != nil || owner.ID != source.ID {
+				continue
+			}
 			if item, ok := mapSearchExtension(source.ID, displayName, extension); ok {
 				response.Items = append(response.Items, item)
 			}

@@ -53,6 +53,9 @@ func PackDir(root, output string) (Inspection, error) {
 			return err
 		}
 		rel = filepath.ToSlash(rel)
+		if d.IsDir() && (rel == "node_modules" || rel == ".git" || strings.HasPrefix(rel, "node_modules/") || strings.HasPrefix(rel, ".git/")) {
+			return filepath.SkipDir
+		}
 		if d.Type()&os.ModeSymlink != 0 {
 			return fmt.Errorf("symlink not allowed: %s", rel)
 		}

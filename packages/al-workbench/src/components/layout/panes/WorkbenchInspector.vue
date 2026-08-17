@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 import type { WorkbenchTab } from '../../../core/workbench/contributions'
 import type { WorkbenchLayoutNode } from '../../../core/workbench/shell'
+import WorkbenchExtensionBoundary from '../WorkbenchExtensionBoundary.vue'
 
 import InspectorPanel from './InspectorPanel.vue'
 

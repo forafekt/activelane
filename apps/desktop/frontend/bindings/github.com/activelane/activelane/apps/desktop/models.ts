@@ -240,6 +240,93 @@ export class InstalledResponse {
     }
 }
 
+export class NetworkRequest {
+    "method": string;
+    "url": string;
+    "headers": { [_ in string]?: string };
+    "body": string;
+
+    /** Creates a new NetworkRequest instance. */
+    constructor($$source: Partial<NetworkRequest> = {}) {
+        if (!("method" in $$source)) {
+            this["method"] = "";
+        }
+        if (!("url" in $$source)) {
+            this["url"] = "";
+        }
+        if (!("headers" in $$source)) {
+            this["headers"] = {};
+        }
+        if (!("body" in $$source)) {
+            this["body"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new NetworkRequest instance from a string or object.
+     */
+    static createFrom($$source: any = {}): NetworkRequest {
+        const $$createField2_0 = $$createType6;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("headers" in $$parsedSource) {
+            $$parsedSource["headers"] = $$createField2_0($$parsedSource["headers"]);
+        }
+        return new NetworkRequest($$parsedSource as Partial<NetworkRequest>);
+    }
+}
+
+export class NetworkResponse {
+    "status": number;
+    "statusText": string;
+    "durationMs": number;
+    "sizeBytes": number;
+    "headers": { [_ in string]?: string[] };
+    "body": string;
+    "error"?: DesktopError | null;
+
+    /** Creates a new NetworkResponse instance. */
+    constructor($$source: Partial<NetworkResponse> = {}) {
+        if (!("status" in $$source)) {
+            this["status"] = 0;
+        }
+        if (!("statusText" in $$source)) {
+            this["statusText"] = "";
+        }
+        if (!("durationMs" in $$source)) {
+            this["durationMs"] = 0;
+        }
+        if (!("sizeBytes" in $$source)) {
+            this["sizeBytes"] = 0;
+        }
+        if (!("headers" in $$source)) {
+            this["headers"] = {};
+        }
+        if (!("body" in $$source)) {
+            this["body"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new NetworkResponse instance from a string or object.
+     */
+    static createFrom($$source: any = {}): NetworkResponse {
+        const $$createField4_0 = $$createType8;
+        const $$createField6_0 = $$createType3;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("headers" in $$parsedSource) {
+            $$parsedSource["headers"] = $$createField4_0($$parsedSource["headers"]);
+        }
+        if ("error" in $$parsedSource) {
+            $$parsedSource["error"] = $$createField6_0($$parsedSource["error"]);
+        }
+        return new NetworkResponse($$parsedSource as Partial<NetworkResponse>);
+    }
+}
+
 export class RegistryFailure {
     "registryId": string;
     "registryDisplayName": string;
@@ -319,8 +406,8 @@ export class RegistryStatus {
      * Creates a new RegistryStatus instance from a string or object.
      */
     static createFrom($$source: any = {}): RegistryStatus {
-        const $$createField6_0 = $$createType6;
-        const $$createField8_0 = $$createType7;
+        const $$createField6_0 = $$createType7;
+        const $$createField8_0 = $$createType9;
         const $$createField9_0 = $$createType3;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("scopes" in $$parsedSource) {
@@ -361,7 +448,7 @@ export class RegistryStatusResponse {
      * Creates a new RegistryStatusResponse instance from a string or object.
      */
     static createFrom($$source: any = {}): RegistryStatusResponse {
-        const $$createField0_0 = $$createType9;
+        const $$createField0_0 = $$createType11;
         const $$createField3_0 = $$createType3;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("registries" in $$parsedSource) {
@@ -481,8 +568,8 @@ export class SearchResponse {
      * Creates a new SearchResponse instance from a string or object.
      */
     static createFrom($$source: any = {}): SearchResponse {
-        const $$createField0_0 = $$createType11;
-        const $$createField1_0 = $$createType13;
+        const $$createField0_0 = $$createType13;
+        const $$createField1_0 = $$createType15;
         const $$createField4_0 = $$createType3;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("items" in $$parsedSource) {
@@ -505,11 +592,13 @@ const $$createType2 = DesktopError.createFrom;
 const $$createType3 = $Create.Nullable($$createType2);
 const $$createType4 = $Create.Map($Create.Any, $Create.Any);
 const $$createType5 = $Create.Array($$createType0);
-const $$createType6 = $Create.Array($Create.Any);
-const $$createType7 = $Create.Map($Create.Any, $Create.Any);
-const $$createType8 = RegistryStatus.createFrom;
-const $$createType9 = $Create.Array($$createType8);
-const $$createType10 = SearchExtension.createFrom;
+const $$createType6 = $Create.Map($Create.Any, $Create.Any);
+const $$createType7 = $Create.Array($Create.Any);
+const $$createType8 = $Create.Map($Create.Any, $$createType7);
+const $$createType9 = $Create.Map($Create.Any, $Create.Any);
+const $$createType10 = RegistryStatus.createFrom;
 const $$createType11 = $Create.Array($$createType10);
-const $$createType12 = RegistryFailure.createFrom;
+const $$createType12 = SearchExtension.createFrom;
 const $$createType13 = $Create.Array($$createType12);
+const $$createType14 = RegistryFailure.createFrom;
+const $$createType15 = $Create.Array($$createType14);

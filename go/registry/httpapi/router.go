@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/activelane/activelane/go/alx"
 	"github.com/activelane/activelane/go/registry"
@@ -25,12 +26,22 @@ type Store interface {
 	SetYanked(namespace, name, version string, yanked bool) (registry.Version, error)
 }
 
+type SubscriptionStore interface {
+	Plans(namespace, name string) ([]alx.SubscriptionPlan, error)
+	GetSubscription(accountID, extensionID string) (registry.Subscription, error)
+	SaveSubscription(subscription registry.Subscription) error
+	ResolveEntitlements(accountID, namespace, name string) (registry.EntitlementResolution, error)
+}
+
 type Config struct {
-	Store           Store
-	RegistryID      string
-	DisplayName     string
-	AllowPublish    bool
-	MaxPublishBytes int64
+	Store                Store
+	RegistryID           string
+	DisplayName          string
+	AllowPublish         bool
+	MaxPublishBytes      int64
+	SubscriptionProvider registry.SubscriptionProvider
+	SubscriptionStore    SubscriptionStore
+	Now                  func() time.Time
 }
 
 type handlers struct {
@@ -41,6 +52,9 @@ func NewRouter(config Config) http.Handler {
 	if config.MaxPublishBytes <= 0 {
 		config.MaxPublishBytes = DefaultMaxPublishBytes
 	}
+	if config.SubscriptionStore == nil {
+		config.SubscriptionStore, _ = config.Store.(SubscriptionStore)
+	}
 
 	handlers := handlers{config: config}
 	router := chi.NewRouter()
@@ -48,6 +62,7 @@ func NewRouter(config Config) http.Handler {
 	router.Use(exposeRequestID)
 	router.Use(recoverPanics)
 	router.Use(securityHeaders)
+	router.Use(localDevelopmentCORS)
 	router.NotFound(notFound)
 	router.MethodNotAllowed(methodNotAllowed)
 
@@ -63,6 +78,16 @@ func NewRouter(config Config) http.Handler {
 		router.Get("/{namespace}/{name}/versions/{version}/package", handlers.downloadPackage)
 		router.Post("/{namespace}/{name}/versions/{version}/yank", handlers.yankVersion)
 		router.Delete("/{namespace}/{name}/versions/{version}/yank", handlers.restoreVersion)
+		router.Get("/{namespace}/{name}/plans", handlers.listPlans)
+	})
+
+	router.Route("/v1/accounts/{accountId}/extensions/{namespace}/{name}", func(router chi.Router) {
+		router.Get("/subscription", handlers.getSubscription)
+		router.Post("/subscription", handlers.subscribe)
+		router.Put("/subscription/plan", handlers.changePlan)
+		router.Post("/subscription/cancel", handlers.cancelSubscription)
+		router.Post("/subscription/resume", handlers.resumeSubscription)
+		router.Get("/entitlements", handlers.resolveEntitlements)
 	})
 
 	return router

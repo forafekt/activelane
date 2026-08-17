@@ -8,6 +8,7 @@ import type {
   WorkbenchNotificationOptions,
   WorkbenchRegistrySearchResponse,
   WorkbenchRegistryStatusResponse,
+  WorkbenchSubscriptionProvider,
 } from '@activelane/workbench'
 import { Clipboard, Dialogs, System, Window as WailsWindow } from '@wailsio/runtime'
 import {
@@ -19,6 +20,7 @@ import {
   Search as SearchRegistries,
   Uninstall as UninstallExtension,
 } from '../../bindings/github.com/activelane/activelane/apps/desktop/extensionservice'
+import { Request as NativeNetworkRequest } from '../../bindings/github.com/activelane/activelane/apps/desktop/networkservice'
 import type {
   DesktopError,
   InstalledExtension,
@@ -77,6 +79,37 @@ export async function getPlatform() {
 
 export const workbenchWindow = WailsWindow
 
+function subscriptionEndpoint(extensionId: string, suffix: string) {
+  const match = extensionId.match(/^@([^/]+)\/(.+)$/)
+  if (!match) throw new Error(`Invalid extension identity: ${extensionId}`)
+  return `http://127.0.0.1:8787/v1/accounts/local-development/extensions/${encodeURIComponent(match[1] ?? '')}/${encodeURIComponent(match[2] ?? '')}${suffix}`
+}
+
+function createRegistrySubscriptionProvider(): WorkbenchSubscriptionProvider {
+  const request = async <T>(extensionId: string, suffix: string, init?: RequestInit) => {
+    const response = await NativeNetworkRequest({
+      method: init?.method ?? 'GET',
+      url: subscriptionEndpoint(extensionId, suffix),
+      headers: { 'content-type': 'application/json' },
+      body: typeof init?.body === 'string' ? init.body : '',
+    })
+    throwNativeError(response.error)
+    if (response.status === 404 && !init) return undefined as T
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(response.body || `Registry returned ${response.status}.`)
+    }
+    return JSON.parse(response.body) as T
+  }
+  return {
+    getSubscription: (extensionId) => request(extensionId, '/subscription'),
+    subscribe: (extensionId, planId) => request(extensionId, '/subscription', { method: 'POST', body: JSON.stringify({ planId }) }),
+    changePlan: (extensionId, planId) => request(extensionId, '/subscription/plan', { method: 'PUT', body: JSON.stringify({ planId }) }),
+    cancel: (extensionId) => request(extensionId, '/subscription/cancel', { method: 'POST', body: '{}' }),
+    resume: (extensionId) => request(extensionId, '/subscription/resume', { method: 'POST', body: '{}' }),
+    resolveEntitlements: (extensionId) => request(extensionId, '/entitlements'),
+  }
+}
+
 export function createNativeCapabilities(): WorkbenchHostCapabilities {
   return {
     lifecycle: { closeWindow: () => workbenchWindow.Close() },
@@ -104,7 +137,26 @@ export function createNativeCapabilities(): WorkbenchHostCapabilities {
       readText: () => Clipboard.Text(),
       writeText: (value) => Clipboard.SetText(value),
     },
-    network: { fetch: (input, init) => fetch(input, init) },
+    network: {
+      request: async (input) => {
+        const response = await NativeNetworkRequest({
+          method: input.method,
+          url: input.url,
+          headers: input.headers ?? {},
+          body: input.body ?? '',
+        })
+        throwNativeError(response.error)
+        return {
+          status: response.status,
+          statusText: response.statusText,
+          durationMs: response.durationMs,
+          sizeBytes: response.sizeBytes,
+          headers: Object.fromEntries(Object.entries(response.headers).filter((entry): entry is [string, string[]] => Array.isArray(entry[1]))),
+          body: response.body,
+        }
+      },
+    },
+    subscriptions: createRegistrySubscriptionProvider(),
     registry: {
       status: async () => {
         const response = await RegistryStatuses()

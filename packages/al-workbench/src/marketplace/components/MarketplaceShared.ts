@@ -36,7 +36,7 @@ export function statusTone(
 }
 
 function isIconSvgFile(value: string) {
-  return !isIconSvgRemoteUrl(value) && value.endsWith('.svg')
+  return (value.startsWith('/') || value.startsWith('data:')) && value.endsWith('.svg')
 }
 function isIconSvgRemoteUrl(value: string) {
   return value.startsWith('http')
@@ -55,43 +55,20 @@ export function extensionIcon(extension: MarketplaceExtension): Component {
     if (isIconSvgRemoteUrl(extension.icon)) {
       return defineComponent({
         render() {
-          // is darkmode?
-
-          const isDark = document.documentElement.classList.contains('dark')
-
           return h('img', {
-            is: 'img',
             src: extension.icon,
-
-            // inherit color
-            style: {
-              filter: isDark
-                ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(180deg)'
-                : undefined,
-            },
+            alt: '',
+            loading: 'lazy',
           })
         },
       })
     }
 
-    // return extension.icon
-    // ensure irst letter uppercase
     const fallback = getIcon(extension.icon)
-
     if (fallback) return fallback
-    throw new Error(`Could not find icon for extension ${extension.id}`)
   }
 
-  // throw new Error(`No icon found for extension ${extension.id}`)
-  return getIcon('puzzle')
-
-  // if (extension.status === 'disabled') return Layers3
-  // if (extension.status === 'error') return AlertCircle
-  // if (extension.status === 'update-available') return RefreshCcw
-  // if (extension.featured) return Star
-  // if (extension.recommended) return Sparkles
-  // if (extension.installState === 'installed') return Check
-  // return Layers3
+  return getIcon('Puzzle')
 }
 
 export function primaryAction(extension: MarketplaceExtension) {
@@ -104,7 +81,7 @@ export function primaryAction(extension: MarketplaceExtension) {
   if (extension.updateAvailable)
     return { label: 'Update', action: 'update' as const, variant: 'secondary' as const }
   if (extension.status === 'enabled')
-    return { label: 'Disable', action: 'disable' as const, variant: 'outline' as const }
+    return { label: 'Open', action: 'open' as const, variant: 'default' as const }
   if (extension.status === 'error')
     return { label: 'Settings', action: 'settings' as const, variant: 'outline' as const }
   return { label: 'Manage', action: 'details' as const, variant: 'outline' as const }

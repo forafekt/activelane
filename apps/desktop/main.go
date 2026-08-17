@@ -14,6 +14,7 @@ var assets embed.FS
 func main() {
 	workspaceService := NewWorkspaceService()
 	extensionService := NewExtensionService()
+	networkService := NewNetworkService()
 
 	app := application.New(application.Options{
 		Name:        "ActiveLane",
@@ -21,6 +22,7 @@ func main() {
 		Services: []application.Service{
 			application.NewService(workspaceService),
 			application.NewService(extensionService),
+			application.NewService(networkService),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),

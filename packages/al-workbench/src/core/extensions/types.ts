@@ -26,6 +26,7 @@ import type {
 import type { WorkbenchContributionRegistrar, WorkbenchShellApi } from '../workbench/shell'
 import type { WorkbenchTabSurfaceContribution } from '../workbench/surfaces'
 import type { WorkbenchThemeContribution } from '../workbench/themes'
+import type { WorkbenchExtensionEntitlements } from '../entitlements/types'
 
 export interface WorkbenchMarketplaceEntry {
   categories?: string[]
@@ -33,6 +34,31 @@ export interface WorkbenchMarketplaceEntry {
   keywords?: string[]
   longDescription?: string
   screenshots?: Array<{ title: string; src: string }>
+}
+
+export interface WorkbenchSubscriptionPlan {
+  id: string
+  name: string
+  description?: string
+  interval: 'none' | 'monthly' | 'yearly'
+  priceMinor: number
+  currency: string
+  trialDays?: number
+  features?: string[]
+  entitlements?: string[]
+}
+
+export interface WorkbenchMarketplaceMetadata {
+  icon?: string
+  summary?: string
+  longDescription?: string
+  categories?: string[]
+  capabilities?: string[]
+  highlights?: string[]
+  media?: Array<{ type: 'image' | 'video'; source: string; title?: string; altText?: string }>
+  releaseNotes?: string
+  plans?: WorkbenchSubscriptionPlan[]
+  featured?: boolean
 }
 
 export interface WorkbenchApiRouteDefinition {
@@ -146,6 +172,7 @@ export interface ActiveLaneExtensionManifest
   visibility?: ActiveLaneExtensionVisibility
   os?: Array<'linux' | 'darwin' | 'windows'>
   architecture?: Array<'amd64' | 'arm64' | '386'>
+  marketplace?: WorkbenchMarketplaceMetadata
 }
 
 export interface ExtensionPackageRef {
@@ -183,6 +210,7 @@ export interface MarketplaceExtensionRecord {
   createdAt: string
   updatedAt: string
   featured?: boolean
+  plans?: WorkbenchSubscriptionPlan[]
   registryId?: string
   registryDisplayName?: string
   versionStatus?: ExtensionVersionStatus
@@ -470,6 +498,7 @@ export interface WorkbenchExtensionContext {
   commands: import('../runtime/types').WorkbenchCommandService
   capabilities: ActiveLaneCapabilityService
   explorer: import('../explorer/types').ExplorerRuntime
+  entitlements: WorkbenchExtensionEntitlements
   runtime: import('../runtime/types').WorkbenchRuntimeApi
   contribute: WorkbenchContributionRegistrar
 }

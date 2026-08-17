@@ -135,6 +135,12 @@ function manifestSettingsSummary(
 function contributionSummary(record: WorkbenchRuntimeExtensionRecord | InstalledExtensionRecord) {
   const contributes = record.manifest.contributes
   return {
+    applications: contributes?.apps?.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      kind: item.launch.type,
+    })),
     commands: contributes?.commands?.map((item) => ({
       id: item.id,
       title: item.title,
@@ -160,6 +166,10 @@ function contributionSummary(record: WorkbenchRuntimeExtensionRecord | Installed
       description: item.mode,
     })),
     inspectorPanels: contributes?.inspectorPanels?.map((item) => ({
+      id: item.id,
+      title: item.title,
+    })),
+    bottomPanels: contributes?.bottomPaneViews?.map((item) => ({
       id: item.id,
       title: item.title,
     })),
@@ -216,11 +226,11 @@ function registryRecordToMarketplace(
     .slice()
     .sort((left, right) => compareSemver(right.version, left.version))[0]
   if (!latest) return null
-  const marketplace = latest.manifest.contributes?.marketplace
+  const marketplace = latest.manifest.marketplace
   const updatedAt = latest.publishedAt ?? new Date(0).toISOString()
   const appIcon = latest.manifest.contributes?.apps?.[0]?.icon
   return {
-    icon: typeof appIcon === 'string' ? appIcon : '',
+    icon: marketplace?.icon ?? (typeof appIcon === 'string' ? appIcon : ''),
     id: record.id,
     slug: `${record.publisher}.${record.name}`,
     name: record.name,
@@ -233,8 +243,9 @@ function registryRecordToMarketplace(
       verified: record.publisher === 'activelane',
     },
     categories: marketplace?.categories ?? latest.manifest.categories ?? [],
-    tags: marketplace?.keywords ?? latest.manifest.keywords ?? [],
-    screenshots: marketplace?.screenshots?.map((item) => item.src) ?? [],
+    tags: latest.manifest.keywords ?? [],
+    screenshots:
+      marketplace?.media?.filter((item) => item.type === 'image').map((item) => item.source) ?? [],
     readme: marketplace?.longDescription ?? latest.manifest.description,
     manifest: latest.manifest,
     package: {
@@ -247,6 +258,7 @@ function registryRecordToMarketplace(
     createdAt: updatedAt,
     updatedAt,
     featured: marketplace?.featured,
+    plans: marketplace?.plans ?? [],
     registryId: record.registryId,
     registryDisplayName: record.registryDisplayName,
     versionStatus: latest.status,
@@ -373,12 +385,13 @@ function makeExtension(
     icon: marketplace.icon ?? '',
     categories: marketplace.categories.map((item) => item.toLowerCase()),
     tags: marketplace.tags,
-    pricingModel: 'free',
-    featured: marketplace.categories.includes('platform') || marketplace.categories.includes('ai'),
+    pricingModel: marketplace.plans?.some((plan) => plan.priceMinor > 0) ? 'subscription' : 'free',
+    plans: marketplace.plans ?? [],
+    featured: marketplace.featured === true,
     recommended: marketplace.publisher.verified === true,
     recentlyUpdated: true,
-    rating: { average: 4.6, count: 24 },
-    downloads: { total: 1200, weekly: 80 },
+    rating: { average: 0, count: 0 },
+    downloads: { total: 0, weekly: 0 },
     lastUpdated: marketplace.updatedAt,
     firstPublished: marketplace.createdAt,
     repository: marketplace.repositoryUrl,
@@ -408,9 +421,12 @@ function makeExtension(
         changes: ['Catalog-backed local registry entry.'],
       },
     ],
-    gallery: (marketplace.screenshots ?? []).map((src, index) => ({
-      title: `Screenshot ${index + 1}`,
-      description: src,
+    gallery: (marketplace.manifest.marketplace?.media ?? []).map((item, index) => ({
+      title: item.title ?? `Preview ${index + 1}`,
+      description: item.altText ?? item.title ?? `Preview of ${marketplace.displayName}`,
+      source: item.source,
+      type: item.type,
+      altText: item.altText,
     })),
     errors:
       marketplace.versionStatus === 'blocked'
@@ -548,6 +564,26 @@ export class MarketplaceCatalogService {
     if (filters.featured) results = results.filter((extension) => extension.featured)
     if (filters.recommended) results = results.filter((extension) => extension.recommended)
     if (filters.updatesOnly) results = results.filter((extension) => extension.updateAvailable)
+    if (filters.pricing?.length) {
+      results = results.filter((extension) => filters.pricing?.includes(extension.pricingModel))
+    }
+    if (filters.installed !== undefined) {
+      results = results.filter(
+        (extension) => (extension.installState === 'installed') === filters.installed,
+      )
+    }
+    if (filters.minimumRating !== undefined) {
+      const minimumRating = filters.minimumRating
+      results = results.filter((extension) => extension.rating.average >= minimumRating)
+    }
+    if (filters.verifiedPublisher !== undefined) {
+      results = results.filter(
+        (extension) => extension.publisher.verified === filters.verifiedPublisher,
+      )
+    }
+    if (filters.compatibility) {
+      results = results.filter((extension) => extension.compatibility === filters.compatibility)
+    }
     return this.sortExtensions(
       results,
       filters.sortBy ?? 'recommended',

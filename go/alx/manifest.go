@@ -122,6 +122,12 @@ func (m Manifest) Validate() error {
 	if len(m.ExtensionKind) == 0 {
 		issues = append(issues, "extensionKind: must be non-empty")
 	}
+	marketplace, err := m.Marketplace()
+	if err != nil {
+		issues = append(issues, err.Error())
+	} else {
+		issues = append(issues, validateMarketplace(marketplace)...)
+	}
 	for index, value := range m.OS {
 		if !validOS[value] {
 			issues = append(issues, fmt.Sprintf("os.%d: unsupported operating system", index))

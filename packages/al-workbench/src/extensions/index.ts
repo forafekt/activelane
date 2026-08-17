@@ -7,6 +7,11 @@ export type {
   ActiveLaneCapabilityRisk,
 } from '../core/capabilities/types'
 export type { ExplorerNode, ExplorerProvider } from '../core/explorer/types'
+export type {
+  WorkbenchEntitlementResolution,
+  WorkbenchExtensionEntitlements,
+  WorkbenchSubscription,
+} from '../core/entitlements/types'
 export {
   defineExtension,
   defineManifest,

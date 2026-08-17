@@ -4,6 +4,12 @@ import WorkbenchShell from './components/shell/WorkbenchShell.vue'
 export { createWorkbenchBuiltinExtensions } from './contributions'
 export type { ActiveLaneCapabilityRecord } from './core/capabilities/types'
 export type {
+  WorkbenchEntitlementResolution,
+  WorkbenchEntitlementService,
+  WorkbenchSubscription,
+  WorkbenchSubscriptionProvider,
+} from './core/entitlements/types'
+export type {
   ActiveLaneExtensionManifest,
   InstalledExtensionRecord,
   WorkbenchRegistrySearchResponse,

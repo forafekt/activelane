@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -38,6 +39,25 @@ func TestPackIsDeterministic(t *testing.T) {
 	}
 	if ia.Digest != ib.Digest {
 		t.Fatalf("digests differ: %s %s", ia.Digest, ib.Digest)
+	}
+}
+
+func TestPackIgnoresDevelopmentDependencyDirectories(t *testing.T) {
+	d := fixture(t)
+	if err := os.MkdirAll(filepath.Join(d, "node_modules", "example"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink("../../extension", filepath.Join(d, "node_modules", "example", "linked")); err != nil {
+		t.Fatal(err)
+	}
+	inspection, err := PackDir(d, filepath.Join(t.TempDir(), "example.alx"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range inspection.Files {
+		if strings.HasPrefix(name, "node_modules/") {
+			t.Fatalf("development dependency was packed: %s", name)
+		}
 	}
 }
 
