@@ -13,7 +13,7 @@ const props = defineProps<{
 const File = props.runtime.workbench.ui.getIcon('lucide.file')
 const Copy = props.runtime.workbench.ui.getIcon('lucide.copy')
 const ExternalLink = props.runtime.workbench.ui.getIcon('lucide.external-link')
-const [AlBadge] = props.runtime.workbench.ui.getComponents(['AlBadge'])
+const [AlBadge] = props.runtime.workbench.ui.getComponents(['Badge'])
 
 const path = computed(() => String(props.tab.input?.path ?? props.tab.input?.uri ?? ''))
 const size = computed(() =>

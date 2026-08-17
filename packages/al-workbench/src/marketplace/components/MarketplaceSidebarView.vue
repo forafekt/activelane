@@ -9,8 +9,8 @@ import type { MarketplaceExtension } from '../types/marketplace'
 const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
 const [AlDropdownMenu, AlInput] = props.runtime.workbench.ui.getComponents([
-  'AlDropdownMenu',
-  'AlInput',
+  'DropdownMenu',
+  'Input',
 ])
 const Filter = props.runtime.workbench.ui.getIcon('lucide.filter')
 const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide.ellipsis')

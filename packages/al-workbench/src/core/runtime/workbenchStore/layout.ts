@@ -110,6 +110,14 @@ export function listGroupIds(node: WorkbenchLayoutNode, result: string[] = []): 
   return result
 }
 
+export function shouldShowActiveGroupIndicator(
+  groupCount: number,
+  groupId: string,
+  activeGroupId: string,
+): boolean {
+  return groupCount > 1 && groupId === activeGroupId
+}
+
 export function normalizeShellState(
   partial: Partial<WorkbenchShellState>,
   fallback: WorkbenchShellState,

@@ -57,7 +57,7 @@ function activate(item: ResolvedWorkbenchStatusBarItem) {
           class="wb-status-bar__button"
           @click="activate(item)"
         >
-          <component v-if="item.icon" :is="item.icon" class="h-4 w-4" />
+          <component v-if="item.icon" :is="item.icon" class="size-3.5" />
           <span v-if="item.label">{{ item.label }}</span>
         </button>
       </div>
@@ -71,7 +71,7 @@ function activate(item: ResolvedWorkbenchStatusBarItem) {
           class="wb-status-bar__button"
           @click="activate(item)"
         >
-          <component v-if="item.icon" :is="item.icon" class="h-4 w-4" />
+          <component v-if="item.icon" :is="item.icon" class="size-3.5" />
           <span v-if="item.label">{{ item.label }}</span>
         </button>
       </div>

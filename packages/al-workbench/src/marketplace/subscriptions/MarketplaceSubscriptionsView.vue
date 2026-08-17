@@ -12,7 +12,7 @@ const records = ref<
   Array<{ extension: MarketplaceExtension; subscription: WorkbenchSubscription }>
 >([])
 const loading = ref(true)
-const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['AlBadge', 'AlButton'])
+const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
 const CreditCard = props.runtime.workbench.ui.getIcon('lucide.credit-card')
 const WalletCards = props.runtime.workbench.ui.getIcon('lucide.wallet-cards')
 

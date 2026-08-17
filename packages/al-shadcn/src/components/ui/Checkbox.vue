@@ -22,14 +22,14 @@ const emit = defineEmits<{ 'update:modelValue': [value: boolean | 'indeterminate
     :disabled="disabled"
     :class="
       cn(
-        'peer size-4 shrink-0 rounded border border-input bg-background shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',
+        'peer size-3.5 shrink-0 rounded-[0.1875rem] border border-[var(--control-border,var(--input))] bg-[var(--control-surface,var(--background))] transition-colors hover:border-foreground/25 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--focus-outline,var(--ring))] disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',
         $props.class,
       )
     "
     @update:model-value="emit('update:modelValue', $event)"
   >
     <CheckboxIndicator class="flex items-center justify-center text-current">
-      <Check class="size-3" />
+      <Check class="size-2.5" />
     </CheckboxIndicator>
   </CheckboxRoot>
 </template>

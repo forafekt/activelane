@@ -62,4 +62,12 @@ export type {
   WorkbenchTabIndicatorSeverity,
 } from '../core/workbench/tabWorkspace'
 export type * from '../core/workbench/themes'
-export type { WorkbenchComponent, WorkbenchIcon } from '../core/workbench/ui'
+export type {
+  WorkbenchBlockId,
+  WorkbenchBlockMap,
+  WorkbenchComponent,
+  WorkbenchComponentId,
+  WorkbenchComponentMap,
+  WorkbenchIcon,
+  WorkbenchUI,
+} from '../core/workbench/ui'

@@ -17,7 +17,7 @@ const props = defineProps<{
 const runtime = useWorkbenchRuntime()
 
 const [AlIconButton, ScrollArea] = runtime.workbench.ui.getComponents([
-  'AlIconButton',
+  'IconButton',
   'ScrollArea',
 ])
 const ChevronLeft = runtime.workbench.ui.getIcon('lucide.chevron-left')

@@ -12,7 +12,7 @@ const props = defineProps<{
   subscription?: WorkbenchSubscription
 }>()
 const emit = defineEmits<{ changed: [subscription: WorkbenchSubscription] }>()
-const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['AlBadge', 'AlButton'])
+const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
 const Check = props.runtime.workbench.ui.getIcon('lucide.check')
 const CheckCircle2 = props.runtime.workbench.ui.getIcon('lucide.circle-check-big')
 const X = props.runtime.workbench.ui.getIcon('lucide.x')

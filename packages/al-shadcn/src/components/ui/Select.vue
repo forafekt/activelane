@@ -23,7 +23,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
     <select
       :value="modelValue"
       :disabled="disabled"
-      class="h-9 w-full appearance-none rounded-md border border-input bg-background px-3 py-1 pr-8 text-sm text-foreground shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
+      class="h-[var(--control-height,2rem)] w-full appearance-none rounded-[var(--control-radius,0.3125rem)] border border-[var(--control-border,var(--input))] bg-[var(--control-surface,var(--background))] px-2.5 py-1 pr-7 text-xs text-foreground transition-[border-color,background-color] hover:border-foreground/20 focus-visible:border-[var(--focus-outline,var(--ring))] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-1px] focus-visible:outline-[var(--focus-outline,var(--ring))] disabled:cursor-not-allowed disabled:opacity-50"
       @change="emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
     >
       <option v-if="placeholder" value="" disabled>{{ placeholder }}</option>
@@ -37,7 +37,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
       </option>
     </select>
     <ChevronDown
-      class="pointer-events-none absolute right-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+      class="pointer-events-none absolute right-2 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground"
     />
   </div>
 </template>

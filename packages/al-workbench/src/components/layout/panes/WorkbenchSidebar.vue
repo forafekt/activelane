@@ -38,9 +38,9 @@ const [
   SidebarMenuButton,
   SidebarMenuItem,
 ] = runtime.workbench.ui.getComponents([
-  'AlEmptyState',
-  'AlIconButton',
-  'AlPanelHeader',
+  'EmptyState',
+  'IconButton',
+  'PanelHeader',
   'ScrollArea',
   'Collapsible',
   'CollapsibleContent',
@@ -51,7 +51,7 @@ const [
   'ContextMenuLabel',
   'ContextMenuSeparator',
   'ContextMenuTrigger',
-  'DropdownMenu',
+  'DropdownMenuRoot',
   'DropdownMenuContent',
   'DropdownMenuItem',
   'DropdownMenuLabel',
@@ -119,11 +119,7 @@ watchEffect(() => {
 <template>
   <Sidebar v-if="activeView" collapsible="none" class="wb-sidebar-pane static flex h-full">
     <SidebarHeader class="wb-sidebar-pane__header p-0">
-      <AlPanelHeader
-        :title="activeView.title"
-        :description="runtime.workbench.state.activeActivityId ?? undefined"
-        class="border-0"
-      >
+      <AlPanelHeader :title="activeView.title" class="border-0">
         <template #actions>
           <DropdownMenu v-if="activityViews.length > 1">
             <DropdownMenuTrigger as-child>
@@ -155,7 +151,7 @@ watchEffect(() => {
             v-for="action in activeView.actions ?? []"
             :key="action.id"
             :label="action.title"
-            :icon="action.icon"
+            :icon="typeof action.icon === 'string' ? runtime.workbench.ui.getIcon(action.icon) : action.icon"
             variant="ghost"
             size="icon-sm"
             @click="runtime.commands.execute(action.commandId)"
@@ -210,7 +206,7 @@ watchEffect(() => {
           />
         </div>
 
-        <footer v-if="activeView.footerComponent" class="border-t border-border p-3">
+        <footer v-if="activeView.footerComponent" class="border-t border-border p-2">
           <WorkbenchExtensionBoundary
             :component="activeView.footerComponent"
             :extension-id="activeView.ownerExtensionId"

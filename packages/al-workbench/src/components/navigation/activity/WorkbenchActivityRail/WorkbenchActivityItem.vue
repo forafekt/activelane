@@ -64,7 +64,7 @@ const icon = computed(() =>
         @drop.prevent="emit('drop', item.id)"
         @dragend="emit('dragend')"
       >
-        <component :is="icon" v-if="icon" class="size-5" />
+        <component :is="icon" v-if="icon" class="size-4" />
         <span v-else class="text-xs font-semibold">{{ item.title.slice(0, 1) }}</span>
         <span v-if="expanded" class="wb-activity-item__label">{{ item.title }}</span>
         <span v-if="item.badge" class="wb-activity-item__badge">{{ item.badge.value }}</span>

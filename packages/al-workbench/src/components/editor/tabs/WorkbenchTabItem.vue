@@ -14,7 +14,7 @@ const Shield = runtime.workbench.ui.getIcon('lucide.shield')
 const Snowflake = runtime.workbench.ui.getIcon('lucide.snowflake')
 const X = runtime.workbench.ui.getIcon('lucide.x')
 const [AlIconButton, ContextMenu, ContextMenuTrigger] = runtime.workbench.ui.getComponents([
-  'AlIconButton',
+  'IconButton',
   'ContextMenu',
   'ContextMenuTrigger',
 ])

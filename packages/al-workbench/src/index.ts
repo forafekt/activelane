@@ -33,6 +33,13 @@ export type { ServerExtensionHandle } from './core/serverRuntime'
 export { createVueExtensionRuntime } from './core/vueRuntime'
 export type { WorkbenchTab } from './core/workbench/contributions'
 export type { WorkbenchShellState } from './core/workbench/shell'
+export type {
+  WorkbenchBlockId,
+  WorkbenchBlockMap,
+  WorkbenchComponentId,
+  WorkbenchComponentMap,
+  WorkbenchUI,
+} from './core/workbench/ui'
 export {
   createDesktopNativeMenuSnapshot,
   resolveApplicationMenus,

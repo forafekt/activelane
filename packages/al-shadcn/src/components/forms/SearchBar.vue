@@ -35,15 +35,15 @@ function clear() {
 
 <template>
   <div :class="cn('relative flex items-center', $props.class)">
-    <Search class="pointer-events-none absolute left-2.5 size-4 text-muted-foreground" />
+    <Search class="pointer-events-none absolute left-2.5 size-3.5 text-muted-foreground" />
     <input
       :value="modelValue"
       :placeholder="placeholder"
       type="search"
       :class="
         cn(
-          'h-9 w-full rounded-md border border-input bg-background py-1 pl-8 pr-8 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-          compact && 'h-8 text-xs',
+          'h-[var(--control-height,2rem)] w-full rounded-[var(--control-radius,0.3125rem)] border border-[var(--control-border,var(--input))] bg-[var(--control-surface,var(--background))] py-1 pl-7 pr-7 text-xs transition-[border-color,background-color] placeholder:text-muted-foreground/75 hover:border-foreground/20 focus-visible:border-[var(--focus-outline,var(--ring))] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-1px] focus-visible:outline-[var(--focus-outline,var(--ring))]',
+          compact && 'h-[var(--control-height-compact,1.75rem)]',
         )
       "
       @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
@@ -54,7 +54,7 @@ function clear() {
       v-if="modelValue"
       label="Clear search"
       size="icon-xs"
-      class="absolute right-1"
+      class="absolute right-0.5"
       @click="clear"
     >
       <X class="size-3.5" />

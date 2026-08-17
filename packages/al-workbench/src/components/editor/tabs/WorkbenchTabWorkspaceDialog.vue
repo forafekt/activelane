@@ -27,7 +27,7 @@ const [
   'DialogFooter',
   'DialogHeader',
   'DialogTitle',
-  'AlButton',
+  'Button',
 ])
 
 const open = ref(false)

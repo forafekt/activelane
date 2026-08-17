@@ -5,7 +5,7 @@ import { useMarketplace } from '../composables/useMarketplaceStore'
 
 const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
-const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['AlBadge', 'AlButton'])
+const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
 const CheckCircle2 = props.runtime.workbench.ui.getIcon('lucide.circle-check-big')
 const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
 </script>

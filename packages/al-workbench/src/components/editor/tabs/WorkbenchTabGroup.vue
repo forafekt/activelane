@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 import { useWorkbenchTabs } from '../../../composables/useWorkbenchTabs'
+import { shouldShowActiveGroupIndicator } from '../../../core/runtime/workbenchStore/layout'
 import type { WorkbenchTabGroupNode } from '../../../core/workbench/shell'
 import WorkbenchSurfaceRenderer from '../../layout/WorkbenchSurfaceRenderer.vue'
 import { provideWorkbenchTabInteractions } from './useWorkbenchTabInteractions'
@@ -11,6 +13,7 @@ defineOptions({ name: 'WorkbenchTabGroup' })
 
 const props = defineProps<{
   group: WorkbenchTabGroupNode
+  groupCount: number
 }>()
 
 const runtime = useWorkbenchRuntime()
@@ -18,11 +21,18 @@ const runtime = useWorkbenchRuntime()
 const Shield = runtime.workbench.ui.getIcon('lucide.shield')
 const Snowflake = runtime.workbench.ui.getIcon('lucide.snowflake')
 const Star = runtime.workbench.ui.getIcon('lucide.star')
-const [AlButton, AlEmptyState] = runtime.workbench.ui.getComponents(['AlButton', 'AlEmptyState'])
+const [AlButton, AlEmptyState] = runtime.workbench.ui.getComponents(['Button', 'EmptyState'])
 
 const tabs = useWorkbenchTabs(props.group)
 const tabInteractions = provideWorkbenchTabInteractions(props.group)
 const activeTab = tabs.activeTab
+const showActiveGroupIndicator = computed(() =>
+  shouldShowActiveGroupIndicator(
+    props.groupCount,
+    props.group.id,
+    runtime.workbench.state.activeGroupId,
+  ),
+)
 
 function markActiveTabEngaged() {
   if (activeTab.value?.preview) tabs.markEngaged(activeTab.value.id)
@@ -49,7 +59,7 @@ function wakeActiveTab() {
     :data-active-group-id="runtime.workbench.state.activeGroupId"
     :data-active-tab-id="activeTab?.id"
     class="wb-tab-group wb-structural-pane"
-    :class="{ 'wb-tab-group--active': runtime.workbench.state.activeGroupId === group.id }"
+    :class="{ 'wb-tab-group--active': showActiveGroupIndicator }"
     @mousedown="runtime.workbench.setActiveGroup(group.id)"
   >
     <WorkbenchTabStrip

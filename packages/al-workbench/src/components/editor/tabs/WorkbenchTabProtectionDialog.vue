@@ -28,9 +28,9 @@ const [
   'DialogFooter',
   'DialogHeader',
   'DialogTitle',
-  'AlButton',
-  'AlInput',
-  'AlLabel',
+  'Button',
+  'Input',
+  'Label',
 ])
 
 const needsSecret = computed(

@@ -15,8 +15,6 @@ defineOptions({ name: 'WorkbenchLayout' })
 
 const runtime = useWorkbenchRuntime()
 
-// const [AlResizeHandle] = runtime.workbench.ui.getComponents(['AlResizeHandle'])
-
 const layout = useWorkbenchLayout(runtime)
 const {
   sidebarStyle,

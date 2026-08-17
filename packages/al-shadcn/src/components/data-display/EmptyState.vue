@@ -18,19 +18,19 @@ const emit = defineEmits<{ action: [] }>()
 
 <template>
   <div
-    :class="cn('grid place-items-center m-2 rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center', $props.class)"
+    :class="cn('grid place-items-center m-1 min-h-28 rounded-[var(--overlay-radius,0.4375rem)] border border-dashed border-border/70 bg-muted/15 p-5 text-center', $props.class)"
   >
-    <div class="grid max-w-sm gap-3">
+    <div class="grid max-w-sm gap-2.5">
       <div
         v-if="$slots.icon || icon"
-        class="mx-auto flex size-10 items-center justify-center rounded-full border border-border bg-background text-muted-foreground"
+        class="mx-auto flex size-8 items-center justify-center rounded-[var(--control-radius,0.3125rem)] border border-border/70 bg-background text-muted-foreground"
       >
         <slot name="icon" />
-        <component :is="icon" v-if="icon && !$slots.icon" class="size-5" />
+        <component :is="icon" v-if="icon && !$slots.icon" class="size-4" />
       </div>
       <div class="grid gap-1">
-        <h3 class="m-0 text-sm font-semibold tracking-tight">{{ title }}</h3>
-        <p v-if="description" class="m-0 text-sm leading-relaxed text-muted-foreground">
+        <h3 class="m-0 text-xs font-semibold tracking-tight">{{ title }}</h3>
+        <p v-if="description" class="m-0 text-xs leading-relaxed text-muted-foreground">
           {{ description }}
         </p>
       </div>

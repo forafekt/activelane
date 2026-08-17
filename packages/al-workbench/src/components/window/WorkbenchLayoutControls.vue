@@ -6,7 +6,7 @@ defineOptions({ name: 'WorkbenchLayoutControls' })
 
 const runtime = useWorkbenchRuntime()
 
-const [AlIconButton] = runtime.workbench.ui.getComponents(['AlIconButton'])
+const [AlIconButton] = runtime.workbench.ui.getComponents(['IconButton'])
 
 function toggleSidebar() {
   runtime.workbench.setSidebarCollapsed(!runtime.workbench.state.sidebar.collapsed)

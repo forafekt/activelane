@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useWorkbenchRuntime } from '../../composables/useWorkbenchRuntime'
+import { listGroupIds } from '../../core/runtime/workbenchStore/layout'
 import type { WorkbenchLayoutNode, WorkbenchSplitNode } from '../../core/workbench/shell'
 
 import WorkbenchTabGroup from '../editor/tabs/WorkbenchTabGroup.vue'
@@ -10,14 +11,14 @@ defineOptions({ name: 'WorkbenchSplitLayout' })
 
 const props = defineProps<{
   node: WorkbenchLayoutNode
+  groupCount?: number
 }>()
 
 const runtime = useWorkbenchRuntime()
 
-// const [AlResizeHandle] = runtime.workbench.ui.getComponents(['AlResizeHandle'])
-
 const hostRef = ref<HTMLElement | null>(null)
 const HANDLE_SIZE = 6
+const totalGroupCount = computed(() => props.groupCount ?? listGroupIds(props.node).length)
 
 const style = computed(() =>
   props.node.kind === 'split'
@@ -94,11 +95,11 @@ function nudgeSplit(split: WorkbenchSplitNode, index: number, pixels: number) {
 </script>
 
 <template>
-  <WorkbenchTabGroup v-if="node.kind === 'group'" :group="node" />
+  <WorkbenchTabGroup v-if="node.kind === 'group'" :group="node" :group-count="totalGroupCount" />
 
   <section v-else ref="hostRef" class="wb-split-layout" :style="style">
     <template v-for="(child, index) in node.children" :key="child.id">
-      <WorkbenchSplitLayout :node="child" />
+      <WorkbenchSplitLayout :node="child" :group-count="totalGroupCount" />
       <ResizeHandle
         v-if="index < node.children.length - 1"
         :orientation="node.orientation === 'horizontal' ? 'horizontal' : 'vertical'"

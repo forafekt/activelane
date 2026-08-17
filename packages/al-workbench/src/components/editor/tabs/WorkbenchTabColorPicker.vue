@@ -25,7 +25,7 @@ const [
   'DialogFooter',
   'DialogHeader',
   'DialogTitle',
-  'AlButton',
+  'Button',
 ])
 
 const selectedLabel = computed(() => colorLabel(interactions.color.selected))

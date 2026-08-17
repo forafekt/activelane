@@ -28,8 +28,8 @@ const [
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 ] = runtime.workbench.ui.getComponents([
-  'AlIconButton',
-  'DropdownMenu',
+  'IconButton',
+  'DropdownMenuRoot',
   'DropdownMenuContent',
   'DropdownMenuItem',
   'DropdownMenuLabel',

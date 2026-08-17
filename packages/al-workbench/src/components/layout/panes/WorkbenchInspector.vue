@@ -14,8 +14,8 @@ const runtime = useWorkbenchRuntime()
 const X = runtime.workbench.ui.getIcon('lucide.x')
 
 const [AlEmptyState, AlIconButton] = runtime.workbench.ui.getComponents([
-  'AlEmptyState',
-  'AlIconButton',
+  'EmptyState',
+  'IconButton',
 ])
 
 function findActiveTab(node: WorkbenchLayoutNode, activeGroupId: string): WorkbenchTab | null {
@@ -59,7 +59,7 @@ const panels = computed(() =>
       />
     </template>
 
-    <div class="wb-inspector-pane__content grid min-h-0 gap-3">
+    <div class="wb-inspector-pane__content grid min-h-0 gap-1.5">
       <WorkbenchExtensionBoundary
         v-for="panel in panels"
         :key="panel.id"
@@ -73,7 +73,7 @@ const panels = computed(() =>
       <AlEmptyState
         v-if="!panels.length"
         title="No inspector panels"
-        description="Extensions can contribute constextual inspector surfaces for the active tab kind."
+        description="Extensions can contribute contextual inspector surfaces for the active tab kind."
       />
     </div>
   </InspectorPanel>

@@ -15,13 +15,13 @@ const props = defineProps<{
 
 const [AlBadge, AlButton, AlCard, AlKeyValueList, AlSection, AlSectionHeader, AlStatBlock] =
   props.runtime.workbench.ui.getComponents([
-    'AlBadge',
-    'AlButton',
-    'AlCard',
-    'AlKeyValueList',
-    'AlSection',
-    'AlSectionHeader',
-    'AlStatBlock',
+    'Badge',
+    'Button',
+    'Card',
+    'KeyValueList',
+    'Section',
+    'SectionHeader',
+    'StatBlock',
   ])
 
 const AlertCircle = props.runtime.workbench.ui.getIcon('lucide.circle-alert')

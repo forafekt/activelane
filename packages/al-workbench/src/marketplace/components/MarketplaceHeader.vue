@@ -5,7 +5,7 @@ import { useMarketplace } from '../composables/useMarketplaceStore'
 const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const emit = defineEmits<{ search: [] }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
-const [AlButton, AlInput] = props.runtime.workbench.ui.getComponents(['AlButton', 'AlInput'])
+const [AlButton, AlInput] = props.runtime.workbench.ui.getComponents(['Button', 'Input'])
 const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
 const Search = props.runtime.workbench.ui.getIcon('lucide.search')
 const WalletCards = props.runtime.workbench.ui.getIcon('lucide.wallet-cards')

@@ -13,8 +13,8 @@ const props = defineProps<{
 }>()
 
 const [AlBadge, AlEmptyState] = props.runtime.workbench.ui.getComponents([
-  'AlBadge',
-  'AlEmptyState',
+  'Badge',
+  'EmptyState',
 ])
 
 const { servers } = useServerRuntime(props.runtime)

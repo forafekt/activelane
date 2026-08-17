@@ -14,12 +14,12 @@ const props = defineProps<{
 
 const [AlScrollArea, AlBadge, AlButton, AlEmptyState, AlSection, AlStatBlock] =
   props.runtime.workbench.ui.getComponents([
-    'AlScrollArea',
-    'AlBadge',
-    'AlButton',
-    'AlEmptyState',
-    'AlSection',
-    'AlStatBlock',
+    'ScrollArea',
+    'Badge',
+    'Button',
+    'EmptyState',
+    'Section',
+    'StatBlock',
   ])
 
 const { servers, startServer, stopServer, restartServer } = useServerRuntime(props.runtime)

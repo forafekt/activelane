@@ -21,8 +21,8 @@ const SplitSquareHorizontal = runtime.workbench.ui.getIcon('lucide.square-split-
 const SplitSquareVertical = runtime.workbench.ui.getIcon('lucide.square-split-vertical')
 
 const [AlDropdownMenu, AlIconButton, ScrollArea] = runtime.workbench.ui.getComponents([
-  'AlDropdownMenu',
-  'AlIconButton',
+  'DropdownMenu',
+  'IconButton',
   'ScrollArea',
 ])
 
@@ -223,7 +223,7 @@ function executeAction(id: string) {
         v-for="action in toolbarActions"
         :key="action.id"
         :label="action.title"
-        :icon="action.icon"
+        :icon="typeof action.icon === 'string' ? runtime.workbench.ui.getIcon(action.icon) : action.icon"
         size="icon-xs"
         variant="ghost"
         @click="runtime.commands.execute(action.commandId)"

@@ -10,7 +10,7 @@ const canGoForward = computed(() => runtime.workbench.state.navigation.forward.l
 
 const ChevronLeft = runtime.workbench.ui.getIcon('lucide.chevron-left')
 const ChevronRight = runtime.workbench.ui.getIcon('lucide.chevron-right')
-const [AlIconButton] = runtime.workbench.ui.getComponents(['AlIconButton'])
+const [AlIconButton] = runtime.workbench.ui.getComponents(['IconButton'])
 </script>
 
 <template>

@@ -9,9 +9,9 @@ const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
 const query = ref('')
 const [AlBadge, AlButton, AlInput] = props.runtime.workbench.ui.getComponents([
-  'AlBadge',
-  'AlButton',
-  'AlInput',
+  'Badge',
+  'Button',
+  'Input',
 ])
 const CheckCircle2 = props.runtime.workbench.ui.getIcon('lucide.circle-check-big')
 const Search = props.runtime.workbench.ui.getIcon('lucide.search')

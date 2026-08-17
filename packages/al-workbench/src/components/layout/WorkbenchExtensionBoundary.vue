@@ -16,7 +16,7 @@ const props = defineProps<{
 
 const runtime = useWorkbenchRuntime()
 
-const [AlAlert, AlButton] = runtime.workbench.ui.getComponents(['AlAlert', 'AlButton'])
+const [AlAlert, AlButton] = runtime.workbench.ui.getComponents(['Alert', 'Button'])
 
 const errorMessage = ref<string | null>(null)
 

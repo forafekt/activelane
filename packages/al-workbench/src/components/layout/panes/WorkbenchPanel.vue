@@ -11,8 +11,8 @@ defineProps<{
 const runtime = useWorkbenchRuntime()
 
 const [AlEmptyState, AlIconButton] = runtime.workbench.ui.getComponents([
-  'AlEmptyState',
-  'AlIconButton',
+  'EmptyState',
+  'IconButton',
 ])
 
 const views = computed(() => [...runtime.registry.bottomPaneViews])

@@ -16,7 +16,7 @@ const ChevronRight = props.runtime.workbench.ui.getIcon('lucide.chevron-right')
 const RefreshCw = props.runtime.workbench.ui.getIcon('lucide.refresh-cw')
 const FoldVertical = props.runtime.workbench.ui.getIcon('lucide.fold-vertical')
 const AlertTriangle = props.runtime.workbench.ui.getIcon('lucide.triangle-alert')
-const AlIconButton = props.runtime.workbench.ui.getComponent('AlIconButton')
+const AlIconButton = props.runtime.workbench.ui.getComponent('IconButton')
 
 const providers = computed(() => props.runtime.explorer.state.providers)
 const providerRootRows = computed<Record<string, ExplorerNode[]>>(() => {
