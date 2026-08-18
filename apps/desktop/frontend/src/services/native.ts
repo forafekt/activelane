@@ -10,21 +10,26 @@ import type {
   WorkbenchRegistryStatusResponse,
   WorkbenchSubscriptionProvider,
 } from '@activelane/workbench'
+import {
+  resolveWorkbenchExtensionModule,
+  type WorkbenchExtensionDefinition,
+} from '@activelane/workbench/extensions'
 import { Clipboard, Dialogs, System, Window as WailsWindow } from '@wailsio/runtime'
 import {
   Disable as DisableExtension,
   Enable as EnableExtension,
   Install as InstallExtension,
   Installed as InstalledExtensions,
+  Module as ExtensionModule,
   Registries as RegistryStatuses,
   Search as SearchRegistries,
   Uninstall as UninstallExtension,
 } from '../../bindings/github.com/activelane/activelane/apps/desktop/extensionservice'
-import { Request as NativeNetworkRequest } from '../../bindings/github.com/activelane/activelane/apps/desktop/networkservice'
 import type {
   DesktopError,
   InstalledExtension,
 } from '../../bindings/github.com/activelane/activelane/apps/desktop/models'
+import { Request as NativeNetworkRequest } from '../../bindings/github.com/activelane/activelane/apps/desktop/networkservice'
 import {
   ReadDirectory,
   ReadFile,
@@ -73,23 +78,91 @@ function mapInstalled(record: InstalledExtension): InstalledExtensionRecord {
   }
 }
 
+async function loadInstalledExtension(
+  record: InstalledExtensionRecord,
+): Promise<WorkbenchExtensionDefinition> {
+  const match = record.extensionId.match(/^@([^/]+)\/(.+)$/)
+  const namespace = match?.[1]
+  const name = match?.[2]
+  if (!namespace || !name)
+    throw new Error(`Invalid installed extension identity: ${record.extensionId}`)
+  const entry = record.manifest.entry
+  if (!entry)
+    throw new Error(
+      `Installed extension ${record.extensionId}@${record.version} has no runtime entrypoint.`,
+    )
+  const response = await ExtensionModule(record.extensionId, record.version)
+  throwNativeError(response.error)
+  if (!response.source) {
+    throw new Error(`Installed extension ${record.extensionId}@${record.version} has no module source.`)
+  }
+  const url = URL.createObjectURL(new Blob([response.source], { type: 'text/javascript' }))
+  try {
+    const module = (await import(/* @vite-ignore */ url)) as unknown
+    return resolveWorkbenchExtensionModule(module, {
+      extensionId: record.extensionId,
+      version: record.version,
+      source: record.source?.registryId ?? record.installSource,
+      entrypoint: `${record.resolvedPath ?? '<installed>'}/${entry}`,
+    })
+  } finally {
+    URL.revokeObjectURL(url)
+  }
+}
+
 export async function getPlatform() {
   return (await System.Environment()).OS
 }
 
 export const workbenchWindow = WailsWindow
 
-function subscriptionEndpoint(extensionId: string, suffix: string) {
+function parseExtensionIdentity(extensionId: string) {
   const match = extensionId.match(/^@([^/]+)\/(.+)$/)
-  if (!match) throw new Error(`Invalid extension identity: ${extensionId}`)
-  return `http://127.0.0.1:8787/v1/accounts/local-development/extensions/${encodeURIComponent(match[1] ?? '')}/${encodeURIComponent(match[2] ?? '')}${suffix}`
+  const namespace = match?.[1]
+  const name = match?.[2]
+  if (!namespace || !name) throw new Error(`Invalid extension identity: ${extensionId}`)
+  return { namespace, name }
+}
+
+async function resolveExtensionRegistry(extensionId: string) {
+  const { namespace } = parseExtensionIdentity(extensionId)
+  const installed = await InstalledExtensions()
+  throwNativeError(installed.error)
+  const installedRecord = installed.items.find((item) => item.extensionId === extensionId)
+  const statuses = await RegistryStatuses()
+  throwNativeError(statuses.error)
+  const status = statuses.registries.find(
+    (item) =>
+      item.enabled &&
+      item.type === 'remote' &&
+      (item.id === installedRecord?.registryId || item.scopes.includes(namespace)),
+  )
+  const source = installedRecord?.registrySource || status?.source
+  if (!source || !/^https?:\/\//.test(source)) {
+    throw new Error(`No remote registry source is available for ${extensionId}.`)
+  }
+  return {
+    source: source.replace(/\/$/, ''),
+    commerce: status?.capabilities?.commerce === true,
+  }
+}
+
+async function subscriptionEndpoint(extensionId: string, suffix: string) {
+  const { namespace, name } = parseExtensionIdentity(extensionId)
+  const registry = await resolveExtensionRegistry(extensionId)
+  const path = `/v1/accounts/local-development/extensions/${encodeURIComponent(namespace)}/${encodeURIComponent(name)}${suffix}`
+  return { url: `${registry.source}${path}`, commerce: registry.commerce }
 }
 
 function createRegistrySubscriptionProvider(): WorkbenchSubscriptionProvider {
   const request = async <T>(extensionId: string, suffix: string, init?: RequestInit) => {
+    const endpoint = await subscriptionEndpoint(extensionId, suffix)
+    if (!endpoint.commerce) {
+      throw new Error(`Registry commerce is unavailable for ${extensionId}.`)
+    }
     const response = await NativeNetworkRequest({
       method: init?.method ?? 'GET',
-      url: subscriptionEndpoint(extensionId, suffix),
+      url: endpoint.url,
       headers: { 'content-type': 'application/json' },
       body: typeof init?.body === 'string' ? init.body : '',
     })
@@ -101,12 +174,35 @@ function createRegistrySubscriptionProvider(): WorkbenchSubscriptionProvider {
     return JSON.parse(response.body) as T
   }
   return {
-    getSubscription: (extensionId) => request(extensionId, '/subscription'),
-    subscribe: (extensionId, planId) => request(extensionId, '/subscription', { method: 'POST', body: JSON.stringify({ planId }) }),
-    changePlan: (extensionId, planId) => request(extensionId, '/subscription/plan', { method: 'PUT', body: JSON.stringify({ planId }) }),
-    cancel: (extensionId) => request(extensionId, '/subscription/cancel', { method: 'POST', body: '{}' }),
-    resume: (extensionId) => request(extensionId, '/subscription/resume', { method: 'POST', body: '{}' }),
-    resolveEntitlements: (extensionId) => request(extensionId, '/entitlements'),
+    getSubscription: async (extensionId) => {
+      const endpoint = await subscriptionEndpoint(extensionId, '/subscription')
+      if (!endpoint.commerce) return undefined
+      return request(extensionId, '/subscription')
+    },
+    subscribe: (extensionId, planId) =>
+      request(extensionId, '/subscription', { method: 'POST', body: JSON.stringify({ planId }) }),
+    changePlan: (extensionId, planId) =>
+      request(extensionId, '/subscription/plan', {
+        method: 'PUT',
+        body: JSON.stringify({ planId }),
+      }),
+    cancel: (extensionId) =>
+      request(extensionId, '/subscription/cancel', { method: 'POST', body: '{}' }),
+    resume: (extensionId) =>
+      request(extensionId, '/subscription/resume', { method: 'POST', body: '{}' }),
+    resolveEntitlements: async (extensionId) => {
+      const endpoint = await subscriptionEndpoint(extensionId, '/entitlements')
+      if (!endpoint.commerce) {
+        return {
+          accountId: 'local-development',
+          extensionId,
+          planId: 'free',
+          entitlements: [],
+          resolvedAt: new Date().toISOString(),
+        }
+      }
+      return request(extensionId, '/entitlements')
+    },
   }
 }
 
@@ -151,7 +247,11 @@ export function createNativeCapabilities(): WorkbenchHostCapabilities {
           statusText: response.statusText,
           durationMs: response.durationMs,
           sizeBytes: response.sizeBytes,
-          headers: Object.fromEntries(Object.entries(response.headers).filter((entry): entry is [string, string[]] => Array.isArray(entry[1]))),
+          headers: Object.fromEntries(
+            Object.entries(response.headers).filter((entry): entry is [string, string[]] =>
+              Array.isArray(entry[1]),
+            ),
+          ),
           body: response.body,
         }
       },
@@ -170,6 +270,7 @@ export function createNativeCapabilities(): WorkbenchHostCapabilities {
       },
     },
     extensions: {
+      load: loadInstalledExtension,
       listInstalled: async () => {
         const response = await InstalledExtensions()
         throwNativeError(response.error)

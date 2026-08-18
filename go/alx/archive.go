@@ -40,6 +40,13 @@ func PackDir(root, output string) (Inspection, error) {
 	if err != nil {
 		return Inspection{}, err
 	}
+	entryBytes, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(m.Entry)))
+	if err != nil {
+		return Inspection{}, fmt.Errorf("runtime entry %q: %w", m.Entry, err)
+	}
+	if err := ValidateRuntimeEntry(m.Entry, entryBytes); err != nil {
+		return Inspection{}, err
+	}
 	var names []string
 	err = filepath.WalkDir(root, func(p string, d fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
@@ -203,6 +210,24 @@ func InspectReader(r io.ReaderAt, size int64) (Inspection, error) {
 	}
 	if !seen[m.Entry] {
 		return Inspection{}, fmt.Errorf("manifest entry %q is missing from package", m.Entry)
+	}
+	for _, zf := range zr.File {
+		if zf.Name != m.Entry {
+			continue
+		}
+		rc, openErr := zf.Open()
+		if openErr != nil {
+			return Inspection{}, openErr
+		}
+		entryBytes, readErr := io.ReadAll(io.LimitReader(rc, MaxPackageBytes+1))
+		rc.Close()
+		if readErr != nil {
+			return Inspection{}, readErr
+		}
+		if err := ValidateRuntimeEntry(m.Entry, entryBytes); err != nil {
+			return Inspection{}, err
+		}
+		break
 	}
 	sort.Strings(names)
 	return Inspection{Manifest: m, Digest: "sha256:" + hex.EncodeToString(hash.Sum(nil)), Size: size, Files: names}, nil

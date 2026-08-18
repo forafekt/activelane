@@ -9,7 +9,7 @@ Start the service on loopback. Publishing is disabled unless explicitly enabled:
 ```bash
 go run ./go/cmd/registry \
   --listen 127.0.0.1:8787 \
-  --data /tmp/activelane-registry \
+  --data ./.activelane/registry \
   --id local.activelane \
   --allow-publish
 ```
@@ -17,7 +17,7 @@ go run ./go/cmd/registry \
 Use the checked-in local-only configuration:
 
 ```bash
-export ACTIVELANE_REGISTRY_CONFIG="$PWD/examples/registries.local.json"
+source ./scripts/activelane-dev-env.sh
 ```
 
 This file has no official public registry, so public access is completely disabled. The equivalent
@@ -42,8 +42,11 @@ go run ./go/cmd/alx inspect /tmp/hello.alx --json
 go run ./go/cmd/alx verify /tmp/hello.alx
 ```
 
-Packing unchanged input produces the same SHA-256 digest. The manifest is not coupled to
-TypeScript; its entry can target any payload supported by the eventual host adapter.
+Packing unchanged input produces the same SHA-256 digest. The manifest `entry` identifies
+a browser-native ES module in the ALX. Its default export must be a
+`WorkbenchExtensionDefinition` (normally created with `defineExtension` from
+`@activelane/workbench/extensions`). The desktop loads that file and its relative package
+imports directly from the installed ALX directory, independently of npm and Vite resolution.
 
 ## Publish, discover, and install
 
@@ -52,12 +55,35 @@ go run ./go/cmd/alx publish /tmp/hello.alx --registry local
 go run ./go/cmd/alx search hello
 go run ./go/cmd/alx info local/hello
 go run ./go/cmd/alx info local/hello@1.0.0
-go run ./go/cmd/alx install local/hello@1.0.0 --root /tmp/activelane-installed
+go run ./go/cmd/alx install local/hello@1.0.0 --root ./.activelane/extensions
 ```
 
-The final command writes `/tmp/activelane-installed/installed.json`. Repeating the workflow after
+The final command writes `./.activelane/extensions/installed.json`. Repeating the workflow after
 restarting the registry reads the same persisted metadata and blobs. Republishing version `1.0.0`
 returns `VERSION_EXISTS`, even for identical bytes.
+
+## Seed development marketplace data
+
+Populate a realistic, deterministic local marketplace with the in-process ALX
+seeder. Every generated extension follows normal validation, packaging,
+verification, and publication:
+
+```bash
+go run ./go/cmd/alx seed --registry local \
+  --profile marketplace-demo --count 500 --seed 42
+```
+
+Generated source projects are removed after success. Pass `--keep` or
+`--output <directory>` to inspect them. Repeating the command is idempotent.
+Remove only seeder-owned versions with:
+
+```bash
+go run ./go/cmd/alx seed clean --registry local
+```
+
+The `minimal`, `subscriptions`, and `marketplace-stress` profiles are also
+available; run `alx seed --help` for details. Remote development registries
+must be running with publication enabled.
 
 Yank and restore are currently HTTP administrative operations:
 

@@ -31,6 +31,29 @@ export class DesktopError {
     }
 }
 
+export class ExtensionModuleResponse {
+    "source"?: string;
+    "error"?: DesktopError | null;
+
+    /** Creates a new ExtensionModuleResponse instance. */
+    constructor($$source: Partial<ExtensionModuleResponse> = {}) {
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ExtensionModuleResponse instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ExtensionModuleResponse {
+        const $$createField1_0 = $$createType1;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("error" in $$parsedSource) {
+            $$parsedSource["error"] = $$createField1_0($$parsedSource["error"]);
+        }
+        return new ExtensionModuleResponse($$parsedSource as Partial<ExtensionModuleResponse>);
+    }
+}
+
 export class ExtensionOperationResponse {
     "record"?: InstalledExtension | null;
     "restartRequired": boolean;
@@ -49,8 +72,8 @@ export class ExtensionOperationResponse {
      * Creates a new ExtensionOperationResponse instance from a string or object.
      */
     static createFrom($$source: any = {}): ExtensionOperationResponse {
-        const $$createField0_0 = $$createType1;
-        const $$createField2_0 = $$createType3;
+        const $$createField0_0 = $$createType3;
+        const $$createField2_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("record" in $$parsedSource) {
             $$parsedSource["record"] = $$createField0_0($$parsedSource["record"]);
@@ -228,7 +251,7 @@ export class InstalledResponse {
      */
     static createFrom($$source: any = {}): InstalledResponse {
         const $$createField0_0 = $$createType5;
-        const $$createField1_0 = $$createType3;
+        const $$createField1_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("items" in $$parsedSource) {
             $$parsedSource["items"] = $$createField0_0($$parsedSource["items"]);
@@ -315,7 +338,7 @@ export class NetworkResponse {
      */
     static createFrom($$source: any = {}): NetworkResponse {
         const $$createField4_0 = $$createType8;
-        const $$createField6_0 = $$createType3;
+        const $$createField6_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("headers" in $$parsedSource) {
             $$parsedSource["headers"] = $$createField4_0($$parsedSource["headers"]);
@@ -351,7 +374,7 @@ export class RegistryFailure {
      * Creates a new RegistryFailure instance from a string or object.
      */
     static createFrom($$source: any = {}): RegistryFailure {
-        const $$createField2_0 = $$createType2;
+        const $$createField2_0 = $$createType0;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("error" in $$parsedSource) {
             $$parsedSource["error"] = $$createField2_0($$parsedSource["error"]);
@@ -408,7 +431,7 @@ export class RegistryStatus {
     static createFrom($$source: any = {}): RegistryStatus {
         const $$createField6_0 = $$createType7;
         const $$createField8_0 = $$createType9;
-        const $$createField9_0 = $$createType3;
+        const $$createField9_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("scopes" in $$parsedSource) {
             $$parsedSource["scopes"] = $$createField6_0($$parsedSource["scopes"]);
@@ -449,7 +472,7 @@ export class RegistryStatusResponse {
      */
     static createFrom($$source: any = {}): RegistryStatusResponse {
         const $$createField0_0 = $$createType11;
-        const $$createField3_0 = $$createType3;
+        const $$createField3_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("registries" in $$parsedSource) {
             $$parsedSource["registries"] = $$createField0_0($$parsedSource["registries"]);
@@ -570,7 +593,7 @@ export class SearchResponse {
     static createFrom($$source: any = {}): SearchResponse {
         const $$createField0_0 = $$createType13;
         const $$createField1_0 = $$createType15;
-        const $$createField4_0 = $$createType3;
+        const $$createField4_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("items" in $$parsedSource) {
             $$parsedSource["items"] = $$createField0_0($$parsedSource["items"]);
@@ -586,12 +609,12 @@ export class SearchResponse {
 }
 
 // Private type creation functions
-const $$createType0 = InstalledExtension.createFrom;
+const $$createType0 = DesktopError.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
-const $$createType2 = DesktopError.createFrom;
+const $$createType2 = InstalledExtension.createFrom;
 const $$createType3 = $Create.Nullable($$createType2);
 const $$createType4 = $Create.Map($Create.Any, $Create.Any);
-const $$createType5 = $Create.Array($$createType0);
+const $$createType5 = $Create.Array($$createType2);
 const $$createType6 = $Create.Map($Create.Any, $Create.Any);
 const $$createType7 = $Create.Array($Create.Any);
 const $$createType8 = $Create.Map($Create.Any, $$createType7);

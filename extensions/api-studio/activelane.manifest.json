@@ -4,7 +4,7 @@
   "publisher": "activelane",
   "name": "api-studio",
   "displayName": "ActiveLane API Studio",
-  "version": "0.3.3",
+  "version": "0.0.5",
   "description": "Build, organize, send, and inspect HTTP APIs inside your ActiveLane workspace.",
   "entry": "dist/extension.js",
   "engines": { "activelane": ">=0.1.0" },

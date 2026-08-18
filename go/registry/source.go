@@ -60,14 +60,22 @@ func (client SourceClient) Search(ctx context.Context, source registryconfig.Reg
 		}
 		return store.List(query)
 	}
-	var result struct {
-		Items []Extension `json:"items"`
+	const pageSize = 100
+	var items []Extension
+	for offset := 0; ; offset += pageSize {
+		var result struct {
+			Items []Extension `json:"items"`
+			Total int         `json:"total"`
+		}
+		endpoint := strings.TrimRight(source.URL, "/") + "/v1/extensions?search=" + url.QueryEscape(query) + "&limit=100&offset=" + fmt.Sprint(offset)
+		if err := client.getJSON(ctx, endpoint, &result); err != nil {
+			return nil, err
+		}
+		items = append(items, result.Items...)
+		if len(items) >= result.Total || len(result.Items) == 0 {
+			return items, nil
+		}
 	}
-	endpoint := strings.TrimRight(source.URL, "/") + "/v1/extensions?search=" + url.QueryEscape(query)
-	if err := client.getJSON(ctx, endpoint, &result); err != nil {
-		return nil, err
-	}
-	return result.Items, nil
 }
 
 func (client SourceClient) GetExtension(ctx context.Context, source registryconfig.Registry, namespace, name string) (Extension, error) {

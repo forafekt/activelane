@@ -17,6 +17,7 @@ const (
 var (
 	segmentRE         = regexp.MustCompile(`^[a-z0-9][a-z0-9-]*$`)
 	semverRE          = regexp.MustCompile(`^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$`)
+	defaultExportRE   = regexp.MustCompile(`(?m)\bexport\s+default\b|(?s)\bexport\s*\{[^}]*\bas\s+default\b[^}]*\}`)
 	validOS           = map[string]bool{"linux": true, "darwin": true, "windows": true}
 	validArchitecture = map[string]bool{"amd64": true, "arm64": true, "386": true}
 )
@@ -37,6 +38,20 @@ type Manifest struct {
 	Architecture  []string          `json:"architecture,omitempty"`
 	Visibility    string            `json:"visibility,omitempty"`
 	Raw           map[string]any    `json:"-"`
+}
+
+// ValidateRuntimeEntry checks the package-level contract that can be established
+// without executing untrusted extension code. Runtime validation still checks the
+// exported definition's shape, identity, and version after the module is loaded.
+func ValidateRuntimeEntry(name string, data []byte) error {
+	extension := strings.ToLower(path.Ext(name))
+	if extension != ".js" && extension != ".mjs" {
+		return fmt.Errorf("runtime entry %q must be an ES module ending in .js or .mjs", name)
+	}
+	if !defaultExportRE.Match(data) {
+		return fmt.Errorf("runtime entry %q must default-export a Workbench extension definition", name)
+	}
+	return nil
 }
 
 func (m Manifest) MarshalJSON() ([]byte, error) {

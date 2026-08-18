@@ -37,6 +37,68 @@ func NewExtensionServiceAt(configPath, installRoot string) *ExtensionService {
 }
 func (service *ExtensionService) Close() {}
 
+// Module returns the self-contained ES module entrypoint for an installed package.
+// Keeping this at the native service boundary gives development and packaged builds
+// one loading path and prevents the webview from reading arbitrary local files.
+func (service *ExtensionService) Module(extensionID, version string) ExtensionModuleResponse {
+	service.mu.Lock()
+	defer service.mu.Unlock()
+	namespace, name, err := parseExtensionID(extensionID)
+	if err != nil {
+		return ExtensionModuleResponse{Error: desktopError("EXTENSION_NOT_FOUND", "Extension identity is invalid.", err)}
+	}
+	records, err := install.ListRecords(service.installRoot)
+	if err != nil {
+		return ExtensionModuleResponse{Error: mapInstallError(err)}
+	}
+	for _, record := range records {
+		if record.Namespace != namespace || record.Name != name || record.Version != version {
+			continue
+		}
+		manifestBytes, readErr := os.ReadFile(filepath.Join(record.InstallPath, alx.ManifestFile))
+		if readErr != nil {
+			return ExtensionModuleResponse{Error: desktopError("EXTENSION_INVALID", "Extension manifest is unavailable.", readErr)}
+		}
+		manifest, parseErr := alx.ParseManifest(manifestBytes)
+		if parseErr != nil || manifest.Publisher != record.Namespace || manifest.Name != record.Name || manifest.Version != record.Version {
+			return ExtensionModuleResponse{Error: desktopError("EXTENSION_INVALID", "Extension manifest identity is invalid.", parseErr)}
+		}
+		file := filepath.Join(record.InstallPath, filepath.FromSlash(manifest.Entry))
+		if err := validateRuntimeEntry(record.InstallPath, file); err != nil {
+			return ExtensionModuleResponse{Error: desktopError("EXTENSION_INVALID", "Extension runtime entrypoint is unsafe.", err)}
+		}
+		source, readErr := os.ReadFile(file)
+		if readErr != nil {
+			return ExtensionModuleResponse{Error: desktopError("EXTENSION_INVALID", "Extension runtime entrypoint is unavailable.", readErr)}
+		}
+		return ExtensionModuleResponse{Source: string(source)}
+	}
+	return ExtensionModuleResponse{Error: desktopError("EXTENSION_NOT_FOUND", "Installed extension version was not found.", nil)}
+}
+
+func validateRuntimeEntry(root, entry string) error {
+	rootAbs, err := filepath.Abs(root)
+	if err != nil {
+		return err
+	}
+	entryAbs, err := filepath.Abs(entry)
+	if err != nil {
+		return err
+	}
+	rel, err := filepath.Rel(rootAbs, entryAbs)
+	if err != nil || rel == "." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) || filepath.IsAbs(rel) {
+		return fmt.Errorf("entry escapes installed package")
+	}
+	info, err := os.Lstat(entryAbs)
+	if err != nil {
+		return err
+	}
+	if !info.Mode().IsRegular() {
+		return fmt.Errorf("entry is not a regular file")
+	}
+	return nil
+}
+
 func (service *ExtensionService) Registries(ctx context.Context) RegistryStatusResponse {
 	config, err := service.loadConfig()
 

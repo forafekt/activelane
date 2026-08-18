@@ -17,7 +17,7 @@ func packageBytes(t *testing.T) []byte {
 	root := t.TempDir()
 	os.MkdirAll(filepath.Join(root, "extension"), 0755)
 	os.WriteFile(filepath.Join(root, alx.ManifestFile), []byte(`{"schemaVersion":"1.0.0","id":"@acme/example","publisher":"acme","name":"example","displayName":"Example","version":"1.0.0","description":"Example","entry":"extension/main.js","engines":{"activelane":"*"},"hostSupport":["desktop"],"extensionKind":["workbench"]}`), 0644)
-	os.WriteFile(filepath.Join(root, "extension/main.js"), []byte("ok"), 0644)
+	os.WriteFile(filepath.Join(root, "extension/main.js"), []byte("export default { manifest: { id: '@acme/example', version: '1.0.0' } }"), 0644)
 	out := filepath.Join(t.TempDir(), "x.alx")
 	if _, e := alx.PackDir(root, out); e != nil {
 		t.Fatal(e)

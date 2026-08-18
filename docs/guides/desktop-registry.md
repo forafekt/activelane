@@ -1,14 +1,75 @@
 # Desktop registry and marketplace
 
-The desktop application reads the same version-1 registry configuration as `alx`. By default this
-is `~/.config/activelane/registries.json`. Set `ACTIVELANE_REGISTRY_CONFIG` to select another file
-and `ACTIVELANE_EXTENSIONS_DIR` to override the installation root before starting ActiveLane.
+## Running ActiveLane locally with the Marketplace
+
+Run each command from the repository root in a separate terminal. All three
+commands use the project-local `.activelane/registries.json` initialized from
+`examples/registries.local.json`, where `local` resolves to `http://127.0.0.1:8787`.
+
+### Terminal 1 — start the persistent development registry
 
 ```bash
-export ACTIVELANE_REGISTRY_CONFIG="$PWD/examples/registries.local.json"
-export ACTIVELANE_EXTENSIONS_DIR="$HOME/.local/share/activelane/extensions"
-cd apps/desktop
-wails3 dev
+pnpm registry:dev
+```
+
+The startup banner reports the URL, storage directory, registry ID, publishing
+state, and health endpoint. Development data persists under `./.activelane/registry`
+across registry restarts. Confirm readiness with:
+
+```bash
+curl http://127.0.0.1:8787/healthz
+```
+
+### Terminal 2 — seed and verify the Marketplace
+
+```bash
+pnpm marketplace:seed
+pnpm marketplace:status
+```
+
+The status command must report `Extensions: 500`. Repeating the seed is
+idempotent and reports the versions as existing.
+
+For a fast 12-extension dataset instead:
+
+```bash
+pnpm marketplace:seed:minimal
+```
+
+### Terminal 3 — start the Wails desktop application
+
+```bash
+pnpm dev:desktop
+```
+
+Open **Extensions Marketplace**, select **Discover**, and refresh if the view
+was already open. The desktop Go service reads the same checked-in registry
+profile and queries the real registry HTTP API; the frontend has no mock
+Marketplace dataset.
+
+### Cleanup and reset
+
+Remove only versions carrying internal seed provenance:
+
+```bash
+pnpm marketplace:clean
+```
+
+To completely reset this disposable local registry, stop the registry first,
+then remove `./.activelane/registry`. This also removes genuine packages
+published there, unlike `marketplace:clean`.
+
+If seeding reports that `local` is unavailable, start `pnpm registry:dev` and
+wait for its readiness banner. Desktop startup does not start the registry;
+when it is offline, Marketplace reports the source as unavailable rather than
+substituting frontend data.
+
+Repository development initializes `./.activelane/registries.json` from the checked-in example.
+The desktop and ALX commands share that file and keep installed packages under
+`./.activelane/extensions`.
+
+```bash
+pnpm dev:desktop
 ```
 
 The Wails `ExtensionService` reads configuration and performs search, resolution, verification,
@@ -37,12 +98,17 @@ These states remain distinct:
 
 - Installed means verified package files and an exact record exist under the installation root.
 - Enabled is a persisted user preference in `installed.json`.
-- Active means the Workbench runtime loaded a discovered definition and registered contributions.
+- Loaded means the desktop asset boundary resolved the installed manifest's `entry` and imported
+  that self-contained ES module.
+- Active means Workbench called that module's canonical `activate(context)` function and registered
+  its owned contributions.
 
-The current phase does not dynamically load a newly installed package definition. Install and
-enable operations therefore return `restartRequired`. Enabling is persisted but does not fake an
-active runtime record. If a definition is already discoverable and activation fails, Workbench
-rolls the enabled preference back through the native service and reports the activation error.
+Installation, loading and activation are separate operations. Marketplace install asks Go to
+download, digest-check and extract the ALX package, then Workbench loads the returned exact version,
+enables it and activates it without a rebuild or restart. Disable calls `deactivate`, disposes every
+contribution registered through the extension-owned registrar, and persists disabled state. Enable
+loads the package if necessary and activates it again. Uninstall deactivates and disposes first,
+persists disabled state, then lets Go quarantine and remove the package and inventory record.
 
 On uninstall, Workbench deactivates a known active definition and persists disabled state first.
 Go then verifies the exact package-owned path, atomically moves it into an installation-root
@@ -54,12 +120,16 @@ uninstalled directly by the service.
 Default state locations are:
 
 ```text
-~/.config/activelane/registries.json
-~/.local/share/activelane/extensions/installed.json
-~/.local/share/activelane/extensions/<namespace>/<name>/<version>/
+./.activelane/registries.json
+./.activelane/extensions/installed.json
+./.activelane/extensions/<namespace>/<name>/<version>/
+./.activelane/registry/
+./.activelane/xdg/{data,cache,config}/
 ```
 
-Restarting ActiveLane reloads installed and enabled records. The service also verifies that the
+Restarting ActiveLane reloads installed records, loads only enabled packages, and activates each
+one independently. A load or activation failure is recorded against that extension and does not
+prevent later extensions from starting. The service also verifies that the
 manifest is parseable, its canonical digest still matches, and its entrypoint remains present.
 `verified` means verified during install and currently consistent at those checks; the original
 archive is not retained for full post-install package re-hashing.
@@ -83,9 +153,32 @@ For local-only operation, configure only enabled `directory` sources or disable 
 - `VERSION_YANKED` / `VERSION_INCOMPATIBLE`: select a supported published release.
 - `PACKAGE_DIGEST_MISMATCH` / `PACKAGE_INVALID`: do not bypass verification; republish a new version.
 - `INSTALLATION_CORRUPT`: inspect `installed.json`, the package directory and manifest entrypoint.
-- `RESTART_REQUIRED`: installation state is persisted, but the current desktop build does not yet
-  discover downloaded extension definitions. Restarting preserves and re-reads the state; activation
-  remains unavailable until the runtime discovery adapter is implemented.
+- Activation errors include the extension ID, installed version and failing stage in the desktop
+  console; disable or uninstall remains available for recovery.
+
+## Runtime loading boundary
+
+```text
+Registry -> ALX -> Go install service -> installed package
+  -> manifest entry -> same-origin runtime module endpoint
+  -> ExtensionManager -> activate(context) -> owned Workbench registries
+```
+
+The Wails asset middleware exposes only the manifest-declared entry point for an exact package in
+`installed.json`; it is not a filesystem server. It re-parses and identity-checks the manifest,
+rejects paths outside the installed package, requires a regular file, sets JavaScript and `nosniff`
+headers, and serves the compiled module without `eval` or source-string execution. Runtime modules
+must bundle their browser dependencies and assets, so Vite does not need an import map or knowledge
+of marketplace extension IDs. Installed extension code is trusted executable software: package
+digest and manifest checks exist, while publisher signatures and sandboxing remain future security
+work. Requested capabilities continue through the existing scoped Workbench context.
+
+Startup is:
+
+```text
+Desktop starts -> read installed.json -> keep disabled packages unloaded
+  -> load each enabled manifest entry -> activate independently
+```
 
 Authentication, publisher signatures, malware scanning and entitlement are not implemented. Remote
 registries requiring credentials are not yet supported by the desktop service.

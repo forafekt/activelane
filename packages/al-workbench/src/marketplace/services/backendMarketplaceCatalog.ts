@@ -657,9 +657,14 @@ export class MarketplaceCatalogService {
   async updateExtension(extensionId: string) {
     const extension = this.extensions.get(extensionId)
     if (!extension?.updateAvailable) throw new Error('No update is available for this extension.')
-    throw new Error(
-      'Extension updates are not supported until the registry installer can stage and roll back artifacts.',
+    const registryId = extension.registryId
+    if (!registryId) throw new Error('The update source registry is unavailable.')
+    await this.runtime?.extensions.install(
+      extensionId,
+      extension.updateAvailable.version,
+      registryId,
     )
+    await this.refresh()
   }
 
   async installLocalPackage(input: { filePath?: string; fileName?: string; contents?: string }) {

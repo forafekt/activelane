@@ -58,6 +58,120 @@ type Store struct {
 	now  func() time.Time
 }
 
+type SeedRecord struct {
+	Publisher string `json:"publisher"`
+	Name      string `json:"name"`
+	Version   string `json:"version"`
+}
+
+// PublishSeeded uses normal immutable publication semantics and records internal
+// provenance. An existing version is idempotent only when it was seeded before.
+func (s *Store) PublishSeeded(ctx context.Context, namespace, name string, r io.Reader) (Version, bool, error) {
+	version, err := s.Publish(ctx, namespace, name, r)
+	record := SeedRecord{Publisher: namespace, Name: name}
+	if err == nil {
+		record.Version = version.Version
+		if err := s.RecordSeed(record); err != nil {
+			return Version{}, false, err
+		}
+		return version, false, nil
+	}
+	if !errors.Is(err, ErrVersionExists) {
+		return Version{}, false, err
+	}
+	versions, listErr := s.ListVersions(namespace, name)
+	if listErr != nil {
+		return Version{}, false, listErr
+	}
+	for _, existing := range versions {
+		record.Version = existing.Version
+		seeded, provenanceErr := s.IsSeeded(record)
+		if provenanceErr != nil {
+			return Version{}, false, provenanceErr
+		}
+		if seeded {
+			return existing, true, nil
+		}
+	}
+	return Version{}, false, ErrVersionExists
+}
+
+func (s *Store) IsSeeded(record SeedRecord) (bool, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	data, err := os.ReadFile(filepath.Join(s.root, ".activelane-seed", "records.json"))
+	if errors.Is(err, os.ErrNotExist) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	var records []SeedRecord
+	if err := json.Unmarshal(data, &records); err != nil {
+		return false, fmt.Errorf("read seed provenance: %w", err)
+	}
+	for _, existing := range records {
+		if existing == record {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func (s *Store) RecordSeed(record SeedRecord) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	filename := filepath.Join(s.root, ".activelane-seed", "records.json")
+	var records []SeedRecord
+	if data, err := os.ReadFile(filename); err == nil {
+		_ = json.Unmarshal(data, &records)
+	}
+	for _, existing := range records {
+		if existing == record {
+			return nil
+		}
+	}
+	records = append(records, record)
+	sort.Slice(records, func(i, j int) bool {
+		return records[i].Publisher+"/"+records[i].Name < records[j].Publisher+"/"+records[j].Name
+	})
+	return writeJSONAtomic(filename, records)
+}
+
+// CleanSeeded removes only version metadata recorded by the development seeder.
+func (s *Store) CleanSeeded() (int, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	filename := filepath.Join(s.root, ".activelane-seed", "records.json")
+	data, err := os.ReadFile(filename)
+	if errors.Is(err, os.ErrNotExist) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, err
+	}
+	var records []SeedRecord
+	if err := json.Unmarshal(data, &records); err != nil {
+		return 0, fmt.Errorf("read seed provenance: %w", err)
+	}
+	removed := 0
+	for _, record := range records {
+		if err := os.Remove(s.versionPath(record.Publisher, record.Name, record.Version)); err == nil {
+			removed++
+		} else if !errors.Is(err, os.ErrNotExist) {
+			return removed, err
+		}
+		_ = os.Remove(filepath.Dir(s.versionPath(record.Publisher, record.Name, record.Version)))
+		_ = os.Remove(filepath.Dir(filepath.Dir(s.versionPath(record.Publisher, record.Name, record.Version))))
+		_ = os.Remove(filepath.Dir(filepath.Dir(filepath.Dir(s.versionPath(record.Publisher, record.Name, record.Version)))))
+	}
+	if err := os.Remove(filename); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return removed, err
+	}
+	_ = os.Remove(filepath.Dir(filename))
+	return removed, nil
+}
+
 func NewStore(root string) (*Store, error) {
 	root, err := filepath.Abs(root)
 	if err != nil {

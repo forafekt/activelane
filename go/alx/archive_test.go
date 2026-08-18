@@ -19,10 +19,21 @@ func fixture(t *testing.T) string {
 	if err := os.WriteFile(filepath.Join(d, ManifestFile), []byte(manifest), 0644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(d, "extension/main.js"), []byte("export {}\n"), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(d, "extension/main.js"), []byte("export default { manifest: { id: '@acme/example', version: '1.2.3' } }\n"), 0644); err != nil {
 		t.Fatal(err)
 	}
 	return d
+}
+
+func TestPackRejectsRuntimeEntryWithoutCanonicalDefaultExport(t *testing.T) {
+	d := fixture(t)
+	if err := os.WriteFile(filepath.Join(d, "extension/main.js"), []byte("export function createExtension() {}\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	_, err := PackDir(d, filepath.Join(t.TempDir(), "invalid.alx"))
+	if err == nil || !strings.Contains(err.Error(), "must default-export") {
+		t.Fatalf("expected canonical export error, got %v", err)
+	}
 }
 
 func TestPackIsDeterministic(t *testing.T) {

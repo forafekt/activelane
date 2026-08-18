@@ -6,12 +6,12 @@ export type {
   ActiveLaneCapabilityKind,
   ActiveLaneCapabilityRisk,
 } from '../core/capabilities/types'
-export type { ExplorerNode, ExplorerProvider } from '../core/explorer/types'
 export type {
   WorkbenchEntitlementResolution,
   WorkbenchExtensionEntitlements,
   WorkbenchSubscription,
 } from '../core/entitlements/types'
+export type { ExplorerNode, ExplorerProvider } from '../core/explorer/types'
 export {
   defineExtension,
   defineManifest,
@@ -20,6 +20,10 @@ export {
   defineWorkbenchManifest,
   registerCapability,
 } from '../core/extensions/helpers'
+export {
+  resolveWorkbenchExtensionModule,
+  type WorkbenchExtensionModuleDescriptor,
+} from '../core/extensions/module'
 export type {
   ServerExtensionContext,
   ServerExtensionDefinition,

@@ -71,6 +71,16 @@ func (i Installer) InstallFromRegistry(ctx context.Context, c registryconfig.Con
 	if err != nil {
 		return Record{}, err
 	}
+	root, err := filepath.Abs(i.Root)
+	if err != nil {
+		return Record{}, fmt.Errorf("resolve extension install root: %w", err)
+	}
+	var previous *Record
+	if installed, readErr := ReadRecord(filepath.Join(root, RecordsFile), ns, name); readErr == nil {
+		previous = &installed
+	} else if !errors.Is(readErr, os.ErrNotExist) {
+		return Record{}, readErr
+	}
 	route, err := c.Resolve(ns)
 	if err != nil {
 		return Record{}, err
@@ -78,13 +88,13 @@ func (i Installer) InstallFromRegistry(ctx context.Context, c registryconfig.Con
 	if registryID != "" && route.ID != registryID {
 		return Record{}, &Error{Code: "REGISTRY_SCOPE_AMBIGUOUS", Message: fmt.Sprintf("Namespace %q is routed to registry %q, not selected registry %q.", ns, route.ID, registryID)}
 	}
-	tmpDir, err := os.MkdirTemp(filepath.Dir(i.Root), ".activelane-install-*")
+	tmpDir, err := os.MkdirTemp(filepath.Dir(root), ".activelane-install-*")
 	if err != nil {
 		if os.IsNotExist(err) {
-			if e := os.MkdirAll(filepath.Dir(i.Root), 0755); e != nil {
+			if e := os.MkdirAll(filepath.Dir(root), 0755); e != nil {
 				return Record{}, e
 			}
-			tmpDir, err = os.MkdirTemp(filepath.Dir(i.Root), ".activelane-install-*")
+			tmpDir, err = os.MkdirTemp(filepath.Dir(root), ".activelane-install-*")
 		}
 		if err != nil {
 			return Record{}, err
@@ -113,13 +123,27 @@ func (i Installer) InstallFromRegistry(ctx context.Context, c registryconfig.Con
 	if _, err = alx.ExtractFile(pkg, staged); err != nil {
 		return Record{}, err
 	}
-	dest := filepath.Join(i.Root, ns, name, version)
+	dest := filepath.Join(root, ns, name, version)
+	backup := ""
 	if _, err = os.Stat(dest); err == nil {
-		record, readErr := ReadRecord(filepath.Join(i.Root, "installed.json"), ns, name)
-		if readErr == nil && record.PackageDigest == inspection.Digest {
+		record, readErr := ReadRecord(filepath.Join(root, RecordsFile), ns, name)
+		matches, compareErr := equalDirectories(staged, dest)
+		if compareErr != nil {
+			return Record{}, compareErr
+		}
+		if readErr == nil && record.PackageDigest == inspection.Digest && matches {
+			if record.InstallPath != dest {
+				record.InstallPath = dest
+				if err := UpdateRecord(filepath.Join(root, RecordsFile), record); err != nil {
+					return Record{}, err
+				}
+			}
 			return record, nil
 		}
-		return Record{}, fmt.Errorf("install destination already exists: %s", dest)
+		backup = filepath.Join(tmpDir, "previous-installation")
+		if err = os.Rename(dest, backup); err != nil {
+			return Record{}, fmt.Errorf("preserve existing install destination: %w", err)
+		}
 	} else if !errors.Is(err, os.ErrNotExist) {
 		return Record{}, err
 	}
@@ -127,18 +151,86 @@ func (i Installer) InstallFromRegistry(ctx context.Context, c registryconfig.Con
 		return Record{}, err
 	}
 	if err = os.Rename(staged, dest); err != nil {
+		if backup != "" {
+			_ = os.Rename(backup, dest)
+		}
 		return Record{}, err
 	}
 	now := time.Now
 	if i.Now != nil {
 		now = i.Now
 	}
-	record := Record{SchemaVersion: 1, RegistryID: route.ID, RegistrySource: source, Namespace: ns, Name: name, Version: version, ManifestDigest: meta.ManifestDigest, PackageDigest: inspection.Digest, InstalledAt: now().UTC().Format(time.RFC3339Nano), Enabled: false, InstallPath: dest}
-	if err = UpdateRecord(filepath.Join(i.Root, RecordsFile), record); err != nil {
-		os.RemoveAll(dest)
+	enabled := false
+	if previous != nil {
+		enabled = previous.Enabled
+	}
+	record := Record{SchemaVersion: 1, RegistryID: route.ID, RegistrySource: source, Namespace: ns, Name: name, Version: version, ManifestDigest: meta.ManifestDigest, PackageDigest: inspection.Digest, InstalledAt: now().UTC().Format(time.RFC3339Nano), Enabled: enabled, InstallPath: dest}
+	if err = UpdateRecord(filepath.Join(root, RecordsFile), record); err != nil {
+		_ = os.RemoveAll(dest)
+		if backup != "" {
+			_ = os.Rename(backup, dest)
+		}
 		return Record{}, err
 	}
+	if previous != nil && previous.Version != version {
+		// The new version is fully extracted and its inventory record is durable before
+		// the old package is removed. Cleanup failure is non-fatal: the old directory is
+		// no longer reachable from installed.json and can be reclaimed later.
+		previousPath := filepath.Join(root, previous.Namespace, previous.Name, previous.Version)
+		_ = os.RemoveAll(previousPath)
+		removeEmptyParents(root, filepath.Dir(previousPath))
+	}
 	return record, nil
+}
+
+func equalDirectories(left, right string) (bool, error) {
+	leftFiles := map[string]string{}
+	for _, root := range []string{left, right} {
+		files := map[string]string{}
+		err := filepath.Walk(root, func(name string, info os.FileInfo, walkErr error) error {
+			if walkErr != nil {
+				return walkErr
+			}
+			if info.IsDir() {
+				return nil
+			}
+			relative, err := filepath.Rel(root, name)
+			if err != nil {
+				return err
+			}
+			file, err := os.Open(name)
+			if err != nil {
+				return err
+			}
+			hash := sha256.New()
+			_, copyErr := io.Copy(hash, file)
+			closeErr := file.Close()
+			if copyErr != nil {
+				return copyErr
+			}
+			if closeErr != nil {
+				return closeErr
+			}
+			files[filepath.ToSlash(relative)] = hex.EncodeToString(hash.Sum(nil))
+			return nil
+		})
+		if err != nil {
+			return false, err
+		}
+		if root == left {
+			leftFiles = files
+			continue
+		}
+		if len(leftFiles) != len(files) {
+			return false, nil
+		}
+		for name, digest := range leftFiles {
+			if files[name] != digest {
+				return false, nil
+			}
+		}
+	}
+	return true, nil
 }
 
 func (i Installer) fetch(ctx context.Context, r registryconfig.Registry, ns, name, version, dest string) (reg.Version, string, error) {

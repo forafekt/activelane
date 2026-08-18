@@ -39,11 +39,10 @@ searches local or remote registries, resolves namespaces to exactly one configur
 installs exact versions with persisted source and digest records.
 
 ```bash
-go run ./go/cmd/registry --allow-publish
-ACTIVELANE_REGISTRY_CONFIG="$PWD/examples/registries.local.json" \
-  go run ./go/cmd/alx pack ./examples/extensions/hello --output /tmp/hello.alx
-ACTIVELANE_REGISTRY_CONFIG="$PWD/examples/registries.local.json" \
-  go run ./go/cmd/alx publish /tmp/hello.alx --registry local
+source ./scripts/activelane-dev-env.sh
+go run ./go/cmd/registry --allow-publish --data ./.activelane/registry
+go run ./go/cmd/alx pack ./examples/extensions/hello --output ./.activelane/packages/hello.alx
+go run ./go/cmd/alx publish ./.activelane/packages/hello.alx --registry local
 ```
 
 See [docs/guides/registry-workflow.md](docs/guides/registry-workflow.md) for the complete workflow

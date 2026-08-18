@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "@activelane/runtime-test",
+  "publisher": "activelane",
+  "name": "runtime-test",
+  "displayName": "Runtime Test",
+  "version": "1.1.1",
+  "description": "Minimal installed-extension lifecycle proof.",
+  "entry": "dist/extension.js",
+  "engines": { "activelane": ">=0.1.0" },
+  "hostSupport": ["desktop"],
+  "extensionKind": ["workbench"],
+  "visibility": "public",
+  "permissions": ["workspace-ui"],
+  "marketplace": {
+    "summary": "Proves dynamic runtime extension loading.",
+    "categories": ["development"],
+    "capabilities": ["workspace-ui"],
+    "highlights": ["Activity item", "Sidebar view", "Command"]
+  }
+}
