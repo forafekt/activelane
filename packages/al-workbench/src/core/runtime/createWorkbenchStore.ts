@@ -740,7 +740,7 @@ export function createWorkbenchStore(
         id: 'workbench.hibernate',
         label: 'Hibernated',
         tooltip: reason,
-        icon: 'lucide.snowflake',
+        icon: 'lucide:snowflake',
         severity: 'neutral',
         persist: true,
       },

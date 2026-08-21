@@ -2,7 +2,7 @@
 import { cn } from '../../lib/utils'
 import { panelClass } from '../../lib/variants'
 
-defineOptions({ name: 'AlPanel' })
+defineOptions({ name: 'Panel' })
 
 withDefaults(
   defineProps<{

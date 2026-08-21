@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -65,8 +66,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	absoluteDataDirectory, err := filepath.Abs(dataDirectory)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	fmt.Fprintf(os.Stderr, "ActiveLane registry %s listening on http://%s (publishing=%t)\n", registryID, address, allowPublish)
+	fmt.Fprintf(os.Stderr, "ActiveLane Registry\n\nListening:  http://%s\nStorage:    %s\nRegistry:   %s\nPublishing: %t\nHealth:     http://%s/healthz\n\n", address, absoluteDataDirectory, registryID, allowPublish, address)
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
 	go func() {

@@ -28,14 +28,14 @@ export interface FilesystemExplorerProviderOptions {
 }
 
 function fileIcon(name: string) {
-  if (name === 'package.json') return 'lucide.package' as const
-  if (name.endsWith('.vue')) return 'lucide.component' as const
+  if (name === 'package.json') return 'lucide:package' as const
+  if (name.endsWith('.vue')) return 'lucide:component' as const
   if (name.endsWith('.ts') || name.endsWith('.tsx') || name.endsWith('.js'))
-    return 'lucide.file-code-2' as const
-  if (name.endsWith('.json')) return 'lucide.braces' as const
-  if (name.endsWith('.md')) return 'lucide.book-open-text' as const
-  if (name.endsWith('.css') || name.endsWith('.scss')) return 'lucide.palette' as const
-  return 'lucide.file' as const
+    return 'lucide:file-code-2' as const
+  if (name.endsWith('.json')) return 'lucide:braces' as const
+  if (name.endsWith('.md')) return 'lucide:book-open-text' as const
+  if (name.endsWith('.css') || name.endsWith('.scss')) return 'lucide:palette' as const
+  return 'lucide:file' as const
 }
 
 function nodeFromEntry(entry: WorkbenchFileSystemEntry): ExplorerNode {
@@ -43,7 +43,7 @@ function nodeFromEntry(entry: WorkbenchFileSystemEntry): ExplorerNode {
   return {
     id: entry.path,
     label: entry.name,
-    icon: directory ? 'lucide.folder' : fileIcon(entry.name),
+    icon: directory ? 'lucide:folder' : fileIcon(entry.name),
     uri: entry.uri,
     resourceType: entry.type,
     contextValue: directory ? 'folder' : 'file',
@@ -75,7 +75,7 @@ export function createFilesystemExplorerProvider(
   return {
     id: FILE_PROVIDER_ID,
     title: 'Files',
-    icon: 'lucide.folder-tree',
+    icon: 'lucide:folder-tree',
     order: 10,
     async getChildren(node?: ExplorerNode) {
       if (!files?.readDirectory) {
@@ -83,7 +83,7 @@ export function createFilesystemExplorerProvider(
           {
             id: 'workbench.files.unavailable',
             label: 'Filesystem unavailable',
-            icon: 'lucide.circle-slash',
+            icon: 'lucide:circle-slash',
             description: runtime.host.kind,
             isLeaf: true,
             disabled: true,

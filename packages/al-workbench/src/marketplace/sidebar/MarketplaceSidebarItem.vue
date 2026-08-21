@@ -14,12 +14,9 @@ const emit = defineEmits<{
   action: [action: 'install' | 'open' | 'update' | 'enable' | 'subscribe']
   manage: [action: string]
 }>()
-const [AlButton, AlDropdownMenu] = props.runtime.workbench.ui.getComponents([
-  'Button',
-  'DropdownMenu',
-])
-const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide.badge-check')
-const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide.ellipsis')
+const [Button, DropdownMenu] = props.runtime.workbench.ui.getComponents(['Button', 'DropdownMenu'])
+const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide:badge-check')
+const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide:ellipsis')
 
 function priceLabel() {
   const paid = props.extension.plans
@@ -79,7 +76,7 @@ const manageItems = [
       </span>
     </button>
 
-    <AlDropdownMenu
+    <DropdownMenu
       v-if="mode === 'installed'"
       :items="manageItems"
       class="w-44"
@@ -94,8 +91,8 @@ const manageItems = [
           <MoreHorizontal />
         </button>
       </template>
-    </AlDropdownMenu>
-    <AlButton
+    </DropdownMenu>
+    <Button
       v-else
       class="sidebar-item-action"
       size="sm"
@@ -103,7 +100,7 @@ const manageItems = [
       @click="emit('action', primaryAction().action)"
     >
       {{ primaryAction().label }}
-    </AlButton>
+    </Button>
   </article>
 </template>
 

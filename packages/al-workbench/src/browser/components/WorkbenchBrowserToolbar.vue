@@ -1,28 +1,28 @@
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
 import {
-  AlButton,
-  AlIconButton,
-  AlInput,
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  IconButton,
+  Input,
 } from '@activelane/shadcn'
 
 defineOptions({ name: 'WorkbenchBrowserToolbar' })
 
-const Copy = getIcon('lucide.copy')
-const ArrowLeft = getIcon('lucide.arrow-left')
-const ArrowRight = getIcon('lucide.arrow-right')
-const ExternalLink = getIcon('lucide.external-link')
-const Home = getIcon('lucide.house')
-const MoreHorizontal = getIcon('lucide.ellipsis')
-const Plus = getIcon('lucide.plus')
-const RotateCcw = getIcon('lucide.rotate-ccw')
-const Trash2 = getIcon('lucide.trash-2')
-const X = getIcon('lucide.x')
+const Copy = getIcon('lucide:copy')
+const ArrowLeft = getIcon('lucide:arrow-left')
+const ArrowRight = getIcon('lucide:arrow-right')
+const ExternalLink = getIcon('lucide:external-link')
+const Home = getIcon('lucide:house')
+const MoreHorizontal = getIcon('lucide:ellipsis')
+const Plus = getIcon('lucide:plus')
+const RotateCcw = getIcon('lucide:rotate-ccw')
+const Trash2 = getIcon('lucide:trash-2')
+const X = getIcon('lucide:x')
 
 defineProps<{
   address: string
@@ -50,7 +50,7 @@ const emit = defineEmits<{
 
 <template>
   <form class="browser-toolbar" @submit.prevent="emit('navigate')">
-    <AlIconButton
+    <IconButton
       label="Back"
       :icon="ArrowLeft"
       size="icon-sm"
@@ -58,7 +58,7 @@ const emit = defineEmits<{
       :disabled="!canGoBack"
       @click="emit('back')"
     />
-    <AlIconButton
+    <IconButton
       label="Forward"
       :icon="ArrowRight"
       size="icon-sm"
@@ -66,29 +66,29 @@ const emit = defineEmits<{
       :disabled="!canGoForward"
       @click="emit('forward')"
     />
-    <AlIconButton
+    <IconButton
       label="Reload"
       :icon="loading ? X : RotateCcw"
       size="icon-sm"
       variant="ghost"
       @click="loading ? emit('stop') : emit('reload')"
     />
-    <AlIconButton label="Home" :icon="Home" size="icon-sm" variant="ghost" @click="emit('home')" />
-    <AlInput
+    <IconButton label="Home" :icon="Home" size="icon-sm" variant="ghost" @click="emit('home')" />
+    <Input
       class="browser-toolbar__address"
       :model-value="address"
       placeholder="Search or enter URL"
       spellcheck="false"
       @update:model-value="emit('update:address', $event)"
     />
-    <AlIconButton
+    <IconButton
       label="New browser tab"
       :icon="Plus"
       size="icon-sm"
       variant="ghost"
       @click="emit('newTab')"
     />
-    <AlIconButton
+    <IconButton
       label="Open externally"
       :icon="ExternalLink"
       size="icon-sm"
@@ -97,9 +97,9 @@ const emit = defineEmits<{
     />
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
-        <AlButton variant="ghost" size="icon-sm" aria-label="Browser actions">
+        <Button variant="ghost" size="icon-sm" aria-label="Browser actions">
           <MoreHorizontal class="size-4" />
-        </AlButton>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" class="w-48">
         <DropdownMenuItem @select="emit('duplicate')">

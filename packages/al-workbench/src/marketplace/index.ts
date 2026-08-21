@@ -13,11 +13,11 @@ import MarketplaceInspectorPanel from './components/MarketplaceInspectorPanel.vu
 import MarketplaceSidebarView from './components/MarketplaceSidebarView.vue'
 import MarketplaceTabView from './components/MarketplaceTabView.vue'
 
-const Check = getIcon('lucide.check')
-const Layers3 = getIcon('lucide.layers-3')
-const Search = getIcon('lucide.search')
-const Settings2 = getIcon('lucide.settings-2')
-const X = getIcon('lucide.x')
+const Check = getIcon('lucide:check')
+const Layers3 = getIcon('lucide:layers-3')
+const Search = getIcon('lucide:search')
+const Settings2 = getIcon('lucide:settings-2')
+const X = getIcon('lucide:x')
 
 const MARKETPLACE_TAB_KIND = 'extensions.marketplace.home'
 const MARKETPLACE_DETAILS_TAB_KIND = 'extensions.marketplace.details'
@@ -85,7 +85,7 @@ export function createExtensionsMarketplaceExtension(): WorkbenchExtensionDefini
             name: 'Marketplace',
             description: 'Browse, install, enable, disable, and inspect ActiveLane extensions.',
             category: 'Extensions',
-            icon: 'lucide.store',
+            icon: 'lucide:store',
             keywords: ['extensions', 'marketplace', 'plugins', 'install'],
             launch: {
               type: 'command',

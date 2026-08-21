@@ -10,6 +10,7 @@ import (
 )
 
 const packageMediaType = "application/vnd.activelane.alx+zip"
+const seedHeader = "X-ActiveLane-Seed"
 
 func (handlers handlers) listVersions(response http.ResponseWriter, request *http.Request) {
 	versions, err := handlers.config.Store.ListVersions(extensionParams(request))
@@ -33,6 +34,28 @@ func (handlers handlers) publishVersion(response http.ResponseWriter, request *h
 
 	request.Body = http.MaxBytesReader(response, request.Body, handlers.config.MaxPublishBytes)
 	namespace, name := extensionParams(request)
+	if request.Header.Get(seedHeader) == "1" {
+		store, ok := handlers.config.Store.(SeedStore)
+		if !ok {
+			writeError(response, http.StatusNotImplemented, "SEEDING_UNSUPPORTED", "registry store does not support development seeding")
+			return
+		}
+		version, existing, err := store.PublishSeeded(request.Context(), namespace, name, request.Body)
+		if errors.Is(err, registry.ErrVersionExists) {
+			writeError(response, http.StatusConflict, "VERSION_EXISTS", "version exists and is not owned by the seeder")
+			return
+		}
+		if err != nil {
+			writeError(response, http.StatusBadRequest, "INVALID_PACKAGE", err.Error())
+			return
+		}
+		status := http.StatusCreated
+		if existing {
+			status = http.StatusOK
+		}
+		writeJSON(response, status, version)
+		return
+	}
 	version, err := handlers.config.Store.Publish(request.Context(), namespace, name, request.Body)
 	if errors.Is(err, registry.ErrVersionExists) {
 		writeError(response, http.StatusConflict, "VERSION_EXISTS", err.Error())
@@ -50,6 +73,24 @@ func (handlers handlers) publishVersion(response http.ResponseWriter, request *h
 	}
 
 	writeJSON(response, http.StatusCreated, version)
+}
+
+func (handlers handlers) cleanSeededExtensions(response http.ResponseWriter, request *http.Request) {
+	if !handlers.config.AllowPublish {
+		writeError(response, http.StatusForbidden, "PUBLISH_DISABLED", "development cleanup is disabled")
+		return
+	}
+	store, ok := handlers.config.Store.(SeedStore)
+	if !ok {
+		writeError(response, http.StatusNotImplemented, "SEEDING_UNSUPPORTED", "registry store does not support development seeding")
+		return
+	}
+	removed, err := store.CleanSeeded()
+	if err != nil {
+		writeError(response, http.StatusInternalServerError, "CLEAN_FAILED", err.Error())
+		return
+	}
+	writeJSON(response, http.StatusOK, map[string]int{"removed": removed})
 }
 
 func (handlers handlers) yankVersion(response http.ResponseWriter, request *http.Request) {

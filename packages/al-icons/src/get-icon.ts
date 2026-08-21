@@ -13,9 +13,11 @@ export function getIcon(reference: IconReference) {
   const cached = cache.get(reference)
   if (cached) return cached
 
+  const name = `Icon-${reference.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '')}`
+
   const component = markRaw(
     defineComponent({
-      name: `Icon-${reference.replace('.', '-')}`,
+      name,
       inheritAttrs: false,
       props: { size: { type: [Number, String], default: '1em' } },
       setup(props, { attrs }) {

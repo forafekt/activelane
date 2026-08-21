@@ -25,7 +25,7 @@ func serviceFixture(t *testing.T) (*ExtensionService, string) {
 		t.Fatal(err)
 	}
 
-	if err := os.WriteFile(filepath.Join(extensionRoot, "extension/main.js"), []byte("export {}"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(extensionRoot, "extension/main.js"), []byte("export default { manifest: { id: '@local/example', version: '1.0.0' } }"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	packageFile := filepath.Join(t.TempDir(), "example.alx")
@@ -184,5 +184,23 @@ func TestInstalledIntegrityMismatchIsPresented(t *testing.T) {
 
 	if response.Error != nil || len(response.Items) != 1 || response.Items[0].IntegrityState != "mismatch" {
 		t.Fatalf("response: %+v", response)
+	}
+}
+
+func TestModuleReadsOnlyTheInstalledManifestEntrypoint(t *testing.T) {
+	service, _ := serviceFixture(t)
+	installed := service.Install(context.Background(), "local", "@local/example", "1.0.0")
+	if installed.Error != nil {
+		t.Fatalf("install: %+v", installed)
+	}
+
+	response := service.Module("@local/example", "1.0.0")
+	if response.Error != nil || !bytes.Contains([]byte(response.Source), []byte("export default")) {
+		t.Fatalf("module response: %+v", response)
+	}
+
+	missing := service.Module("@local/example", "9.9.9")
+	if missing.Error == nil || missing.Error.Code != "EXTENSION_NOT_FOUND" {
+		t.Fatalf("missing version: %+v", missing)
 	}
 }

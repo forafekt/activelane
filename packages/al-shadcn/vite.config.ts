@@ -1,13 +1,28 @@
 import { fileURLToPath, URL } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
+import RekaResolver from 'reka-ui/resolver'
+import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 
 export default defineConfig(({ command, mode }) => {
   const isShowcase = command === 'serve' || mode === 'showcase'
 
   return {
-    plugins: [tailwindcss(), vue()],
+    plugins: [
+      tailwindcss(),
+      Components({
+        dts: true,
+        resolvers: [
+          RekaResolver(),
+
+          // RekaResolver({
+          //   prefix: '' // use the prefix option to add Prefix to the imported components
+          // })
+        ],
+      }),
+      vue(),
+    ],
     build: isShowcase
       ? {
           outDir: 'dist-showcase',

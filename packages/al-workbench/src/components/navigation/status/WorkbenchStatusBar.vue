@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { getComponent } from '@activelane/ui'
 import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 import type { ResolvedWorkbenchStatusBarItem } from '../../../core/workbench/zones'
 import { resolveStatusBarItems } from '../../../core/workbench/zones'
 
 defineOptions({ name: 'WorkbenchStatusBar' })
+
+const Button = getComponent('button')
 
 const runtime = useWorkbenchRuntime()
 
@@ -50,30 +53,28 @@ function activate(item: ResolvedWorkbenchStatusBarItem) {
   <footer class="wb-status-bar">
     <div class="wb-status-bar__group">
       <div v-for="item in itemsLeft" :key="item.id" class="flex items-center">
-        <button
-          type="button"
-          :disabled="item.disabled"
-          :title="item.tooltip"
-          class="wb-status-bar__button"
-          @click="activate(item)"
-        >
-          <component v-if="item.icon" :is="item.icon" class="size-3.5" />
+        <Button :disabled="item.disabled" :title="item.tooltip" @click="activate(item)" size="tiny" quaternary>
+          <template #icon>
+            <component v-if="item.icon" :is="item.icon" />
+          </template>
           <span v-if="item.label">{{ item.label }}</span>
-        </button>
+        </Button>
       </div>
     </div>
     <div class="wb-status-bar__group">
       <div v-for="item in itemsRight" :key="item.id" class="flex items-center">
-        <button
-          type="button"
+        <Button
+          size="tiny"
+          quaternary
           :disabled="item.disabled"
           :title="item.tooltip"
-          class="wb-status-bar__button"
           @click="activate(item)"
         >
-          <component v-if="item.icon" :is="item.icon" class="size-3.5" />
+          <template #icon>
+            <component v-if="item.icon" :is="item.icon" />
+          </template>
           <span v-if="item.label">{{ item.label }}</span>
-        </button>
+        </Button>
       </div>
     </div>
   </footer>

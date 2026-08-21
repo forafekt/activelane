@@ -1,0 +1,28 @@
+.wb-shell-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.wb-shell-atmosphere::before {
+  content: "";
+  position: absolute;
+
+  width: 760px;
+  height: 520px;
+
+  left: -250px;
+  top: -280px;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgb(205 153 52 / 17%) 0%,
+      rgb(172 120 38 / 8%) 38%,
+      transparent 72%
+    );
+
+  filter: blur(80px);
+}

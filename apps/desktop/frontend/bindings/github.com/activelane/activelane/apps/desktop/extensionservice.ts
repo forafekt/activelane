@@ -43,9 +43,20 @@ export function Installed(): $CancellablePromise<$models.InstalledResponse> {
     });
 }
 
+/**
+ * Module returns the self-contained ES module entrypoint for an installed package.
+ * Keeping this at the native service boundary gives development and packaged builds
+ * one loading path and prevents the webview from reading arbitrary local files.
+ */
+export function Module(extensionID: string, version: string): $CancellablePromise<$models.ExtensionModuleResponse> {
+    return $Call.ByID(44273680, extensionID, version).then(($result: any) => {
+        return $$createType3($result);
+    });
+}
+
 export function Registries(): $CancellablePromise<$models.RegistryStatusResponse> {
     return $Call.ByID(3943143959).then(($result: any) => {
-        return $$createType3($result);
+        return $$createType4($result);
     });
 }
 
@@ -65,4 +76,5 @@ export function Uninstall(extensionID: string): $CancellablePromise<$models.Exte
 const $$createType0 = $models.SearchResponse.createFrom;
 const $$createType1 = $models.ExtensionOperationResponse.createFrom;
 const $$createType2 = $models.InstalledResponse.createFrom;
-const $$createType3 = $models.RegistryStatusResponse.createFrom;
+const $$createType3 = $models.ExtensionModuleResponse.createFrom;
+const $$createType4 = $models.RegistryStatusResponse.createFrom;

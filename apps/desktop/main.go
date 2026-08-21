@@ -52,7 +52,6 @@ func main() {
 		extensionService.Close()
 	})
 
-
 	if err := app.Run(); err != nil {
 		log.Fatal(err)
 	}

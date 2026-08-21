@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiProvider } from '@activelane/ui/providers'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { provideWorkbenchRuntime } from '../../composables/useWorkbenchRuntime'
 import { useWorkbenchShellKeybindings } from '../../composables/useWorkbenchShellKeybindings'
@@ -23,7 +24,7 @@ const props = withDefaults(
   },
 )
 
-const [SidebarProvider] = props.runtime.workbench.ui.getComponents(['SidebarProvider'])
+const SidebarProvider = props.runtime.workbench.ui.getComponent('SidebarProvider')
 
 provideWorkbenchRuntime(props.runtime)
 const launcher = createApplicationRegistryService(props.runtime)
@@ -64,18 +65,27 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="wb-shell-root">
-    <slot name="window-header" :host="props.host">
-      <WorkbenchWindowHeader :host="props.host" />
-    </slot>
-    <div class="wb-shell-container">
-      <SidebarProvider :open="sidebarOpen" @update:open="sidebarOpen = $event">
-        <section ref="hostRef" :class="shellClass" :data-host-mode="shellRuntime.host.mode">
-          <WorkbenchLayout />
-          <LauncherOverlay />
-          <WorkbenchTabWorkspaceDialog />
-        </section>
-      </SidebarProvider>
+  <UiProvider>
+    <div data-workbench-part="root" class="wb-shell-root">
+      <div class="wb-shell-atmosphere"></div>
+
+      <slot name="window-header" :host="props.host">
+        <WorkbenchWindowHeader :host="props.host" />
+      </slot>
+      <div data-workbench-part="container" class="wb-shell-container">
+        <SidebarProvider :open="sidebarOpen" @update:open="sidebarOpen = $event">
+          <section
+            data-workbench-part="layout"
+            ref="hostRef"
+            :class="shellClass"
+            :data-host-mode="shellRuntime.host.mode"
+          >
+            <WorkbenchLayout />
+            <LauncherOverlay />
+            <WorkbenchTabWorkspaceDialog />
+          </section>
+        </SidebarProvider>
+      </div>
     </div>
-  </div>
+  </UiProvider>
 </template>

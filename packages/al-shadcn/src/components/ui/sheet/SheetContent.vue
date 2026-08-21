@@ -7,7 +7,7 @@ import type { HTMLAttributes } from 'vue'
 import { cn } from '../../../lib/utils'
 import SheetOverlay from './SheetOverlay.vue'
 
-const X = getIcon('lucide.x')
+const X = getIcon('lucide:x')
 
 interface SheetContentProps extends DialogContentProps {
   class?: HTMLAttributes['class']

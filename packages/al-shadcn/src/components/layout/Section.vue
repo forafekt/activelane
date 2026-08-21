@@ -2,7 +2,7 @@
 import { cn } from '../../lib/utils'
 import SectionHeader from './SectionHeader.vue'
 
-defineOptions({ name: 'AlSection' })
+defineOptions({ name: 'Section' })
 
 defineProps<{
   title?: string

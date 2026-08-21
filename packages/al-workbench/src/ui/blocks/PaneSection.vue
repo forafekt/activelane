@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
-import { AlBadge, AlIconButton } from '@activelane/shadcn'
+import { Badge, IconButton } from '@activelane/shadcn'
 import { ref, watch } from 'vue'
 
-const ChevronDown = getIcon('lucide.chevron-down')
-const ChevronRight = getIcon('lucide.chevron-right')
+const ChevronDown = getIcon('lucide:chevron-down')
+const ChevronRight = getIcon('lucide:chevron-right')
 
 defineOptions({ name: 'PaneSection' })
 
@@ -33,7 +33,7 @@ watch(
       v-if="title || $slots.heading || $slots.actions"
       class="flex min-h-[var(--workbench-list-row-height)] items-center gap-0.5 px-1.5"
     >
-      <AlIconButton
+      <IconButton
         v-if="collapsible"
         :label="`${isOpen ? 'Collapse' : 'Expand'} ${title ?? 'section'}`"
         :icon="isOpen ? ChevronDown : ChevronRight"
@@ -46,7 +46,7 @@ watch(
         @click="collapsible && (isOpen = !isOpen)"
       >
         <slot name="heading">{{ title }}</slot>
-        <AlBadge v-if="count !== undefined" variant="outline">{{ count }}</AlBadge>
+        <Badge v-if="count !== undefined" variant="outline">{{ count }}</Badge>
       </button>
       <div v-if="$slots.actions" class="ml-auto flex items-center gap-1">
         <slot name="actions" />

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button } from '@activelane/ui/components'
 import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
 import type { WorkbenchTab } from '../../../../core/workbench/contributions'
@@ -17,7 +18,7 @@ const emit = defineEmits<{
 }>()
 
 const runtime = useWorkbenchRuntime()
-const X = runtime.workbench.ui.getIcon('lucide.x')
+const X = runtime.workbench.ui.getIcon('lucide:x')
 
 const favicon = computed(() => {
   const value = props.tab.input?.favicon
@@ -29,16 +30,14 @@ const icon = computed(() => {
   try {
     return runtime.workbench.ui.getIcon(props.tab.icon)
   } catch {
-    return runtime.workbench.ui.getIcon('lucide.globe')
+    return runtime.workbench.ui.getIcon('lucide:globe')
   }
 })
 </script>
 
 <template>
   <div class="wb-activity-tab" :class="{ 'wb-activity-tab--active': active }">
-    <button
-      type="button"
-      class="wb-activity-tab__activate"
+    <Button
       :title="expanded ? undefined : tab.title"
       :aria-label="`Open ${tab.title}`"
       @click="emit('activate', tab)"
@@ -47,15 +46,14 @@ const icon = computed(() => {
       <component :is="icon" v-else-if="icon" class="size-4 shrink-0" />
       <span v-else class="wb-activity-tab__fallback">{{ tab.title.slice(0, 1) }}</span>
       <span v-if="expanded" class="wb-activity-tab__label">{{ tab.title }}</span>
-    </button>
-    <button
+    </Button>
+    <Button
       v-if="expanded && tab.closable"
-      type="button"
       class="wb-activity-tab__close"
       :aria-label="`Close ${tab.title}`"
       @click.stop="emit('close', tab)"
     >
       <X class="size-3.5" />
-    </button>
+    </Button>
   </div>
 </template>

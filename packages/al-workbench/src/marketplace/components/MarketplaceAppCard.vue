@@ -10,10 +10,10 @@ const props = defineProps<{
   compact?: boolean
 }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
-const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
-const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide.badge-check')
-const Star = props.runtime.workbench.ui.getIcon('lucide.star')
-const Download = props.runtime.workbench.ui.getIcon('lucide.download')
+const [Badge, Button] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
+const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide:badge-check')
+const Star = props.runtime.workbench.ui.getIcon('lucide:star')
+const Download = props.runtime.workbench.ui.getIcon('lucide:download')
 
 function pricingLabel() {
   const paid = props.extension.plans.filter((plan) => plan.priceMinor > 0)
@@ -59,8 +59,8 @@ async function runAction() {
         </div>
         <span>{{ extension.publisher.displayName }}</span>
       </div>
-      <AlBadge v-if="extension.installState === 'installed'" variant="outline"
-        >{{ statusLabel(extension) }}</AlBadge
+      <Badge v-if="extension.installState === 'installed'" variant="outline"
+        >{{ statusLabel(extension) }}</Badge
       >
     </div>
     <p>{{ extension.description }}</p>
@@ -80,12 +80,12 @@ async function runAction() {
         >{{ kind.replace(/([A-Z])/g, ' $1') }}</span
       >
     </div>
-    <AlButton
+    <Button
       size="sm"
       :variant="primaryAction(extension).variant"
       :loading="Boolean(marketplace.activeOperations.value[extension.id])"
       @click.stop="runAction"
-      >{{ primaryAction(extension).label }}</AlButton
+      >{{ primaryAction(extension).label }}</Button
     >
   </article>
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { cn } from '../../lib/utils'
 
-defineOptions({ name: 'AlKeyValueList' })
+defineOptions({ name: 'KeyValueList' })
 
 defineProps<{
   items: Array<{ key: string; label: string; value?: string | number | null }>

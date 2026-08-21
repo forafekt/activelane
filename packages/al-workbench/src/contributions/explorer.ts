@@ -24,7 +24,7 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
           {
             id: 'workbench.explorer',
             title: 'Explorer',
-            icon: 'lucide.files',
+            icon: 'lucide:files',
             defaultSidebarViewId: 'workbench.explorer.view',
             order: 0,
           },
@@ -40,13 +40,13 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
               {
                 id: 'workbench.explorer.refresh.action',
                 title: 'Refresh Explorer',
-                icon: 'lucide.refresh-cw',
+                icon: 'lucide:refresh-cw',
                 commandId: 'workbench.explorer.refresh',
               },
               {
                 id: 'workbench.explorer.collapseAll.action',
                 title: 'Collapse All',
-                icon: 'lucide.fold-vertical',
+                icon: 'lucide:fold-vertical',
                 commandId: 'workbench.explorer.collapseAll',
               },
             ],
@@ -76,7 +76,7 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
             id: 'workbench.explorer.openFileInfo',
             title: 'Explorer: Open File Info',
             category: 'Explorer',
-            icon: 'lucide.info',
+            icon: 'lucide:info',
             run: ({ runtime }) => {
               const providerId = runtime.explorer.state.selectedProviderId
               const nodeId = runtime.explorer.state.selectedNodeId
@@ -88,7 +88,7 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
                     id: `file:${node.uri}`,
                     kind: EXPLORER_FILE_TAB_KIND,
                     title: node.label,
-                    icon: runtime.workbench.ui.getIcon(node.icon ?? 'lucide.file'),
+                    icon: runtime.workbench.ui.getIcon(node.icon ?? 'lucide:file'),
                     closable: true,
                     preview: true,
                     input: {
@@ -108,21 +108,21 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
             id: 'workbench.explorer.refresh',
             title: 'Explorer: Refresh',
             category: 'Explorer',
-            icon: 'lucide.refresh-cw',
+            icon: 'lucide:refresh-cw',
             run: ({ runtime }) => runtime.explorer.refresh(),
           },
           {
             id: 'workbench.explorer.collapseAll',
             title: 'Explorer: Collapse All',
             category: 'Explorer',
-            icon: 'lucide.fold-vertical',
+            icon: 'lucide:fold-vertical',
             run: ({ runtime }) => runtime.explorer.collapseAll(),
           },
           {
             id: 'workbench.explorer.copyPath',
             title: 'Explorer: Copy Path',
             category: 'Explorer',
-            icon: 'lucide.copy',
+            icon: 'lucide:copy',
             run: ({ runtime }) => {
               const providerId = runtime.explorer.state.selectedProviderId
               const nodeId = runtime.explorer.state.selectedNodeId
@@ -138,7 +138,7 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
             id: 'workbench.explorer.revealInFileManager',
             title: 'Explorer: Reveal in File Manager',
             category: 'Explorer',
-            icon: 'lucide.external-link',
+            icon: 'lucide:external-link',
             run: ({ runtime }) => {
               const providerId = runtime.explorer.state.selectedProviderId
               const nodeId = runtime.explorer.state.selectedNodeId
@@ -154,7 +154,7 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
             id: 'workbench.explorer.newFile',
             title: 'Explorer: New File',
             category: 'Explorer',
-            icon: 'lucide.file-plus',
+            icon: 'lucide:file-plus',
             run: ({ runtime }) => {
               void runtime.host.capabilities.notify?.({
                 title: 'New File is not available yet',
@@ -168,7 +168,7 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
             id: 'workbench.explorer.newFolder',
             title: 'Explorer: New Folder',
             category: 'Explorer',
-            icon: 'lucide.folder-plus',
+            icon: 'lucide:folder-plus',
             run: ({ runtime }) => {
               void runtime.host.capabilities.notify?.({
                 title: 'New Folder is not available yet',
@@ -182,7 +182,7 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
             id: 'workbench.explorer.rename',
             title: 'Explorer: Rename',
             category: 'Explorer',
-            icon: 'lucide.pencil',
+            icon: 'lucide:pencil',
             run: ({ runtime }) => {
               void runtime.host.capabilities.notify?.({
                 title: 'Rename is not available yet',
@@ -196,7 +196,7 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
             id: 'workbench.explorer.delete',
             title: 'Explorer: Delete',
             category: 'Explorer',
-            icon: 'lucide.trash-2',
+            icon: 'lucide:trash-2',
             run: ({ runtime }) => {
               void runtime.host.capabilities.notify?.({
                 title: 'Delete is not available yet',
@@ -213,14 +213,14 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
             title: 'Explorer: Refresh',
             commandId: 'workbench.explorer.refresh',
             category: 'Explorer',
-            icon: 'lucide.refresh-cw',
+            icon: 'lucide:refresh-cw',
           },
           {
             id: 'workbench.explorer.collapseAll.palette',
             title: 'Explorer: Collapse All',
             commandId: 'workbench.explorer.collapseAll',
             category: 'Explorer',
-            icon: 'lucide.fold-vertical',
+            icon: 'lucide:fold-vertical',
           },
         ],
         menus: [
@@ -229,7 +229,7 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
             title: 'Explorer: Refresh',
             location: 'sidebar/header',
             commandId: 'workbench.explorer.refresh',
-            icon: 'lucide.refresh-cw',
+            icon: 'lucide:refresh-cw',
             group: 'navigation',
           },
           {
@@ -237,7 +237,7 @@ export function createWorkbenchExplorerContribution(): WorkbenchExtensionDefinit
             title: 'Explorer: Collapse All',
             location: 'sidebar/header',
             commandId: 'workbench.explorer.collapseAll',
-            icon: 'lucide.fold-vertical',
+            icon: 'lucide:fold-vertical',
             group: 'navigation',
           },
         ],

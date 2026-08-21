@@ -15,17 +15,17 @@ const props = defineProps<{ tab: WorkbenchTab; runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
 const activeTab = ref<'overview' | 'integrations' | 'permissions' | 'releases'>('overview')
 const subscription = ref<WorkbenchSubscription>()
-const [AlButton] = props.runtime.workbench.ui.getComponents(['Button'])
-const ArrowLeft = props.runtime.workbench.ui.getIcon('lucide.arrow-left')
-const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide.badge-check')
-const Check = props.runtime.workbench.ui.getIcon('lucide.check')
-const ExternalLink = props.runtime.workbench.ui.getIcon('lucide.external-link')
-const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide.ellipsis')
-const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
-const Settings2 = props.runtime.workbench.ui.getIcon('lucide.settings-2')
-const ShieldCheck = props.runtime.workbench.ui.getIcon('lucide.shield-check')
-const Star = props.runtime.workbench.ui.getIcon('lucide.star')
-const Trash2 = props.runtime.workbench.ui.getIcon('lucide.trash-2')
+const Button = props.runtime.workbench.ui.getComponent('Button')
+const ArrowLeft = props.runtime.workbench.ui.getIcon('lucide:arrow-left')
+const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide:badge-check')
+const Check = props.runtime.workbench.ui.getIcon('lucide:check')
+const ExternalLink = props.runtime.workbench.ui.getIcon('lucide:external-link')
+const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide:ellipsis')
+const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide:refresh-ccw')
+const Settings2 = props.runtime.workbench.ui.getIcon('lucide:settings-2')
+const ShieldCheck = props.runtime.workbench.ui.getIcon('lucide:shield-check')
+const Star = props.runtime.workbench.ui.getIcon('lucide:star')
+const Trash2 = props.runtime.workbench.ui.getIcon('lucide:trash-2')
 const extension = computed(() => {
   const id = typeof props.tab.input?.extensionId === 'string' ? props.tab.input.extensionId : ''
   return marketplace.getExtension(id) ?? marketplace.selectedExtension.value
@@ -110,18 +110,18 @@ function back() {
           </div>
         </div>
         <div class="product-actions">
-          <AlButton
+          <Button
             :variant="primaryAction(extension).variant"
             :loading="Boolean(marketplace.activeOperations.value[extension.id])"
             @click="runPrimary(extension)"
-            >{{ primaryAction(extension).label }}</AlButton
-          ><AlButton
+            >{{ primaryAction(extension).label }}</Button
+          ><Button
             v-if="extension.settings.length && extension.installState === 'installed'"
             variant="outline"
             :leading-icon="Settings2"
             @click="marketplace.openExtensionSettings(extension)"
-            >Configure</AlButton
-          ><AlButton variant="ghost" :leading-icon="MoreHorizontal" aria-label="More actions" />
+            >Configure</Button
+          ><Button variant="ghost" :leading-icon="MoreHorizontal" aria-label="More actions" />
         </div>
       </header>
       <div
@@ -137,11 +137,11 @@ function back() {
             >{{ extension.updateAvailable?.changelog || extension.compatibilityReason || 'The application will become available after restart.' }}</span
           >
         </div>
-        <AlButton
+        <Button
           v-if="extension.updateAvailable"
           size="sm"
           @click="marketplace.updateExtension(extension.id)"
-          >Update</AlButton
+          >Update</Button
         >
       </div>
       <nav class="details-tabs" aria-label="Application details">
@@ -245,18 +245,18 @@ function back() {
           </section>
           <section v-if="extension.installState === 'installed'">
             <h2>Management</h2>
-            <AlButton
+            <Button
               v-if="extension.status === 'enabled' || extension.status === 'update-available'"
               size="sm"
               variant="outline"
               @click="marketplace.disableExtension(extension.id)"
-              >Disable</AlButton
-            ><AlButton
+              >Disable</Button
+            ><Button
               size="sm"
               variant="ghost"
               :leading-icon="Trash2"
               @click="marketplace.uninstallExtension(extension.id)"
-              >Uninstall</AlButton
+              >Uninstall</Button
             >
           </section>
         </aside>
@@ -312,7 +312,7 @@ function back() {
     <div v-else class="details-missing">
       <h1>Application unavailable</h1>
       <p>This marketplace item may have been removed or its registry is offline.</p>
-      <AlButton @click="back">Return to Marketplace</AlButton>
+      <Button @click="back">Return to Marketplace</Button>
     </div>
   </section>
 </template>

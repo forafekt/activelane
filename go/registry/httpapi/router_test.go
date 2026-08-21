@@ -136,6 +136,21 @@ func TestStructuredRoutingErrors(t *testing.T) {
 	}
 }
 
+func TestDiscoveryAdvertisesCommerceWhenSubscriptionRoutesAreAvailable(t *testing.T) {
+	store, err := registry.NewStore(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	response := httptest.NewRecorder()
+	NewRouter(Config{Store: store}).ServeHTTP(
+		response,
+		httptest.NewRequest(http.MethodGet, "/.well-known/activelane-registry", nil),
+	)
+	if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), `"commerce":true`) {
+		t.Fatalf("status = %d, body = %s", response.Code, response.Body.String())
+	}
+}
+
 func TestPublishValidationAndLimits(t *testing.T) {
 	t.Run("content type", func(t *testing.T) {
 		response := httptest.NewRecorder()

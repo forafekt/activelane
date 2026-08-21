@@ -8,8 +8,8 @@ import type {
 import WorkbenchServerLogsView from '../servers/WorkbenchServerLogsView.vue'
 import WorkbenchServersView from '../servers/WorkbenchServersView.vue'
 
-const ServerIcon = getIcon('lucide.server')
-const LogsIcon = getIcon('lucide.scroll-text')
+const ServerIcon = getIcon('lucide:server')
+const LogsIcon = getIcon('lucide:scroll-text')
 
 const SERVERS_TAB_KIND = 'workbench.servers'
 const SERVER_LOGS_TAB_KIND = 'workbench.server.logs'

@@ -12,10 +12,10 @@ const props = defineProps<{
   subscription?: WorkbenchSubscription
 }>()
 const emit = defineEmits<{ changed: [subscription: WorkbenchSubscription] }>()
-const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
-const Check = props.runtime.workbench.ui.getIcon('lucide.check')
-const CheckCircle2 = props.runtime.workbench.ui.getIcon('lucide.circle-check-big')
-const X = props.runtime.workbench.ui.getIcon('lucide.x')
+const [Badge, Button] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
+const Check = props.runtime.workbench.ui.getIcon('lucide:check')
+const CheckCircle2 = props.runtime.workbench.ui.getIcon('lucide:circle-check-big')
+const X = props.runtime.workbench.ui.getIcon('lucide:x')
 const marketplace = useMarketplace({ runtime: props.runtime })
 const interval = ref<'monthly' | 'yearly'>('monthly')
 const selected = ref<WorkbenchSubscriptionPlan>()
@@ -97,8 +97,8 @@ async function completeAction() {
       >
         <div class="plan-heading">
           <h3>{{ plan.name }}</h3>
-          <AlBadge v-if="subscription?.planId === plan.id" tone="success">Current</AlBadge
-          ><AlBadge v-else-if="index === 1 && plan.priceMinor > 0" tone="info">Recommended</AlBadge>
+          <Badge v-if="subscription?.planId === plan.id" tone="success">Current</Badge
+          ><Badge v-else-if="index === 1 && plan.priceMinor > 0" tone="info">Recommended</Badge>
         </div>
         <p class="plan-price">
           {{ format(plan) }}
@@ -107,17 +107,15 @@ async function completeAction() {
           >
         </p>
         <p class="plan-description">{{ plan.description || 'Core application features.' }}</p>
-        <AlBadge v-if="plan.trialDays" variant="outline"
-          >{{ plan.trialDays }}-day free trial</AlBadge
-        >
+        <Badge v-if="plan.trialDays" variant="outline">{{ plan.trialDays }}-day free trial</Badge>
         <ul>
           <li v-for="feature in plan.features" :key="feature"><Check />{{ feature }}</li>
         </ul>
-        <AlButton
+        <Button
           v-if="plan.interval !== 'none' && subscription?.planId !== plan.id"
           :variant="index === 1 ? 'default' : 'outline'"
           @click="selected = plan"
-          >{{ subscription ? 'Change to this plan' : 'Choose plan' }}</AlButton
+          >{{ subscription ? 'Change to this plan' : 'Choose plan' }}</Button
         ><span v-else-if="plan.interval === 'none'" class="included"
           >Included with installation</span
         >
@@ -172,9 +170,9 @@ async function completeAction() {
             remains available from Marketplace → Subscriptions.
           </div>
           <footer>
-            <AlButton variant="ghost" @click="selected = undefined">Cancel</AlButton
-            ><AlButton :loading="busy" @click="confirm"
-              >{{ selected.trialDays ? 'Start free trial' : 'Start subscription' }}</AlButton
+            <Button variant="ghost" @click="selected = undefined">Cancel</Button
+            ><Button :loading="busy" @click="confirm"
+              >{{ selected.trialDays ? 'Start free trial' : 'Start subscription' }}</Button
             >
           </footer></template
         ><template v-else
@@ -182,10 +180,9 @@ async function completeAction() {
           <h2 id="subscription-review-title">Subscription active</h2>
           <p>{{ selected.name }} features are now available for {{ extension.displayName }}.</p>
           <footer>
-            <AlButton variant="outline" @click="selected = undefined; complete = false"
-              >Close</AlButton
-            ><AlButton @click="completeAction"
-              >{{ extension.installState === 'installed' ? 'Open application' : 'Install application' }}</AlButton
+            <Button variant="outline" @click="selected = undefined; complete = false">Close</Button
+            ><Button @click="completeAction"
+              >{{ extension.installState === 'installed' ? 'Open application' : 'Install application' }}</Button
             >
           </footer></template
         >

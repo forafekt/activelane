@@ -6,8 +6,8 @@ A small Vue-native Iconify boundary for ActiveLane. Callers select icons explici
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
 
-const Search = getIcon('lucide.search')
-const Settings = getIcon('lucide.settings')
+const Search = getIcon('lucide:search')
+const Settings = getIcon('lucide:settings')
 </script>
 
 <template>
@@ -22,13 +22,13 @@ Repeated calls with the same reference return the same cached Vue component. Com
 
 ## Offline and dynamic icons
 
-The Lucide Iconify collection is registered locally because it supplies ActiveLane's standard Workbench UI. Those icons render without network access. Other explicit namespaces, such as `mdi.database` or `simple-icons.github`, use Iconify's loader and cache. Missing icons render a local `lucide.circle-slash` fallback and warn without crashing the Workbench.
+The Lucide Iconify collection is registered locally because it supplies ActiveLane's standard Workbench UI. Those icons render without network access. Other explicit namespaces, such as `mdi.database` or `simple-icons.github`, use Iconify's loader and cache. Missing icons render a local `lucide:circle-slash` fallback and warn without crashing the Workbench.
 
 Extension contributions use the same canonical representation:
 
 ```ts
 const contribution = {
-  icon: 'lucide.database',
+  icon: 'lucide:database',
 }
 ```
 

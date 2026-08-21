@@ -12,6 +12,7 @@ export {
 
 export {
     DesktopError,
+    ExtensionModuleResponse,
     ExtensionOperationResponse,
     FileHandle,
     FileSystemEntry,

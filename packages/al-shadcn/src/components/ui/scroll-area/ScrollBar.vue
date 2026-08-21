@@ -17,8 +17,8 @@ const delegatedProps = reactiveOmit(props, 'class')
 const computedClass = computed(() => {
   return cn(
     'flex touch-none select-none p-0 transition-colors',
-    props.orientation === 'vertical' && 'h-full w-2 border-l border-l-transparent',
-    props.orientation === 'horizontal' && 'h-2 flex-col border-t border-t-transparent',
+    props.orientation === 'vertical' && 'h-full w-3.25 border-l border-l-transparent',
+    props.orientation === 'horizontal' && 'h-1 flex-col border-t border-t-transparent',
     props.class,
   )
 })
@@ -31,7 +31,7 @@ const computedClass = computed(() => {
     :class="computedClass"
   >
     <ScrollAreaThumb
-      class="relative rounded-full bg-border opacity-60 transition-colors hover:bg-muted-foreground"
+      class="relative rounded-none border border-6 opacity-50 hover:border-primary"
     />
   </ScrollAreaScrollbar>
 </template>

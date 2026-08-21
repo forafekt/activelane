@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlButton, AlInput } from '@activelane/shadcn'
+import { Button, Input } from '@activelane/shadcn'
 import type { WorkbenchCommandContribution } from '../../core/workbench/contributions'
 
 defineOptions({ name: 'SettingsCommandRows' })
@@ -46,7 +46,7 @@ const emit = defineEmits<{
           {{ conflictsFor(row.command.id, row.userShortcut).map((item) => item.command.title).join(', ') }}
         </p>
       </div>
-      <AlInput
+      <Input
         v-if="editingCommandId === row.command.id"
         :model-value="keybindingDraft"
         placeholder="Ctrl+,"
@@ -55,22 +55,22 @@ const emit = defineEmits<{
       <kbd v-else class="settings-command-rows__kbd"> {{ row.userShortcut || 'Unassigned' }} </kbd>
       <span class="text-xs text-muted-foreground">{{ row.source }}</span>
       <div class="flex justify-end gap-2">
-        <AlButton
+        <Button
           v-if="editingCommandId === row.command.id"
           size="sm"
           @click="emit('save', row.command.id)"
         >
           Save
-        </AlButton>
-        <AlButton
+        </Button>
+        <Button
           v-else
           size="sm"
           variant="outline"
           @click="emit('edit', row.command.id, row.userShortcut)"
         >
           Edit
-        </AlButton>
-        <AlButton size="sm" variant="ghost" @click="emit('reset', row.command.id)">Reset</AlButton>
+        </Button>
+        <Button size="sm" variant="ghost" @click="emit('reset', row.command.id)">Reset</Button>
       </div>
     </article>
   </section>

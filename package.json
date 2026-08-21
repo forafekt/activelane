@@ -4,8 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "pnpm dev:desktop",
+    "registry:dev": "bash scripts/with-activelane-env.sh go run ./go/cmd/registry --listen 127.0.0.1:8787 --data ./.activelane/registry --id local --allow-publish",
+    "marketplace:seed": "bash scripts/with-activelane-env.sh go run ./go/cmd/alx seed --registry local --profile marketplace-demo --count 500 --seed 42",
+    "marketplace:seed:minimal": "bash scripts/with-activelane-env.sh go run ./go/cmd/alx seed --registry local --profile minimal --count 12 --seed 42",
+    "marketplace:status": "bash scripts/with-activelane-env.sh go run ./go/cmd/alx seed status --registry local",
+    "marketplace:clean": "bash scripts/with-activelane-env.sh go run ./go/cmd/alx seed clean --registry local",
     "dev:frontend": "pnpm --dir apps/desktop/frontend dev",
-    "dev:desktop": "cd apps/desktop && wails3 dev",
+    "dev:desktop": "bash scripts/dev-desktop.sh",
     "check": "biome check .",
     "check:go-architecture": "bash scripts/check-go-architecture.sh",
     "check:fix": "biome check --write .",
@@ -17,7 +22,8 @@
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
     "typecheck": "pnpm -r --filter './packages/*' --if-present run build:types && pnpm -r --filter './packages/*' --filter desktop --if-present run typecheck",
-    "build": "pnpm -r --filter './packages/*' --filter desktop --if-present run build"
+    "build": "pnpm -r --filter './packages/*' --filter desktop --if-present run build",
+    "clean:prune": "node ./scripts/dev/clean.mjs"
   },
   "keywords": [],
   "author": "",

@@ -5,7 +5,7 @@ import type { IconComponent } from '../../componentTypes'
 import { cn } from '../../lib/utils'
 import { buttonVariants } from '../../lib/variants'
 
-defineOptions({ name: 'AlButton' })
+defineOptions({ name: 'Button' })
 
 type ButtonVariants = VariantProps<typeof buttonVariants>
 type ButtonVariant = ButtonVariants['variant'] | 'soft'

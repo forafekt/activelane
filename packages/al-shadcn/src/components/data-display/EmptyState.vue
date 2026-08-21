@@ -3,7 +3,7 @@ import type { IconComponent } from '../../componentTypes'
 import { cn } from '../../lib/utils'
 import Button from '../ui/Button.vue'
 
-defineOptions({ name: 'AlEmptyState' })
+defineOptions({ name: 'EmptyState' })
 
 defineProps<{
   title: string

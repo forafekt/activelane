@@ -18,12 +18,12 @@ const [Button, EmptyState, IconButton, Input] = props.runtime.workbench.ui.getCo
   'IconButton',
   'Input',
 ])
-const ChevronDown = props.runtime.workbench.ui.getIcon('lucide.chevron-down')
-const ChevronRight = props.runtime.workbench.ui.getIcon('lucide.chevron-right')
-const Copy = props.runtime.workbench.ui.getIcon('lucide.copy')
-const Edit = props.runtime.workbench.ui.getIcon('lucide.pencil')
-const Plus = props.runtime.workbench.ui.getIcon('lucide.plus')
-const Trash = props.runtime.workbench.ui.getIcon('lucide.trash-2')
+const ChevronDown = props.runtime.workbench.ui.getIcon('lucide:chevron-down')
+const ChevronRight = props.runtime.workbench.ui.getIcon('lucide:chevron-right')
+const Copy = props.runtime.workbench.ui.getIcon('lucide:copy')
+const Edit = props.runtime.workbench.ui.getIcon('lucide:pencil')
+const Plus = props.runtime.workbench.ui.getIcon('lucide:plus')
+const Trash = props.runtime.workbench.ui.getIcon('lucide:trash-2')
 
 const expanded = ref<Record<string, boolean>>({
   'collection-example': true,

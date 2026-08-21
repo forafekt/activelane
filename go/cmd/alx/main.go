@@ -7,7 +7,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,6 +15,7 @@ import (
 	"github.com/activelane/activelane/go/install"
 	reg "github.com/activelane/activelane/go/registry"
 	"github.com/activelane/activelane/go/registryconfig"
+	"github.com/activelane/activelane/go/seed"
 )
 
 func main() {
@@ -47,6 +47,8 @@ func run(args []string, out io.Writer) error {
 		return info(args[1:], out)
 	case "publish":
 		return publish(args[1:], out)
+	case "seed":
+		return seedCommand(args[1:], out)
 	case "install":
 		return installCommand(args[1:], out)
 	default:
@@ -67,10 +69,15 @@ Usage:
   alx search QUERY [--json]
   alx info namespace/name[@version] [--json]
   alx publish extension.alx --registry ID
+  alx seed [--registry ID] [--profile marketplace-demo] [--count 500] [--seed 42]
+  alx seed clean --registry ID
+  alx seed status --registry ID
   alx install namespace/name@exact-version [--root DIR]
 
 Configuration defaults to ~/.config/activelane/registries.json and may be
 overridden with ACTIVELANE_REGISTRY_CONFIG. Credentials are not stored there.
+The repository local profile is examples/registries.local.json; from the
+repository root, pnpm registry:dev and pnpm marketplace:seed use it together.
 `)
 }
 
@@ -93,7 +100,8 @@ func initExtension(args []string, out io.Writer) error {
 		return e
 	}
 	entry := filepath.Join(dir, "extension/main.js")
-	if e := os.WriteFile(entry, []byte("export async function activate() {}\n"), 0644); e != nil {
+	module := "export default {\n  manifest: { id: '@local/example', name: 'example', displayName: 'Example', version: '0.1.0' },\n  async activate(context) {},\n}\n"
+	if e := os.WriteFile(entry, []byte(module), 0644); e != nil {
 		return e
 	}
 	fmt.Fprintf(out, "Created %s\n", mf)
@@ -105,11 +113,7 @@ func validate(args []string, out io.Writer) error {
 	if len(args) > 0 {
 		file = args[0]
 	}
-	data, e := os.ReadFile(file)
-	if e != nil {
-		return e
-	}
-	m, e := alx.ParseManifest(data)
+	m, e := alx.ValidateFile(file)
 	if e != nil {
 		return e
 	}
@@ -368,61 +372,106 @@ func publish(args []string, out io.Writer) error {
 	if fs.NArg() != 1 || *id == "" {
 		return fmt.Errorf("package and --registry are required")
 	}
-	inspection, e := alx.InspectFile(fs.Arg(0))
+	c, _, e := loadConfig()
 	if e != nil {
 		return e
+	}
+	v, e := (reg.Publisher{}).PublishFile(context.Background(), c, *id, fs.Arg(0))
+	if e != nil {
+		return e
+	}
+	fmt.Fprintf(out, "Published %s@%s to %s (%s)\n", v.ExtensionID, v.Version, *id, v.Artifact.Digest)
+	return nil
+}
+
+func seedCommand(args []string, out io.Writer) error {
+	if len(args) > 0 && (args[0] == "--help" || args[0] == "help") {
+		fmt.Fprint(out, `Usage:
+  alx seed --registry ID [--profile PROFILE] [--count N] [--seed N]
+           [--output DIRECTORY] [--keep]
+  alx seed clean --registry ID
+  alx seed status --registry ID
+
+Profiles: marketplace-demo, marketplace-stress, subscriptions, minimal.
+Registry IDs are resolved through ACTIVELANE_REGISTRY_CONFIG or
+~/.config/activelane/registries.json. The default seed is 42. Generated
+projects are temporary unless --keep or --output is supplied. Repeating a seed
+is safe; clean removes seeded data only.
+`)
+		return nil
+	}
+	clean := len(args) > 0 && args[0] == "clean"
+	status := len(args) > 0 && args[0] == "status"
+	if clean || status {
+		args = args[1:]
+	}
+	fs := flag.NewFlagSet("seed", flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+	registryID := fs.String("registry", "local", "registry id")
+	count := fs.Int("count", -1, "number of extensions")
+	seedValue := fs.Int64("seed", 42, "deterministic random seed")
+	profile := fs.String("profile", string(seed.MarketplaceDemo), "marketplace-demo, marketplace-stress, subscriptions, or minimal")
+	output := fs.String("output", "", "generated project directory")
+	keep := fs.Bool("keep", false, "retain temporary generated projects")
+	known := map[string]bool{"--registry": true, "--count": true, "--seed": true, "--profile": true, "--output": true, "--keep": false}
+	if e := fs.Parse(flagsFirst(args, known)); e != nil {
+		return e
+	}
+	if fs.NArg() != 0 {
+		return fmt.Errorf("unexpected argument %q", fs.Arg(0))
 	}
 	c, _, e := loadConfig()
 	if e != nil {
 		return e
 	}
-	r, e := byID(c, *id)
+	target, e := byID(c, *registryID)
 	if e != nil {
 		return e
 	}
-	owner, e := c.Resolve(inspection.Manifest.Publisher)
-	if e != nil {
-		return fmt.Errorf("cannot publish %s: %w", inspection.Manifest.ID, e)
+	if status {
+		items, e := searchRegistry(target, "")
+		if e != nil {
+			return fmt.Errorf("unable to query registry %q (%s): %w", *registryID, registryLocation(target), e)
+		}
+		fmt.Fprintf(out, "Registry: %s (%s)\nExtensions: %d\n", *registryID, registryLocation(target), len(items))
+		return nil
 	}
-	if owner.ID != r.ID {
-		return fmt.Errorf("cannot publish %s to registry %q: namespace %q is routed to registry %q", inspection.Manifest.ID, r.ID, inspection.Manifest.Publisher, owner.ID)
-	}
-	f, e := os.Open(fs.Arg(0))
-	if e != nil {
+	if clean {
+		n, e := seed.Clean(c, *registryID)
+		if e == nil {
+			fmt.Fprintf(out, "Removed %d seeded extension versions from %s\n", n, *registryID)
+		}
 		return e
 	}
-	defer f.Close()
-	var v reg.Version
-	if r.Type == "directory" {
-		path, e := registryconfig.ExpandPath(r.Path)
-		if e != nil {
-			return e
+	if *count < 0 {
+		if seed.Profile(*profile) == seed.Minimal {
+			*count = 12
+		} else {
+			*count = 100
 		}
-		store, e := reg.NewStore(path)
-		if e != nil {
-			return e
-		}
-		v, e = store.Publish(context.Background(), inspection.Manifest.Publisher, inspection.Manifest.Name, f)
-	} else {
-		url := strings.TrimRight(r.URL, "/") + fmt.Sprintf("/v1/extensions/%s/%s/versions", inspection.Manifest.Publisher, inspection.Manifest.Name)
-		req, _ := http.NewRequest(http.MethodPost, url, f)
-		req.Header.Set("Content-Type", "application/vnd.activelane.alx+zip")
-		resp, e := http.DefaultClient.Do(req)
-		if e != nil {
-			return e
-		}
-		defer resp.Body.Close()
-		if resp.StatusCode != 201 {
-			body, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
-			return fmt.Errorf("publish failed: %s: %s", resp.Status, strings.TrimSpace(string(body)))
-		}
-		e = json.NewDecoder(resp.Body).Decode(&v)
 	}
+	fmt.Fprintf(out, "ActiveLane marketplace seed\n\nRegistry: %s (%s)\nProfile:  %s\nSeed:     %d\nCount:    %d\n\nGenerating and publishing extensions...\n", *registryID, registryLocation(target), *profile, *seedValue, *count)
+	progress := func(completed, total int) {
+		if completed == total || completed%100 == 0 {
+			fmt.Fprintf(out, "%d / %d\n", completed, total)
+		}
+	}
+	result, e := seed.Run(context.Background(), c, seed.Options{RegistryID: *registryID, Count: *count, Seed: *seedValue, Profile: seed.Profile(*profile), Output: *output, Keep: *keep, Progress: progress})
 	if e != nil {
-		return e
+		return fmt.Errorf("seed failed for registry %q (%s): %w\n\nStart the local registry with:\n\n    pnpm registry:dev", *registryID, registryLocation(target), e)
 	}
-	fmt.Fprintf(out, "Published %s@%s to %s (%s)\n", v.ExtensionID, v.Version, r.ID, v.Artifact.Digest)
+	fmt.Fprintf(out, "\nSeed complete\n\nGenerated: %d\nValidated: %d\nPacked:    %d\nVerified:  %d\nPublished: %d\nExisting:  %d\nFailed:    0\n", result.Generated, result.Generated, result.Generated, result.Generated, result.Published, result.Existing)
+	if result.Directory != "" {
+		fmt.Fprintf(out, "Generated projects retained at %s\n", result.Directory)
+	}
 	return nil
+}
+
+func registryLocation(registry registryconfig.Registry) string {
+	if registry.Type == "remote" {
+		return registry.URL
+	}
+	return registry.Path
 }
 
 func installCommand(args []string, out io.Writer) error {

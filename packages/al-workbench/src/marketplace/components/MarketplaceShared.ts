@@ -67,7 +67,7 @@ export function extensionIcon(extension: MarketplaceExtension): Component {
     if (isIconReference(extension.icon)) return getIcon(extension.icon)
   }
 
-  return getIcon('lucide.puzzle')
+  return getIcon('lucide:puzzle')
 }
 
 export function primaryAction(extension: MarketplaceExtension) {

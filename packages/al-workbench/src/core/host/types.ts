@@ -130,6 +130,7 @@ export interface WorkbenchHostCapabilities {
     uninstall?: (extensionId: string) => Promise<void>
     enable?: (extensionId: string) => Promise<InstalledExtensionRecord | undefined>
     disable?: (extensionId: string) => Promise<InstalledExtensionRecord | undefined>
+    load?: (record: InstalledExtensionRecord) => Promise<WorkbenchExtensionDefinition>
     discover?: () => Promise<WorkbenchExtensionDefinition[]>
   }
   registry?: {

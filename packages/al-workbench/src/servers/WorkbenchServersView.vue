@@ -12,7 +12,7 @@ const props = defineProps<{
   tab: WorkbenchTab
 }>()
 
-const [AlScrollArea, AlBadge, AlButton, AlEmptyState, AlSection, AlStatBlock] =
+const [ScrollArea, Badge, Button, EmptyState, Section, StatBlock] =
   props.runtime.workbench.ui.getComponents([
     'ScrollArea',
     'Badge',
@@ -54,23 +54,23 @@ function openUrl(url?: string) {
 </script>
 
 <template>
-  <AlScrollArea>
+  <ScrollArea>
     <section class="servers-view">
       <header class="servers-view__header">
         <div>
           <p class="servers-view__eyebrow">Runtime</p>
           <h1>{{ tab.title }}</h1>
         </div>
-        <AlBadge variant="outline">{{ runningCount }} running</AlBadge>
+        <Badge variant="outline">{{ runningCount }} running</Badge>
       </header>
 
-      <AlEmptyState
+      <EmptyState
         v-if="!servers.length"
         title="No server extensions"
         description="Installed extensions that declare servers will appear here."
       />
 
-      <AlSection v-else title="Servers">
+      <Section v-else title="Servers">
         <div class="servers-list">
           <article v-for="server in servers" :key="server.id" class="servers-list__item">
             <header>
@@ -78,9 +78,9 @@ function openUrl(url?: string) {
                 <h2>{{ server.label }}</h2>
                 <p>{{ server.extensionName }}</p>
               </div>
-              <AlBadge :variant="server.status === 'failed' ? 'destructive' : 'outline'">
+              <Badge :variant="server.status === 'failed' ? 'destructive' : 'outline'">
                 {{ server.status }}
-              </AlBadge>
+              </Badge>
             </header>
 
             <dl>
@@ -117,43 +117,43 @@ function openUrl(url?: string) {
             </dl>
 
             <div class="servers-list__actions">
-              <AlButton
+              <Button
                 size="sm"
                 :disabled="server.status === 'running'"
                 :variant="server.status === 'running' ? 'outline' : 'default'"
                 @click="startServer(server.id)"
-                >Start</AlButton
+                >Start</Button
               >
-              <AlButton
+              <Button
                 size="sm"
                 :disabled="server.status !== 'running'"
                 :variant="server.status === 'running' ? 'destructive' : 'outline'"
                 @click="stopServer(server.id)"
-                >Stop</AlButton
+                >Stop</Button
               >
-              <AlButton
+              <Button
                 size="sm"
                 :disabled="server.status !== 'running'"
                 :variant="server.status === 'running' ? 'outline' : 'default'"
                 @click="restartServer(server.id)"
               >
                 Restart
-              </AlButton>
-              <AlButton size="sm" variant="outline" @click="openLogs(server.id)">Logs</AlButton>
-              <AlButton
+              </Button>
+              <Button size="sm" variant="outline" @click="openLogs(server.id)">Logs</Button>
+              <Button
                 size="sm"
                 variant="link"
                 :disabled="!server.origin"
                 @click="openUrl(server.origin)"
               >
                 Open URL
-              </AlButton>
+              </Button>
             </div>
           </article>
         </div>
-      </AlSection>
+      </Section>
     </section>
-  </AlScrollArea>
+  </ScrollArea>
 </template>
 
 <style scoped>

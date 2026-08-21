@@ -66,13 +66,3 @@
   --radius-lg: calc(var(--radius) - 2px);
   --radius-xl: calc(var(--radius) + 2px);
 }
-
-@layer base {
-  /* Global base styles are limited to token-backed Tailwind defaults shared by all components. */
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}

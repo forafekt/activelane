@@ -7,16 +7,19 @@ func (handlers handlers) health(response http.ResponseWriter, _ *http.Request) {
 }
 
 func (handlers handlers) discovery(response http.ResponseWriter, _ *http.Request) {
+	_, seedStore := handlers.config.Store.(SeedStore)
+	commerce := handlers.config.SubscriptionStore != nil
 	writeJSON(response, http.StatusOK, map[string]any{
 		"protocolVersion": "1",
 		"registryId":      handlers.config.RegistryID,
 		"displayName":     handlers.config.DisplayName,
 		"capabilities": map[string]bool{
-			"search":         true,
-			"publish":        handlers.config.AllowPublish,
-			"signatures":     false,
-			"offlineBundles": false,
-			"commerce":       false,
+			"search":             true,
+			"publish":            handlers.config.AllowPublish,
+			"signatures":         false,
+			"offlineBundles":     false,
+			"commerce":           commerce,
+			"developmentSeeding": handlers.config.AllowPublish && seedStore,
 		},
 	})
 }

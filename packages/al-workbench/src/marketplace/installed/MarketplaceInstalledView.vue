@@ -8,15 +8,15 @@ import type { MarketplaceExtension } from '../types/marketplace'
 const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
 const query = ref('')
-const [AlBadge, AlButton, AlInput] = props.runtime.workbench.ui.getComponents([
+const [Badge, Button, Input] = props.runtime.workbench.ui.getComponents([
   'Badge',
   'Button',
   'Input',
 ])
-const CheckCircle2 = props.runtime.workbench.ui.getIcon('lucide.circle-check-big')
-const Search = props.runtime.workbench.ui.getIcon('lucide.search')
-const Settings2 = props.runtime.workbench.ui.getIcon('lucide.settings-2')
-const Trash2 = props.runtime.workbench.ui.getIcon('lucide.trash-2')
+const CheckCircle2 = props.runtime.workbench.ui.getIcon('lucide:circle-check-big')
+const Search = props.runtime.workbench.ui.getIcon('lucide:search')
+const Settings2 = props.runtime.workbench.ui.getIcon('lucide:settings-2')
+const Trash2 = props.runtime.workbench.ui.getIcon('lucide:trash-2')
 const installed = computed(() =>
   marketplace.installedExtensions.value.filter((item) =>
     `${item.displayName} ${item.publisher.displayName}`
@@ -42,7 +42,7 @@ async function primary(item: MarketplaceExtension) {
     </header>
     <div class="management-search">
       <Search />
-      <AlInput
+      <Input
         v-model="query"
         aria-label="Search installed applications"
         placeholder="Search installed"
@@ -57,8 +57,8 @@ async function primary(item: MarketplaceExtension) {
             applications have newer releases.
           </p>
         </div>
-        <AlButton size="sm" variant="outline" @click="marketplace.setPage('updates')"
-          >Review updates</AlButton
+        <Button size="sm" variant="outline" @click="marketplace.setPage('updates')"
+          >Review updates</Button
         >
       </div>
     </section>
@@ -68,8 +68,8 @@ async function primary(item: MarketplaceExtension) {
         <div class="installed-copy">
           <div>
             <h2>{{ extension.displayName }}</h2>
-            <AlBadge :tone="statusTone(extension)">{{ statusLabel(extension) }}</AlBadge
-            ><AlBadge v-if="extension.restartRequired" tone="warning">Restart required</AlBadge>
+            <Badge :tone="statusTone(extension)">{{ statusLabel(extension) }}</Badge
+            ><Badge v-if="extension.restartRequired" tone="warning">Restart required</Badge>
           </div>
           <p>{{ extension.description }}</p>
           <span
@@ -78,15 +78,15 @@ async function primary(item: MarketplaceExtension) {
           >
         </div>
         <div class="installed-actions">
-          <AlButton size="sm" @click="primary(extension)"
-            >{{ extension.status === 'disabled' ? 'Enable' : 'Open' }}</AlButton
-          ><AlButton
+          <Button size="sm" @click="primary(extension)"
+            >{{ extension.status === 'disabled' ? 'Enable' : 'Open' }}</Button
+          ><Button
             size="sm"
             variant="outline"
             :leading-icon="Settings2"
             @click="marketplace.openExtensionDetails(extension)"
-            >Manage</AlButton
-          ><AlButton
+            >Manage</Button
+          ><Button
             size="sm"
             variant="ghost"
             :leading-icon="Trash2"
@@ -100,8 +100,8 @@ async function primary(item: MarketplaceExtension) {
       <CheckCircle2 />
       <h2>No installed applications</h2>
       <p>Applications you install from Marketplace will be managed here.</p>
-      <AlButton variant="outline" @click="marketplace.setPage('discover')"
-        >Explore marketplace</AlButton
+      <Button variant="outline" @click="marketplace.setPage('discover')"
+        >Explore marketplace</Button
       >
     </div>
   </div>

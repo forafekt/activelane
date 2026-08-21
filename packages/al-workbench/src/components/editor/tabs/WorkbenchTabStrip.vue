@@ -16,11 +16,11 @@ const props = defineProps<{
 
 const runtime = useWorkbenchRuntime()
 
-const Ellipsis = runtime.workbench.ui.getIcon('lucide.ellipsis')
-const SplitSquareHorizontal = runtime.workbench.ui.getIcon('lucide.square-split-horizontal')
-const SplitSquareVertical = runtime.workbench.ui.getIcon('lucide.square-split-vertical')
+const Ellipsis = runtime.workbench.ui.getIcon('lucide:ellipsis')
+const SplitSquareHorizontal = runtime.workbench.ui.getIcon('lucide:square-split-horizontal')
+const SplitSquareVertical = runtime.workbench.ui.getIcon('lucide:square-split-vertical')
 
-const [AlDropdownMenu, AlIconButton, ScrollArea] = runtime.workbench.ui.getComponents([
+const [DropdownMenu, IconButton, ScrollArea] = runtime.workbench.ui.getComponents([
   'DropdownMenu',
   'IconButton',
   'ScrollArea',
@@ -219,7 +219,7 @@ function executeAction(id: string) {
         aria-label="Filter open tabs"
         placeholder="Filter"
       >
-      <AlIconButton
+      <IconButton
         v-for="action in toolbarActions"
         :key="action.id"
         :label="action.title"
@@ -228,25 +228,25 @@ function executeAction(id: string) {
         variant="ghost"
         @click="runtime.commands.execute(action.commandId)"
       />
-      <AlIconButton
+      <IconButton
         label="Split right"
         :icon="SplitSquareHorizontal"
         size="icon-xs"
         variant="ghost"
         @click="runtime.workbench.splitActiveTabRight()"
       />
-      <AlIconButton
+      <IconButton
         label="Split down"
         :icon="SplitSquareVertical"
         size="icon-xs"
         variant="ghost"
         @click="runtime.workbench.splitActiveTabDown()"
       />
-      <AlDropdownMenu v-if="items.length > 0" :items="items" @select="executeAction">
+      <DropdownMenu v-if="items.length > 0" :items="items" @select="executeAction">
         <template #trigger>
-          <AlIconButton label="More actions" :icon="Ellipsis" size="icon-xs" variant="ghost" />
+          <IconButton label="More actions" :icon="Ellipsis" size="icon-xs" variant="ghost" />
         </template>
-      </AlDropdownMenu>
+      </DropdownMenu>
     </div>
   </nav>
 </template>

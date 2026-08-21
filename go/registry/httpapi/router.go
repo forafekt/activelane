@@ -33,6 +33,11 @@ type SubscriptionStore interface {
 	ResolveEntitlements(accountID, namespace, name string) (registry.EntitlementResolution, error)
 }
 
+type SeedStore interface {
+	PublishSeeded(ctx context.Context, namespace, name string, body io.Reader) (registry.Version, bool, error)
+	CleanSeeded() (int, error)
+}
+
 type Config struct {
 	Store                Store
 	RegistryID           string
@@ -80,6 +85,7 @@ func NewRouter(config Config) http.Handler {
 		router.Delete("/{namespace}/{name}/versions/{version}/yank", handlers.restoreVersion)
 		router.Get("/{namespace}/{name}/plans", handlers.listPlans)
 	})
+	router.Delete("/v1/development/seeded-extensions", handlers.cleanSeededExtensions)
 
 	router.Route("/v1/accounts/{accountId}/extensions/{namespace}/{name}", func(router chi.Router) {
 		router.Get("/subscription", handlers.getSubscription)

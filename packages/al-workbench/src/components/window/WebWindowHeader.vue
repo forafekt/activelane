@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlIconButton } from '@activelane/shadcn'
+import { IconButton } from '@activelane/shadcn'
 import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../composables/useWorkbenchRuntime'
 import { getWorkbenchIcon } from '../../workbenchIcons'
@@ -20,7 +20,7 @@ const canGoForward = computed(() => runtime.workbench.state.navigation.forward.l
     <div class="wb-window-header__left">
       <WorkbenchGlobalMenuLauncher placement="topBar" labels />
       <div class="wb-window-header__center">
-        <AlIconButton
+        <IconButton
           label="Back"
           :icon="getWorkbenchIcon('ChevronLeft')"
           size="icon-sm"
@@ -28,7 +28,7 @@ const canGoForward = computed(() => runtime.workbench.state.navigation.forward.l
           :disabled="!canGoBack"
           @click="runtime.workbench.navigateBack()"
         />
-        <AlIconButton
+        <IconButton
           label="Forward"
           :icon="getWorkbenchIcon('ChevronRight')"
           size="icon-sm"

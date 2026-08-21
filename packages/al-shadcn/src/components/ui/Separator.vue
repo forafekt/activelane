@@ -2,7 +2,7 @@
 import { Separator } from 'reka-ui'
 import { cn } from '../../lib/utils'
 
-defineOptions({ name: 'AlSeparator' })
+defineOptions({ name: 'Separator' })
 
 withDefaults(
   defineProps<{

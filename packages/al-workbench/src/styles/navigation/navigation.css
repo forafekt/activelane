@@ -153,10 +153,10 @@
 .wb-activity-bar--expanded :where(.wb-activity-bar__new-tab, .wb-activity-bar__settings) {
   justify-content: flex-start;
 }
-.wb-activity-bar :where(.wb-activity-bar__new-tab, .wb-activity-bar__settings):hover {
+/* .wb-activity-bar :where(.wb-activity-bar__new-tab, .wb-activity-bar__settings):hover {
   background: var(--hover);
   color: var(--text-primary);
-}
+} */
 .wb-activity-bar :where(.wb-activity-bar__new-tab, .wb-activity-bar__settings) span {
   min-width: 0;
   overflow: hidden;

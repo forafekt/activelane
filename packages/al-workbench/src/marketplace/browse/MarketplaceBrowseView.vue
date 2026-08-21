@@ -6,9 +6,9 @@ import type { MarketplaceSortOption } from '../types/marketplace'
 
 const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
-const [AlButton, AlSelect] = props.runtime.workbench.ui.getComponents(['Button', 'Select'])
-const Search = props.runtime.workbench.ui.getIcon('lucide.search')
-const X = props.runtime.workbench.ui.getIcon('lucide.x')
+const [Button, Select] = props.runtime.workbench.ui.getComponents(['Button', 'Select'])
+const Search = props.runtime.workbench.ui.getIcon('lucide:search')
+const X = props.runtime.workbench.ui.getIcon('lucide:x')
 const sortOptions = [
   { label: 'Recommended', value: 'recommended' },
   { label: 'Recently updated', value: 'updated' },
@@ -45,21 +45,21 @@ function setSort(value: string) {
     </header>
     <div class="browse-toolbar">
       <div class="filter-group">
-        <AlSelect
+        <Select
           :model-value="marketplace.sortBy.value"
           :options="sortOptions"
           @update:model-value="setSort"
-        /><AlSelect v-model="marketplace.pricingFilter.value" :options="priceOptions" />
-        <AlButton
+        /><Select v-model="marketplace.pricingFilter.value" :options="priceOptions" />
+        <Button
           size="sm"
           variant="outline"
           :aria-pressed="marketplace.verifiedPublisherOnly.value"
           @click="marketplace.verifiedPublisherOnly.value = !marketplace.verifiedPublisherOnly.value"
-          >Verified only</AlButton
+          >Verified only</Button
         >
       </div>
-      <AlButton size="sm" variant="ghost" :leading-icon="X" @click="marketplace.clearFilters()"
-        >Clear</AlButton
+      <Button size="sm" variant="ghost" :leading-icon="X" @click="marketplace.clearFilters()"
+        >Clear</Button
       >
     </div>
     <div v-if="marketplace.selectedCategories.value.length" class="active-filters">
@@ -89,7 +89,7 @@ function setSort(value: string) {
         >
       </h2>
       <p>Try another term or remove filters to broaden the catalog.</p>
-      <AlButton variant="outline" @click="marketplace.clearFilters()">Clear filters</AlButton>
+      <Button variant="outline" @click="marketplace.clearFilters()">Clear filters</Button>
     </div>
   </div>
 </template>

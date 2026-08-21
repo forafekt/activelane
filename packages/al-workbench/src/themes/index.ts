@@ -5,8 +5,8 @@ import type { WorkbenchThemeContribution } from '../core/workbench/themes'
 type ThemeTokens = WorkbenchThemeContribution['tokens']
 
 const lightWorkbenchSemanticTokens = {
-  windowBackground: 'oklch(0.93 0.008 255)',
-  workbenchBackground: 'oklch(0.955 0.006 255)',
+  windowBackground: 'transparent',
+  workbenchBackground: 'transparent',
   shellChromeSurface: 'oklch(0.945 0.007 255 / 0.94)',
   paneSurface: 'oklch(0.985 0.003 255)',
   paneSurfaceRaised: 'oklch(1 0 0 / 0.9)',
@@ -57,8 +57,8 @@ const lightWorkbenchSemanticTokens = {
 } satisfies ThemeTokens
 
 const darkWorkbenchSemanticTokens = {
-  windowBackground: '#26282c',
-  workbenchBackground: '#26282c',
+  windowBackground: 'transparent',
+  workbenchBackground: 'transparent',
   shellChromeSurface: 'rgb(38 40 44 / 0.98)',
   paneSurface: '#191a1c',
   paneSurfaceRaised: 'rgb(31 33 36 / 0.96)',
@@ -117,8 +117,8 @@ const highContrastWorkbenchSemanticTokens = {
   focusRing: 'oklch(0.92 0.2 95)',
   selectedSurface: 'oklch(0.26 0.08 250)',
   titlebar: 'oklch(0.02 0 0)',
-  windowBackground: 'oklch(0.015 0 0)',
-  workbenchBackground: 'oklch(0.03 0 0)',
+  windowBackground: 'transparent',
+  workbenchBackground: 'transparent',
   shellChromeSurface: 'oklch(0.02 0 0)',
   paneSurface: 'oklch(0.04 0 0)',
   paneSurfaceRaised: 'oklch(0.07 0 0)',

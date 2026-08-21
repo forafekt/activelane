@@ -6,7 +6,7 @@ import { ContextMenuCheckboxItem, ContextMenuItemIndicator, useForwardPropsEmits
 import type { HTMLAttributes } from 'vue'
 import { cn } from '../../../lib/utils'
 
-const Check = getIcon('lucide.check')
+const Check = getIcon('lucide:check')
 
 const props = defineProps<ContextMenuCheckboxItemProps & { class?: HTMLAttributes['class'] }>()
 const emits = defineEmits<ContextMenuCheckboxItemEmits>()

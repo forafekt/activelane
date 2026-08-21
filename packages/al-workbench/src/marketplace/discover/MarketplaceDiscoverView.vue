@@ -7,7 +7,7 @@ import { useMarketplace } from '../composables/useMarketplaceStore'
 
 const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
-const ArrowRight = props.runtime.workbench.ui.getIcon('lucide.arrow-right')
+const ArrowRight = props.runtime.workbench.ui.getIcon('lucide:arrow-right')
 const featured = computed(
   () =>
     marketplace.featuredExtensions.value[0] ??
