@@ -3,8 +3,8 @@ import { getIcon } from '@activelane/icons'
 import { cn } from '../../lib/utils'
 import IconButton from '../ui/IconButton.vue'
 
-const Search = getIcon('lucide.search')
-const X = getIcon('lucide.x')
+const Search = getIcon('lucide:search')
+const X = getIcon('lucide:x')
 
 defineOptions({ name: 'SearchBar' })
 

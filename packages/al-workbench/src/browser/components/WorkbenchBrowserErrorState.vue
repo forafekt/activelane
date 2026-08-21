@@ -11,8 +11,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{ external: [] }>()
-const AlertTriangle = getIcon('lucide.triangle-alert')
-const ExternalLink = getIcon('lucide.external-link')
+const AlertTriangle = getIcon('lucide:triangle-alert')
+const ExternalLink = getIcon('lucide:external-link')
 </script>
 
 <template>

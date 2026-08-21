@@ -71,7 +71,7 @@ const hiddenChildCount = computed(() =>
 )
 const Icon = computed(() =>
   props.runtime.workbench.ui.getIcon(
-    props.node.icon ?? (props.node.isLeaf ? 'lucide.file' : 'lucide.folder'),
+    props.node.icon ?? (props.node.isLeaf ? 'lucide:file' : 'lucide:folder'),
   ),
 )
 const selected = computed(

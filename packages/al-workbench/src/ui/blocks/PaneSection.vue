@@ -3,8 +3,8 @@ import { getIcon } from '@activelane/icons'
 import { Badge, IconButton } from '@activelane/shadcn'
 import { ref, watch } from 'vue'
 
-const ChevronDown = getIcon('lucide.chevron-down')
-const ChevronRight = getIcon('lucide.chevron-right')
+const ChevronDown = getIcon('lucide:chevron-down')
+const ChevronRight = getIcon('lucide:chevron-right')
 
 defineOptions({ name: 'PaneSection' })
 

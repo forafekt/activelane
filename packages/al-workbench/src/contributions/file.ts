@@ -172,7 +172,7 @@ const commands: WorkbenchCommandContribution[] = [
     'New Text File',
     (context) => openTextTab(context, { name: 'Untitled', contents: '' }, true),
     {
-      icon: 'lucide.file-text',
+      icon: 'lucide:file-text',
       shortcut: 'Mod+N',
       description: 'Create an untitled dirty text editor.',
     },
@@ -182,7 +182,7 @@ const commands: WorkbenchCommandContribution[] = [
     'New File',
     (context) => openTextTab(context, { name: 'Untitled', contents: '' }, true),
     {
-      icon: 'lucide.file-plus',
+      icon: 'lucide:file-plus',
       shortcut: 'Mod+Alt+N',
       description: 'Falls back to an untitled editor until explorer inline creation is available.',
     },
@@ -198,7 +198,7 @@ const commands: WorkbenchCommandContribution[] = [
     'Profiles are not represented in the runtime settings model yet.',
   ),
   fileCommand('workbench.file.openFile', 'Open File...', openPickedFile, {
-    icon: 'lucide.folder-open',
+    icon: 'lucide:folder-open',
     shortcut: 'Mod+O',
     description: 'Open a file using the desktop file picker or host file picker.',
   }),
@@ -220,7 +220,7 @@ const commands: WorkbenchCommandContribution[] = [
         tone: 'info',
       })
     },
-    { icon: 'lucide.folder-open', shortcut: 'Mod+K Mod+O' },
+    { icon: 'lucide:folder-open', shortcut: 'Mod+K Mod+O' },
   ),
   fileCommand(
     'workbench.file.openWorkspaceFromFile',
@@ -240,10 +240,10 @@ const commands: WorkbenchCommandContribution[] = [
         tone: 'info',
       })
     },
-    { icon: 'lucide.folder-symlink' },
+    { icon: 'lucide:folder-symlink' },
   ),
   fileCommand('workbench.file.clearRecent', 'Clear Recent', clearRecent, {
-    icon: 'lucide.eraser',
+    icon: 'lucide:eraser',
     description: 'Clear persisted File menu recent entries.',
   }),
   disabledFileCommand(
@@ -260,15 +260,15 @@ const commands: WorkbenchCommandContribution[] = [
     'workbench.file.duplicateWorkspace',
     'Duplicate Workspace',
     (context) => context.runtime.commands.execute('workbench.tabs.sessions.duplicate'),
-    { icon: 'lucide.copy' },
+    { icon: 'lucide:copy' },
   ),
   fileCommand('workbench.file.save', 'Save', (context) => saveActive(context), {
-    icon: 'lucide.save',
+    icon: 'lucide:save',
     shortcut: 'Mod+S',
     description: 'Save the active writable text file.',
   }),
   fileCommand('workbench.file.saveAs', 'Save As...', (context) => saveActive(context, true), {
-    icon: 'lucide.save',
+    icon: 'lucide:save',
     shortcut: 'Mod+Shift+S',
   }),
   fileCommand(
@@ -285,7 +285,7 @@ const commands: WorkbenchCommandContribution[] = [
       }
       if (active) context.runtime.workbench.activateTab(active.id, active.groupId)
     },
-    { icon: 'lucide.save-all', shortcut: 'Mod+Alt+S' },
+    { icon: 'lucide:save-all', shortcut: 'Mod+Alt+S' },
   ),
   fileCommand(
     'workbench.file.share.copyPath',
@@ -295,7 +295,7 @@ const commands: WorkbenchCommandContribution[] = [
       if (!handle?.path) return
       await context.runtime.host.capabilities.clipboard?.writeText?.(handle.path)
     },
-    { icon: 'lucide.copy' },
+    { icon: 'lucide:copy' },
   ),
   fileCommand(
     'workbench.file.share.revealInFileManager',
@@ -306,7 +306,7 @@ const commands: WorkbenchCommandContribution[] = [
         await context.runtime.host.capabilities.files?.revealInFileManager?.(handle.path)
       }
     },
-    { icon: 'lucide.external-link' },
+    { icon: 'lucide:external-link' },
   ),
   fileCommand(
     'workbench.file.autoSave',
@@ -317,13 +317,13 @@ const commands: WorkbenchCommandContribution[] = [
         !runtime.settings.get<boolean>('files.autoSave', false),
       )
     },
-    { icon: 'lucide.refresh-cw' },
+    { icon: 'lucide:refresh-cw' },
   ),
   fileCommand(
     'workbench.file.preferences',
     'Preferences',
     ({ runtime }) => runtime.commands.execute('workbench.settings.open'),
-    { icon: 'lucide.settings', shortcut: 'Mod+,' },
+    { icon: 'lucide:settings', shortcut: 'Mod+,' },
   ),
   fileCommand(
     'workbench.file.revert',
@@ -344,14 +344,14 @@ const commands: WorkbenchCommandContribution[] = [
       tab.input = { ...(tab.input ?? {}), contents: disk.contents ?? '' }
       context.runtime.workbench.markTabDirty(tab.id, false, tab.groupId)
     },
-    { icon: 'lucide.undo-2' },
+    { icon: 'lucide:undo-2' },
   ),
   fileCommand(
     'workbench.file.close',
     'Close',
     ({ runtime }) => runtime.commands.execute('workbench.tab.close'),
     {
-      icon: 'lucide.x',
+      icon: 'lucide:x',
       shortcut: 'Mod+W',
     },
   ),
@@ -368,7 +368,7 @@ const commands: WorkbenchCommandContribution[] = [
         runtime.host.capabilities.lifecycle?.closeWindow?.() ??
         runtime.commands.execute('workbench.tab.close')
       ),
-    { icon: 'lucide.panel-top-close' },
+    { icon: 'lucide:panel-top-close' },
   ),
   fileCommand(
     'workbench.file.exit',
@@ -378,7 +378,7 @@ const commands: WorkbenchCommandContribution[] = [
         runtime.host.capabilities.lifecycle?.closeWindow?.() ??
         runtime.commands.execute('workbench.tab.close')
       ),
-    { icon: 'lucide.log-out' },
+    { icon: 'lucide:log-out' },
   ),
 ]
 

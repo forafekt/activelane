@@ -13,16 +13,16 @@ import {
 
 defineOptions({ name: 'WorkbenchBrowserToolbar' })
 
-const Copy = getIcon('lucide.copy')
-const ArrowLeft = getIcon('lucide.arrow-left')
-const ArrowRight = getIcon('lucide.arrow-right')
-const ExternalLink = getIcon('lucide.external-link')
-const Home = getIcon('lucide.house')
-const MoreHorizontal = getIcon('lucide.ellipsis')
-const Plus = getIcon('lucide.plus')
-const RotateCcw = getIcon('lucide.rotate-ccw')
-const Trash2 = getIcon('lucide.trash-2')
-const X = getIcon('lucide.x')
+const Copy = getIcon('lucide:copy')
+const ArrowLeft = getIcon('lucide:arrow-left')
+const ArrowRight = getIcon('lucide:arrow-right')
+const ExternalLink = getIcon('lucide:external-link')
+const Home = getIcon('lucide:house')
+const MoreHorizontal = getIcon('lucide:ellipsis')
+const Plus = getIcon('lucide:plus')
+const RotateCcw = getIcon('lucide:rotate-ccw')
+const Trash2 = getIcon('lucide:trash-2')
+const X = getIcon('lucide:x')
 
 defineProps<{
   address: string

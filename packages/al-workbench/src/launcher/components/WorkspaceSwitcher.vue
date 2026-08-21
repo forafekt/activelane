@@ -3,8 +3,8 @@ import { getIcon } from '@activelane/icons'
 import { Button } from '@activelane/shadcn'
 import { useWorkspaceSwitcher } from '../composables/useWorkspaceSwitcher'
 
-const Check = getIcon('lucide.check')
-const Plus = getIcon('lucide.plus')
+const Check = getIcon('lucide:check')
+const Plus = getIcon('lucide:plus')
 
 defineOptions({ name: 'WorkspaceSwitcher' })
 

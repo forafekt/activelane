@@ -10,8 +10,8 @@ import LauncherSearch from './LauncherSearch.vue'
 import LauncherSection from './LauncherSection.vue'
 import WorkspaceSwitcher from './WorkspaceSwitcher.vue'
 
-const LayoutGrid = getIcon('lucide.layout-grid')
-const X = getIcon('lucide.x')
+const LayoutGrid = getIcon('lucide:layout-grid')
+const X = getIcon('lucide:x')
 
 defineOptions({ name: 'LauncherOverlay' })
 

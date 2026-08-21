@@ -16,8 +16,8 @@ import {
 import { cn } from '../../lib/utils'
 import { menuItemClass } from '../../lib/variants'
 
-const Check = getIcon('lucide.check')
-const ChevronRight = getIcon('lucide.chevron-right')
+const Check = getIcon('lucide:check')
+const ChevronRight = getIcon('lucide:chevron-right')
 
 defineOptions({ name: 'DropdownMenu' })
 

@@ -5,8 +5,8 @@ import { computed } from 'vue'
 import type { WorkbenchApplicationContribution } from '../../core/workbench/contributions'
 import { resolveLauncherIcon } from './iconResolver'
 
-const Pin = getIcon('lucide.pin')
-const PinOff = getIcon('lucide.pin-off')
+const Pin = getIcon('lucide:pin')
+const PinOff = getIcon('lucide:pin-off')
 
 defineOptions({ name: 'LauncherAppCard' })
 

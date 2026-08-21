@@ -117,7 +117,7 @@ export class ApiStudioStore {
         id: `api-studio.request.${requestId}`,
         kind: 'api-studio.request',
         title: `${item.method} ${item.name}`,
-        icon: 'lucide.globe-2',
+        icon: 'lucide:globe-2',
         ownerExtensionId: this.context.extensionId,
         input: { requestId },
         preview,

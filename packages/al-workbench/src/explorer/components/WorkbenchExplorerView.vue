@@ -38,7 +38,7 @@ const providerHiddenCounts = computed<Record<string, number>>(() => {
 })
 
 function providerIcon(provider: ExplorerProvider) {
-  return props.runtime.workbench.ui.getIcon(provider.icon ?? 'lucide.folder-tree')
+  return props.runtime.workbench.ui.getIcon(provider.icon ?? 'lucide:folder-tree')
 }
 
 function providerExpanded(provider: ExplorerProvider) {

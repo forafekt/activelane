@@ -2,8 +2,8 @@
 import { getIcon } from '@activelane/icons'
 import { Button } from '@activelane/shadcn'
 
-const Download = getIcon('lucide.download')
-const Upload = getIcon('lucide.upload')
+const Download = getIcon('lucide:download')
+const Upload = getIcon('lucide:upload')
 
 defineOptions({ name: 'SettingsJsonTransfer' })
 

@@ -5,7 +5,7 @@ import { useWorkbenchCommands } from '../../../../composables/useWorkbenchComman
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
 import WorkbenchCommandPalette from './WorkbenchCommandPalette.vue'
 
-const Search = getIcon('lucide.search')
+const Search = getIcon('lucide:search')
 
 defineOptions({ name: 'WorkbenchCommandBar' })
 

@@ -50,7 +50,7 @@ export default defineExtension({
       context.contribute.activityRail({
         id: ACTIVITY_ID,
         title: 'API Studio',
-        icon: 'lucide.globe-2',
+        icon: 'lucide:globe-2',
         defaultSidebarViewId: SIDEBAR_ID,
         order: 35,
       }),
@@ -63,13 +63,13 @@ export default defineExtension({
           {
             id: 'api-studio.sidebar.new-request',
             title: 'New Request',
-            icon: 'lucide.plus',
+            icon: 'lucide:plus',
             commandId: 'api-studio.new-request',
           },
           {
             id: 'api-studio.sidebar.new-collection',
             title: 'New Collection',
-            icon: 'lucide.folder-plus',
+            icon: 'lucide:folder-plus',
             commandId: 'api-studio.new-collection',
           },
         ],
@@ -89,7 +89,7 @@ export default defineExtension({
       context.contribute.bottomPaneViews({
         id: 'api-studio.request-log',
         title: 'Request Log',
-        icon: 'lucide.list-restart',
+        icon: 'lucide:list-restart',
         component: ApiStudioRequestLog,
         placement: 'bottomPane',
       }),
@@ -98,7 +98,7 @@ export default defineExtension({
           id: 'api-studio.status',
           title: 'API Studio',
           label: 'API Studio',
-          icon: 'lucide.globe-2',
+          icon: 'lucide:globe-2',
           commandId: 'api-studio.open',
           alignment: 'left',
           order: 40,
@@ -107,7 +107,7 @@ export default defineExtension({
           id: 'api-studio.environment',
           title: 'Active API Studio environment',
           label: studio.activeEnvironment()?.name ?? 'No environment',
-          icon: 'lucide.circle-dot',
+          icon: 'lucide:circle-dot',
           commandId: 'api-studio.select-environment',
           alignment: 'left',
           order: 41,
@@ -253,7 +253,7 @@ export default defineExtension({
           title: 'Send Request',
           location: 'tab/toolbar',
           commandId: 'api-studio.send-request',
-          icon: 'lucide.send',
+          icon: 'lucide:send',
           contexts: { tabKinds: ['api-studio.request'] },
         },
         {
@@ -261,7 +261,7 @@ export default defineExtension({
           title: 'Save Request',
           location: 'tab/toolbar',
           commandId: 'api-studio.save-request',
-          icon: 'lucide.save',
+          icon: 'lucide:save',
           contexts: { tabKinds: ['api-studio.request'] },
         },
         {
@@ -289,5 +289,3 @@ export default defineExtension({
     }
   },
 })
-
- 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { IconButton } from '@activelane/shadcn'
+import { getIcon } from '@activelane/icons'
+import { getComponent } from '@activelane/ui'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 import type { WorkbenchWindowHost } from '../../../core/host/types'
-import { getWorkbenchIcon, getWorkbenchIcons } from '../../../workbenchIcons'
 
-const [MinimizeWindow, CloseWindow] = getWorkbenchIcons([['MinimizeWindow'], ['CloseWindow']])
+const IconButton = getComponent('icon-button')
 
 defineOptions({ name: 'WorkbenchWindowControls' })
 
@@ -30,7 +30,7 @@ async function closeWindow() {
       cancelLabel: 'Cancel',
     })) ?? true
   if (!shouldClose) return
-  await props.windowHost.close()
+  void (await props.windowHost.close())
 }
 </script>
 
@@ -38,27 +38,16 @@ async function closeWindow() {
   <div class="flex flex-row gap-2 ml-2 pl-2 border-l" data-workbench-no-drag>
     <IconButton
       label="Minimize"
-      :icon="MinimizeWindow"
-      size="icon-xs"
-      variant="subtle"
-      class="rounded-full"
+      :icon="getIcon('lucide:minus')"
+      size="tiny"
       @click="minimizeWindow"
     />
     <IconButton
       :label="windowHost.state.maximized ? 'Restore' : 'Maximize'"
-      :icon="getWorkbenchIcon('MaximizeWindow', 'RestoreDownWindow', windowHost.state.maximized)"
-      size="icon-xs"
-      variant="subtle"
-      class="rounded-full"
+      :icon="windowHost.state.maximized ? getIcon('lucide:square') : getIcon('lucide:copy')"
+      size="tiny"
       @click="maximizeWindow"
     />
-    <IconButton
-      label="Close"
-      :icon="CloseWindow"
-      size="icon-xs"
-      variant="subtle"
-      class="rounded-full"
-      @click="void closeWindow()"
-    />
+    <IconButton label="Close" :icon="getIcon('lucide:x')" size="tiny" @click="closeWindow" />
   </div>
 </template>

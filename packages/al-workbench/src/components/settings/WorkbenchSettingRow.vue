@@ -4,7 +4,7 @@ import { Badge, Button, Checkbox, Input, Select, Switch, Textarea } from '@activ
 import { computed, ref } from 'vue'
 import type { WorkbenchSettingEntry } from '../../settings/types'
 
-const RotateCcw = getIcon('lucide.rotate-ccw')
+const RotateCcw = getIcon('lucide:rotate-ccw')
 
 defineOptions({ name: 'WorkbenchSettingRow' })
 
