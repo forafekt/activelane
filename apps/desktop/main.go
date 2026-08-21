@@ -13,12 +13,16 @@ var assets embed.FS
 
 func main() {
 	workspaceService := NewWorkspaceService()
+	extensionService := NewExtensionService()
+	networkService := NewNetworkService()
 
 	app := application.New(application.Options{
 		Name:        "ActiveLane",
 		Description: "ActiveLane Workbench",
 		Services: []application.Service{
 			application.NewService(workspaceService),
+			application.NewService(extensionService),
+			application.NewService(networkService),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -45,6 +49,7 @@ func main() {
 	})
 	window.RegisterHook(events.Common.WindowClosing, func(event *application.WindowEvent) {
 		workspaceService.Close()
+		extensionService.Close()
 	})
 
 	if err := app.Run(); err != nil {

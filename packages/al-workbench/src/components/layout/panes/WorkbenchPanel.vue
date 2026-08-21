@@ -10,10 +10,7 @@ defineProps<{
 
 const runtime = useWorkbenchRuntime()
 
-const [AlEmptyState, AlIconButton] = runtime.workbench.ui.getComponents([
-  'AlEmptyState',
-  'AlIconButton',
-])
+const [EmptyState, IconButton] = runtime.workbench.ui.getComponents(['EmptyState', 'IconButton'])
 
 const views = computed(() => [...runtime.registry.bottomPaneViews])
 const activeView = computed(() => {
@@ -69,9 +66,9 @@ watch(
       </div>
 
       <div class="wb-shell__bottom-panel-actions">
-        <AlIconButton
+        <IconButton
           label="Close bottom pane"
-          :icon="runtime.workbench.ui.getIcon('X')"
+          :icon="runtime.workbench.ui.getIcon('lucide:x')"
           size="icon-xs"
           variant="ghost"
           @click="closeBottomPane"
@@ -88,7 +85,7 @@ watch(
       />
     </div>
     <div v-else class="min-h-0 p-3">
-      <AlEmptyState
+      <EmptyState
         title="No bottom pane view selected"
         description="Select a bottom pane view from the tabs above."
       />

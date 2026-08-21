@@ -9,7 +9,8 @@ const runtime = useWorkbenchRuntime()
 const interactions = useWorkbenchTabInteractions()
 const passwordRef = ref<HTMLInputElement | null>(null)
 
-const [Eye, EyeOff] = runtime.workbench.ui.getIcons(['Eye', 'EyeOff'])
+const Eye = runtime.workbench.ui.getIcon('lucide:eye')
+const EyeOff = runtime.workbench.ui.getIcon('lucide:eye-off')
 const [
   Dialog,
   DialogContent,
@@ -17,9 +18,9 @@ const [
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  AlButton,
-  AlInput,
-  AlLabel,
+  Button,
+  Input,
+  Label,
 ] = runtime.workbench.ui.getComponents([
   'Dialog',
   'DialogContent',
@@ -27,9 +28,9 @@ const [
   'DialogFooter',
   'DialogHeader',
   'DialogTitle',
-  'AlButton',
-  'AlInput',
-  'AlLabel',
+  'Button',
+  'Input',
+  'Label',
 ])
 
 const needsSecret = computed(
@@ -77,9 +78,9 @@ function updateOpen(open: boolean) {
 
         <template v-if="needsSecret">
           <div class="wb-tab-dialog-field">
-            <AlLabel for="workbench-tab-protection-password">PIN/password</AlLabel>
+            <Label for="workbench-tab-protection-password">PIN/password</Label>
             <div class="wb-tab-secret-field">
-              <AlInput
+              <Input
                 id="workbench-tab-protection-password"
                 ref="passwordRef"
                 v-model="interactions.protection.password"
@@ -101,8 +102,8 @@ function updateOpen(open: boolean) {
           </div>
 
           <div class="wb-tab-dialog-field">
-            <AlLabel for="workbench-tab-protection-confirm">Confirm PIN/password</AlLabel>
-            <AlInput
+            <Label for="workbench-tab-protection-confirm">Confirm PIN/password</Label>
+            <Input
               id="workbench-tab-protection-confirm"
               v-model="interactions.protection.confirmation"
               :type="interactions.protection.showPassword ? 'text' : 'password'"
@@ -113,8 +114,8 @@ function updateOpen(open: boolean) {
           </div>
 
           <div class="wb-tab-dialog-field">
-            <AlLabel for="workbench-tab-protection-hint">Hint</AlLabel>
-            <AlInput
+            <Label for="workbench-tab-protection-hint">Hint</Label>
+            <Input
               id="workbench-tab-protection-hint"
               v-model="interactions.protection.hint"
               autocomplete="off"
@@ -133,10 +134,10 @@ function updateOpen(open: boolean) {
         </p>
 
         <DialogFooter>
-          <AlButton type="button" variant="ghost" @click="interactions.cancelProtection">
+          <Button type="button" variant="ghost" @click="interactions.cancelProtection">
             Cancel
-          </AlButton>
-          <AlButton type="submit" :variant="actionVariant">{{ actionLabel }}</AlButton>
+          </Button>
+          <Button type="submit" :variant="actionVariant">{{ actionLabel }}</Button>
         </DialogFooter>
       </form>
     </DialogContent>

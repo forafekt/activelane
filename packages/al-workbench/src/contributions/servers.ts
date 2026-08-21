@@ -1,4 +1,4 @@
-import { getIcons } from '@activelane/icons'
+import { getIcon } from '@activelane/icons'
 import { defineWorkbenchExtension } from '../core/extensions/helpers'
 import type {
   WorkbenchExtensionContext,
@@ -8,7 +8,8 @@ import type {
 import WorkbenchServerLogsView from '../servers/WorkbenchServerLogsView.vue'
 import WorkbenchServersView from '../servers/WorkbenchServersView.vue'
 
-const [ServerIcon, LogsIcon] = getIcons(['Server', 'ScrollText'])
+const ServerIcon = getIcon('lucide:server')
+const LogsIcon = getIcon('lucide:scroll-text')
 
 const SERVERS_TAB_KIND = 'workbench.servers'
 const SERVER_LOGS_TAB_KIND = 'workbench.server.logs'

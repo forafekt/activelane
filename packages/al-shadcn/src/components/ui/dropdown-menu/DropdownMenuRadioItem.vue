@@ -6,7 +6,7 @@ import { DropdownMenuItemIndicator, DropdownMenuRadioItem, useForwardPropsEmits 
 import type { HTMLAttributes } from 'vue'
 import { cn } from '../../../lib/utils'
 
-const Circle = getIcon('Circle')
+const Circle = getIcon('lucide:circle')
 
 const props = defineProps<DropdownMenuRadioItemProps & { class?: HTMLAttributes['class'] }>()
 

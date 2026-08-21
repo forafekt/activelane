@@ -32,10 +32,8 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-# Go workspace file
-go.work
+# Go workspace checks in the root registry module and desktop module together.
 go.work.sum
-go.sum
 
 ### JetBrains ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -332,3 +330,4 @@ components.d.ts
 .activelane
 auto-imports.d.ts
 components.d.ts
+registry-data

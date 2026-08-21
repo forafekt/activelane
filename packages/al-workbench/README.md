@@ -22,4 +22,24 @@ depends only on those explicit capability interfaces.
 Workbench imports semantic icons directly from `@activelane/icons` and generic UI primitives
 directly from `@activelane/shadcn`; it does not re-export either package.
 
+## Extension UI
+
+Extensions receive ActiveLane-owned UI from their activation context and the runtime passed to Vue
+surfaces. Use semantic components for controls and blocks for opinionated application patterns:
+
+```ts
+const Button = runtime.workbench.ui.getComponent('Button')
+const Tabs = runtime.workbench.ui.getComponent('Tabs')
+const ResourceListPane = runtime.workbench.ui.getBlock('ResourceListPane')
+```
+
+Component and block IDs are TypeScript-checked. Unknown IDs throw a descriptive error at runtime.
+The registry deliberately hides `@activelane/shadcn`, allowing Workbench to change its design
+system, interaction conventions, and accessibility behavior without changing extensions.
+
+Use custom Vue components and CSS for genuinely domain-specific experiences, such as an HTTP
+request composer or a specialized visualization. Reuse Workbench UI for ordinary controls, pane
+structure, search, resource lists, empty states, master/detail layouts, and data presentation. If a
+UI concept could reasonably appear in two ActiveLane applications, it belongs in Workbench.
+
 The canonical frontend architecture is documented in the repository's `ARCHITECTURE.md`.

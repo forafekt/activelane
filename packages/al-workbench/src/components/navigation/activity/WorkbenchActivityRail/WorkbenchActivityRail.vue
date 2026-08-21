@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getIcon } from '@activelane/icons'
+import { getComponent } from '@activelane/ui'
 import { computed, ref } from 'vue'
 import { useWorkbenchActivities } from '../../../../composables/useWorkbenchActivities'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
@@ -16,16 +18,14 @@ const props = defineProps<{
 
 const runtime = useWorkbenchRuntime()
 
-const [AlIconButton, ScrollArea] = runtime.workbench.ui.getComponents([
-  'AlIconButton',
-  'ScrollArea',
-])
-const [ChevronLeft, ChevronRight, Plus, Settings] = runtime.workbench.ui.getIcons([
-  'ChevronLeft',
-  'ChevronRight',
-  'Plus',
-  'Settings',
-])
+const IconButton = getComponent('icon-button')
+const Button = getComponent('button')
+
+const [, ScrollArea] = runtime.workbench.ui.getComponents(['IconButton', 'ScrollArea'])
+const ChevronLeft = getIcon('lucide:chevron-left')
+const ChevronRight = getIcon('lucide:chevron-right')
+const Plus = getIcon('lucide:plus')
+const Settings = getIcon('lucide:settings')
 
 const activities = useWorkbenchActivities()
 const items = activities.items
@@ -66,25 +66,28 @@ function closeTab(tab: WorkbenchTab) {
   runtime.workbench.closeTab(tab.id, tab.groupId)
   void runtime.workbench.persist()
 }
+
+const computedNavClass = computed(() => [
+  'wb-activity-bar',
+  { 'wb-activity-bar--expanded': expanded.value },
+  props.class,
+])
 </script>
 
 <template>
   <nav
-    :class="[
-      'wb-activity-bar',
-      { 'wb-activity-bar--expanded': expanded },
-      props.class,
-    ]"
+    :class="computedNavClass"
     :aria-label="expanded ? 'Expanded activity rail' : 'Activity rail'"
   >
     <div class="wb-activity-bar__header">
-      <AlIconButton
+      <IconButton
         :label="expanded ? 'Collapse activity rail' : 'Expand activity rail'"
-        :icon="expanded ? ChevronLeft : ChevronRight"
-        variant="ghost"
-        size="icon-sm"
+        size="tiny"
         @click="toggleExpanded"
-      />
+      >
+        <ChevronLeft v-if="expanded" />
+        <ChevronRight v-else />
+      </IconButton>
     </div>
     <WorkbenchGlobalMenuLauncher
       v-if="runtime.host.kind !== 'desktop'"
@@ -117,26 +120,30 @@ function closeTab(tab: WorkbenchTab) {
           @activate="activateTab"
           @close="closeTab"
         />
-        <button
-          type="button"
+        <Button
           class="wb-activity-bar__new-tab"
           :aria-label="expanded ? undefined : 'New browser tab'"
           @click="runtime.commands.execute('workbench.browser.newTab')"
+          quaternary
         >
-          <Plus class="size-4" />
+          <template #icon>
+            <Plus />
+          </template>
           <span v-if="expanded">New browser tab</span>
-        </button>
+        </Button>
       </div>
     </ScrollArea>
 
-    <button
-      type="button"
+    <Button
       class="wb-activity-bar__settings"
       :aria-label="expanded ? undefined : 'Open settings'"
       @click="runtime.commands.execute('workbench.action.openSettings')"
+      quaternary
     >
-      <Settings class="size-4" />
+      <template #icon>
+        <Settings />
+      </template>
       <span v-if="expanded">Settings</span>
-    </button>
+    </Button>
   </nav>
 </template>

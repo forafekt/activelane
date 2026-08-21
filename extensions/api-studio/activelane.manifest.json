@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "@activelane/api-studio",
+  "publisher": "activelane",
+  "name": "api-studio",
+  "displayName": "ActiveLane API Studio",
+  "version": "0.0.5",
+  "description": "Build, organize, send, and inspect HTTP APIs inside your ActiveLane workspace.",
+  "entry": "dist/extension.js",
+  "engines": { "activelane": ">=0.1.0" },
+  "hostSupport": ["desktop", "webapp"],
+  "extensionKind": ["workbench"],
+  "visibility": "public",
+  "permissions": ["network/http", "extension-storage", "workspace-ui", "notifications"],
+  "contributes": {
+    "activityRail": [{ "id": "api-studio.activity", "title": "API Studio" }],
+    "sidebarViews": [{ "id": "api-studio.sidebar", "title": "API Studio" }],
+    "tabRenderers": [{ "id": "api-studio.request-editor", "title": "Request Editor", "tabKind": "api-studio.request" }],
+    "inspectorPanels": [{ "id": "api-studio.request-inspector", "title": "Request Inspector" }],
+    "bottomPaneViews": [{ "id": "api-studio.request-log", "title": "Request Log" }],
+    "statusBar": [
+      { "id": "api-studio.status", "title": "API Studio" },
+      { "id": "api-studio.environment", "title": "Active Environment" }
+    ],
+    "commands": [
+      { "id": "api-studio.new-request", "title": "API Studio: New Request" },
+      { "id": "api-studio.new-collection", "title": "API Studio: New Collection" },
+      { "id": "api-studio.send-request", "title": "API Studio: Send Request" },
+      { "id": "api-studio.save-request", "title": "API Studio: Save Request" },
+      { "id": "api-studio.select-environment", "title": "API Studio: Select Environment" }
+    ]
+  },
+  "marketplace": {
+    "icon": "assets/api-studio.svg",
+    "summary": "A focused HTTP client that belongs in your workbench.",
+    "longDescription": "Create collections, parameterize environments, send requests through the host network capability, and inspect responses without leaving ActiveLane.",
+    "categories": ["development", "integrations"],
+    "capabilities": ["network/http", "extension-storage", "workspace-ui", "notifications"],
+    "highlights": ["Collections and saved requests", "Environment variable resolution", "Response inspection and request history"],
+    "releaseNotes": "Adds full Workbench integration across the activity rail, sidebar, editor tabs, inspector, bottom panel, status bar, commands, menus, persistent state, and functional request execution.",
+    "media": [
+      { "type": "image", "source": "assets/request-editor.svg", "title": "Request editor", "altText": "API Studio request and response editor" }
+    ],
+    "plans": [
+      {
+        "id": "free",
+        "name": "Free",
+        "interval": "none",
+        "priceMinor": 0,
+        "currency": "EUR",
+        "features": ["HTTP requests", "Collections", "25 history entries", "One environment"],
+        "entitlements": ["api-studio.requests.send", "api-studio.collections", "api-studio.history.basic", "api-studio.environments.basic"]
+      },
+      {
+        "id": "pro-monthly",
+        "name": "Pro Monthly",
+        "description": "All API Studio Pro capabilities, billed monthly.",
+        "interval": "monthly",
+        "priceMinor": 799,
+        "currency": "EUR",
+        "features": ["Unlimited history", "Unlimited environments", "Advanced inspector", "Import and export"],
+        "entitlements": ["api-studio.requests.send", "api-studio.collections", "api-studio.history.unlimited", "api-studio.environments.unlimited", "api-studio.inspector.advanced", "api-studio.transfer"]
+      },
+      {
+        "id": "pro-yearly",
+        "name": "Pro Yearly",
+        "description": "All API Studio Pro capabilities, billed yearly.",
+        "interval": "yearly",
+        "priceMinor": 7900,
+        "currency": "EUR",
+        "features": ["Unlimited history", "Unlimited environments", "Advanced inspector", "Import and export"],
+        "entitlements": ["api-studio.requests.send", "api-studio.collections", "api-studio.history.unlimited", "api-studio.environments.unlimited", "api-studio.inspector.advanced", "api-studio.transfer"]
+      }
+    ]
+  }
+}

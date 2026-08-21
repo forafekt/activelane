@@ -37,13 +37,16 @@ func NewWorkspaceService() *WorkspaceService { return &WorkspaceService{} }
 func (service *WorkspaceService) Close() {}
 
 func (service *WorkspaceService) SetRoot(path string) error {
+
 	if path == "" {
 		return errors.New("workspace path is empty")
 	}
 	info, err := os.Stat(path)
+
 	if err != nil {
 		return err
 	}
+
 	if !info.IsDir() {
 		return errors.New("workspace path is not a directory")
 	}
@@ -61,6 +64,7 @@ func (service *WorkspaceService) Root() string {
 
 func (service *WorkspaceService) ReadFile(path string) (FileHandle, error) {
 	contents, err := os.ReadFile(path)
+
 	if err != nil {
 		return FileHandle{}, err
 	}
@@ -68,9 +72,11 @@ func (service *WorkspaceService) ReadFile(path string) (FileHandle, error) {
 }
 
 func (service *WorkspaceService) WriteFile(file FileHandle) (FileHandle, error) {
+
 	if file.Path == "" {
 		return FileHandle{}, errors.New("file path is empty")
 	}
+
 	if err := os.WriteFile(file.Path, []byte(file.Contents), 0o644); err != nil {
 		return FileHandle{}, err
 	}
@@ -79,13 +85,16 @@ func (service *WorkspaceService) WriteFile(file FileHandle) (FileHandle, error) 
 }
 
 func (service *WorkspaceService) ReadDirectory(path string) ([]FileSystemEntry, error) {
+
 	if path == "" {
 		path = service.Root()
 	}
+
 	if path == "" {
 		return []FileSystemEntry{}, nil
 	}
 	entries, err := os.ReadDir(path)
+
 	if err != nil {
 		return nil, err
 	}

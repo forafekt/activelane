@@ -2,7 +2,7 @@
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
 import { cn } from '../../lib/utils'
 
-defineOptions({ name: 'AlSwitch' })
+defineOptions({ name: 'Switch' })
 
 defineProps<{
   modelValue?: boolean

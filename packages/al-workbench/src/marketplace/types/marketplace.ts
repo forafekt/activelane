@@ -29,6 +29,7 @@ export interface MarketplaceContributionPoint {
 }
 
 export interface MarketplaceContributions {
+  applications?: MarketplaceContributionPoint[]
   commands?: MarketplaceContributionPoint[]
   statusBar?: MarketplaceContributionPoint[]
   activityRail?: MarketplaceContributionPoint[]
@@ -36,6 +37,7 @@ export interface MarketplaceContributions {
   tabRenderers?: MarketplaceContributionPoint[]
   tabSurfaces?: MarketplaceContributionPoint[]
   inspectorPanels?: MarketplaceContributionPoint[]
+  bottomPanels?: MarketplaceContributionPoint[]
   settingsPages?: MarketplaceContributionPoint[]
   menus?: MarketplaceContributionPoint[]
   workbenchViews?: MarketplaceContributionPoint[]
@@ -70,6 +72,9 @@ export interface MarketplaceExtensionIssue {
 export interface MarketplaceGalleryItem {
   title: string
   description: string
+  source: string
+  type: 'image' | 'video'
+  altText?: string
 }
 
 export interface MarketplaceExtension {
@@ -92,6 +97,8 @@ export interface MarketplaceExtension {
   categories: string[]
   tags: string[]
   pricingModel: 'free' | 'one_time' | 'subscription' | 'trial' | 'enterprise'
+  plans: import('../../core/extensions/types').WorkbenchSubscriptionPlan[]
+  subscription?: import('../../core/entitlements/types').WorkbenchSubscription
   featured?: boolean
   recommended?: boolean
   recentlyUpdated?: boolean
@@ -131,6 +138,24 @@ export interface MarketplaceExtension {
   lifecycleState?: string
   logs: Array<{ level: string; message: string; timestamp: string }>
   packageType?: 'builtin' | 'marketplace' | 'local' | 'npm' | 'url' | 'mock'
+  registryId?: string
+  registryDisplayName?: string
+  compatibility: 'compatible' | 'incompatible'
+  compatibilityReason?: string
+  versionStatus?: 'draft' | 'published' | 'yanked' | 'blocked'
+  integrityState?: 'verified' | 'missing' | 'invalid' | 'mismatch'
+  restartRequired?: boolean
+}
+
+export interface MarketplaceRegistryState {
+  mode: 'none' | 'local-only' | 'connected'
+  publicRegistryEnabled: boolean
+  failures: Array<{
+    registryId: string
+    registryDisplayName: string
+    code: string
+    message: string
+  }>
 }
 
 export interface MarketplaceCategory {
@@ -147,6 +172,11 @@ export interface MarketplaceSearchFilters {
   featured?: boolean
   recommended?: boolean
   updatesOnly?: boolean
+  pricing?: MarketplaceExtension['pricingModel'][]
+  installed?: boolean
+  minimumRating?: number
+  verifiedPublisher?: boolean
+  compatibility?: MarketplaceExtension['compatibility']
   sortBy?: MarketplaceSortOption
   sortOrder?: 'asc' | 'desc'
 }

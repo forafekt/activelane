@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { cn } from '../../lib/utils'
 
-defineOptions({ name: 'AlKeyValueRow' })
+defineOptions({ name: 'KeyValueRow' })
 
 defineProps<{
   label: string

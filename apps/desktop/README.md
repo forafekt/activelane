@@ -25,3 +25,8 @@ wails3 build
 
 Do not edit `frontend/bindings`; Wails regenerates it from the registered Go
 services.
+
+`ExtensionService` is the native registry/install boundary. It consumes the reusable packages in the `go` module
+and is adapted in `frontend/src/services/native.ts`; the shared Workbench remains Wails-independent.
+See [desktop-registry.md](../../docs/guides/desktop-registry.md) for configuration, lifecycle state,
+manual verification and current restart requirements.

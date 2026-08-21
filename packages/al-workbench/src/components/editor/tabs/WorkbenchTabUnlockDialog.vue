@@ -9,7 +9,8 @@ const runtime = useWorkbenchRuntime()
 const interactions = useWorkbenchTabInteractions()
 const passwordRef = ref<HTMLInputElement | null>(null)
 
-const [Eye, EyeOff] = runtime.workbench.ui.getIcons(['Eye', 'EyeOff'])
+const Eye = runtime.workbench.ui.getIcon('lucide:eye')
+const EyeOff = runtime.workbench.ui.getIcon('lucide:eye-off')
 const [
   Dialog,
   DialogContent,
@@ -17,9 +18,9 @@ const [
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  AlButton,
-  AlInput,
-  AlLabel,
+  Button,
+  Input,
+  Label,
 ] = runtime.workbench.ui.getComponents([
   'Dialog',
   'DialogContent',
@@ -27,9 +28,9 @@ const [
   'DialogFooter',
   'DialogHeader',
   'DialogTitle',
-  'AlButton',
-  'AlInput',
-  'AlLabel',
+  'Button',
+  'Input',
+  'Label',
 ])
 
 watch(
@@ -56,9 +57,9 @@ function updateOpen(open: boolean) {
         </DialogHeader>
 
         <div class="wb-tab-dialog-field">
-          <AlLabel for="workbench-tab-unlock-password">PIN/password</AlLabel>
+          <Label for="workbench-tab-unlock-password">PIN/password</Label>
           <div class="wb-tab-secret-field">
-            <AlInput
+            <Input
               id="workbench-tab-unlock-password"
               ref="passwordRef"
               v-model="interactions.unlock.password"
@@ -87,10 +88,8 @@ function updateOpen(open: boolean) {
         </p>
 
         <DialogFooter>
-          <AlButton type="button" variant="ghost" @click="interactions.cancelUnlock">
-            Cancel
-          </AlButton>
-          <AlButton type="submit">Unlock</AlButton>
+          <Button type="button" variant="ghost" @click="interactions.cancelUnlock"> Cancel </Button>
+          <Button type="submit">Unlock</Button>
         </DialogFooter>
       </form>
     </DialogContent>

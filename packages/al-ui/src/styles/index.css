@@ -1,0 +1,94 @@
+.al-ui-root {
+  color: var(--al-ui-text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color-scheme: light;
+}
+.al-ui-root[data-theme="dark"],
+.al-ui-root[data-theme="high-contrast"] {
+  color-scheme: dark;
+}
+.al-ui-root :focus-visible {
+  outline: 2px solid var(--al-ui-focus-ring);
+  outline-offset: 2px;
+}
+.al-ui-root[data-reduced-motion="true"] *,
+.al-ui-root[data-reduced-motion="true"] *::before,
+.al-ui-root[data-reduced-motion="true"] *::after {
+  scroll-behavior: auto;
+  transition-duration: 0.01ms;
+  animation-duration: 0.01ms;
+  animation-iteration-count: 1;
+}
+.al-empty-state {
+  display: grid;
+  min-height: 9rem;
+  place-items: center;
+  padding: 1.5rem;
+}
+.al-toolbar {
+  display: flex;
+  min-height: var(--al-ui-control-height);
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--al-ui-surface);
+  border-bottom: 1px solid var(--al-ui-border);
+}
+.al-toolbar-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.al-toolbar-group + .al-toolbar-group {
+  margin-inline-start: 0.375rem;
+  padding-inline-start: 0.625rem;
+  border-inline-start: 1px solid var(--al-ui-border);
+}
+.al-property-row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) minmax(8rem, 1.4fr);
+  align-items: center;
+  gap: 0.75rem;
+  min-height: var(--al-ui-list-row-height);
+  padding: 0.375rem 0.5rem;
+}
+.al-property-row__label {
+  font-weight: 500;
+}
+.al-property-row__description {
+  color: var(--al-ui-text-muted);
+  font-size: 0.75rem;
+}
+.al-property-row__value {
+  min-width: 0;
+}
+.al-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--al-ui-text-muted);
+}
+.al-status__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+.al-status[data-status="success"] {
+  color: var(--al-ui-success);
+}
+.al-status[data-status="warning"] {
+  color: var(--al-ui-warning);
+}
+.al-status[data-status="error"] {
+  color: var(--al-ui-error);
+}
+.al-status[data-status="info"] {
+  color: var(--al-ui-info);
+}

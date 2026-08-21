@@ -15,13 +15,13 @@ const props = defineProps<{
   depth: number
 }>()
 
-const ChevronRight = props.runtime.workbench.ui.getIcon('ChevronRight')
-const Loader2 = props.runtime.workbench.ui.getIcon('Loader2')
-const AlertTriangle = props.runtime.workbench.ui.getIcon('AlertTriangle')
-const Copy = props.runtime.workbench.ui.getIcon('Copy')
-const ExternalLink = props.runtime.workbench.ui.getIcon('ExternalLink')
-const Info = props.runtime.workbench.ui.getIcon('Info')
-const AppWindow = props.runtime.workbench.ui.getIcon('AppWindow')
+const ChevronRight = props.runtime.workbench.ui.getIcon('lucide:chevron-right')
+const Loader2 = props.runtime.workbench.ui.getIcon('lucide:loader-circle')
+const AlertTriangle = props.runtime.workbench.ui.getIcon('lucide:triangle-alert')
+const Copy = props.runtime.workbench.ui.getIcon('lucide:copy')
+const ExternalLink = props.runtime.workbench.ui.getIcon('lucide:external-link')
+const Info = props.runtime.workbench.ui.getIcon('lucide:info')
+const AppWindow = props.runtime.workbench.ui.getIcon('lucide:app-window')
 
 const [
   ContextMenu,
@@ -70,7 +70,9 @@ const hiddenChildCount = computed(() =>
     : 0,
 )
 const Icon = computed(() =>
-  props.runtime.workbench.ui.getIcon(props.node.icon ?? (props.node.isLeaf ? 'File' : 'Folder')),
+  props.runtime.workbench.ui.getIcon(
+    props.node.icon ?? (props.node.isLeaf ? 'lucide:file' : 'lucide:folder'),
+  ),
 )
 const selected = computed(
   () =>

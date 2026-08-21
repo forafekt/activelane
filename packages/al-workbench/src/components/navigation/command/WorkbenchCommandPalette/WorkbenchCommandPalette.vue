@@ -13,7 +13,7 @@ const props = defineProps<{
 const runtime = useWorkbenchRuntime()
 
 const ScrollArea = runtime.workbench.ui.getComponent('ScrollArea')
-const Search = runtime.workbench.ui.getIcon('Search')
+const Search = runtime.workbench.ui.getIcon('lucide:search')
 
 const commands = useWorkbenchCommands()
 

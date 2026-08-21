@@ -20,6 +20,7 @@ import type {
   MarketplaceCategory,
   MarketplaceExtension,
   MarketplaceExtensionStatus,
+  MarketplaceRegistryState,
   MarketplaceSearchFilters,
   MarketplaceSetting,
   MarketplaceSortOption,
@@ -134,6 +135,12 @@ function manifestSettingsSummary(
 function contributionSummary(record: WorkbenchRuntimeExtensionRecord | InstalledExtensionRecord) {
   const contributes = record.manifest.contributes
   return {
+    applications: contributes?.apps?.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      kind: item.launch.type,
+    })),
     commands: contributes?.commands?.map((item) => ({
       id: item.id,
       title: item.title,
@@ -159,6 +166,10 @@ function contributionSummary(record: WorkbenchRuntimeExtensionRecord | Installed
       description: item.mode,
     })),
     inspectorPanels: contributes?.inspectorPanels?.map((item) => ({
+      id: item.id,
+      title: item.title,
+    })),
+    bottomPanels: contributes?.bottomPaneViews?.map((item) => ({
       id: item.id,
       title: item.title,
     })),
@@ -212,14 +223,14 @@ function registryRecordToMarketplace(
   record: RegistryExtensionRecord,
 ): MarketplaceExtensionRecord | null {
   const latest = record.versions
-    .filter((version) => version.status === 'published')
+    .slice()
     .sort((left, right) => compareSemver(right.version, left.version))[0]
   if (!latest) return null
-  const marketplace = latest.manifest.contributes?.marketplace
+  const marketplace = latest.manifest.marketplace
   const updatedAt = latest.publishedAt ?? new Date(0).toISOString()
   const appIcon = latest.manifest.contributes?.apps?.[0]?.icon
   return {
-    icon: typeof appIcon === 'string' ? appIcon : '',
+    icon: marketplace?.icon ?? (typeof appIcon === 'string' ? appIcon : ''),
     id: record.id,
     slug: `${record.publisher}.${record.name}`,
     name: record.name,
@@ -232,8 +243,9 @@ function registryRecordToMarketplace(
       verified: record.publisher === 'activelane',
     },
     categories: marketplace?.categories ?? latest.manifest.categories ?? [],
-    tags: marketplace?.keywords ?? latest.manifest.keywords ?? [],
-    screenshots: marketplace?.screenshots?.map((item) => item.src) ?? [],
+    tags: latest.manifest.keywords ?? [],
+    screenshots:
+      marketplace?.media?.filter((item) => item.type === 'image').map((item) => item.source) ?? [],
     readme: marketplace?.longDescription ?? latest.manifest.description,
     manifest: latest.manifest,
     package: {
@@ -246,16 +258,86 @@ function registryRecordToMarketplace(
     createdAt: updatedAt,
     updatedAt,
     featured: marketplace?.featured,
+    plans: marketplace?.plans ?? [],
+    registryId: record.registryId,
+    registryDisplayName: record.registryDisplayName,
+    versionStatus: latest.status,
   }
 }
 
-async function loadCatalogSnapshot(client: ReturnType<typeof createWorkbenchApiHttpClient>) {
+function defaultRegistryState(): MarketplaceRegistryState {
+  return { mode: 'connected', publicRegistryEnabled: true, failures: [] }
+}
+
+async function loadCatalogSnapshot(
+  client: ReturnType<typeof createWorkbenchApiHttpClient>,
+  runtime: WorkbenchRuntimeApi | null,
+) {
+  if (runtime?.host.capabilities.registry?.search) {
+    const response = await runtime.host.capabilities.registry.search('')
+    const marketplace = response.items
+      .map((item) =>
+        registryRecordToMarketplace({
+          id: item.id,
+          publisher: item.namespace,
+          name: item.name,
+          displayName: item.displayName,
+          description: item.description,
+          visibility: item.manifest.visibility ?? 'private',
+          latestVersion: item.version,
+          registryId: item.registryId,
+          registryDisplayName: item.registryDisplayName,
+          versions: [
+            {
+              extensionId: item.id,
+              publisher: item.namespace,
+              name: item.name,
+              version: item.version,
+              status: item.versionStatus,
+              manifest: item.manifest,
+              artifact: {
+                digest: item.packageDigest,
+                algorithm: 'sha256',
+                sizeBytes: 0,
+                downloadUrl: '',
+              },
+              publishedAt: item.publishedAt,
+            },
+          ],
+        }),
+      )
+      .filter((record): record is MarketplaceExtensionRecord => record !== null)
+      .map((record) => {
+        const source = response.items.find(
+          (item) => item.id === record.id && item.registryId === record.registryId,
+        )
+        return {
+          ...record,
+          compatible: source?.compatible,
+          compatibilityReason: source?.compatibilityReason,
+        }
+      })
+    return {
+      marketplace,
+      capabilities: [] as ActiveLaneCapabilityRecord[],
+      registryState: {
+        mode: response.mode,
+        publicRegistryEnabled: response.publicRegistryEnabled,
+        failures: response.failures.map((failure) => ({
+          registryId: failure.registryId,
+          registryDisplayName: failure.registryDisplayName,
+          code: failure.error.code,
+          message: failure.error.message,
+        })),
+      } satisfies MarketplaceRegistryState,
+    }
+  }
   try {
     const [marketplace, capabilities] = await Promise.all([
       client.listMarketplaceExtensions(),
       client.listCapabilities(),
     ])
-    return { marketplace, capabilities }
+    return { marketplace, capabilities, registryState: defaultRegistryState() }
   } catch (error) {
     if (!(error instanceof WorkbenchApiHttpError) || error.response.status !== 404) throw error
     return {
@@ -263,6 +345,7 @@ async function loadCatalogSnapshot(client: ReturnType<typeof createWorkbenchApiH
         .map(registryRecordToMarketplace)
         .filter((record): record is MarketplaceExtensionRecord => record !== null),
       capabilities: [] as ActiveLaneCapabilityRecord[],
+      registryState: defaultRegistryState(),
     }
   }
 }
@@ -302,12 +385,13 @@ function makeExtension(
     icon: marketplace.icon ?? '',
     categories: marketplace.categories.map((item) => item.toLowerCase()),
     tags: marketplace.tags,
-    pricingModel: 'free',
-    featured: marketplace.categories.includes('platform') || marketplace.categories.includes('ai'),
+    pricingModel: marketplace.plans?.some((plan) => plan.priceMinor > 0) ? 'subscription' : 'free',
+    plans: marketplace.plans ?? [],
+    featured: marketplace.featured === true,
     recommended: marketplace.publisher.verified === true,
     recentlyUpdated: true,
-    rating: { average: 4.6, count: 24 },
-    downloads: { total: 1200, weekly: 80 },
+    rating: { average: 0, count: 0 },
+    downloads: { total: 0, weekly: 0 },
     lastUpdated: marketplace.updatedAt,
     firstPublished: marketplace.createdAt,
     repository: marketplace.repositoryUrl,
@@ -337,29 +421,57 @@ function makeExtension(
         changes: ['Catalog-backed local registry entry.'],
       },
     ],
-    gallery: (marketplace.screenshots ?? []).map((src, index) => ({
-      title: `Screenshot ${index + 1}`,
-      description: src,
+    gallery: (marketplace.manifest.marketplace?.media ?? []).map((item, index) => ({
+      title: item.title ?? `Preview ${index + 1}`,
+      description: item.altText ?? item.title ?? `Preview of ${marketplace.displayName}`,
+      source: item.source,
+      type: item.type,
+      altText: item.altText,
     })),
-    errors: [],
-    warnings: [],
+    errors:
+      marketplace.versionStatus === 'blocked'
+        ? [nowIssue(`${marketplace.id}.blocked`, 'This release is blocked.', 'error', 'registry')]
+        : [],
+    warnings: [
+      ...(marketplace.versionStatus === 'yanked'
+        ? [
+            nowIssue(
+              `${marketplace.id}.yanked`,
+              'This release has been yanked.',
+              'warning',
+              'registry',
+            ),
+          ]
+        : []),
+      ...(marketplace.compatible === false
+        ? [
+            nowIssue(
+              `${marketplace.id}.compatibility`,
+              marketplace.compatibilityReason ?? 'This release is incompatible.',
+              'warning',
+              'compatibility',
+            ),
+          ]
+        : []),
+    ],
     manifest: marketplace.manifest,
-    runtime: installed
-      ? {
-          extensionId: installed.extensionId,
-          manifest: installed.manifest,
-          installed: true,
-          enabled: installed.enabled,
-          active: false,
-          status: installed.enabled ? 'inactive' : 'installed',
-          surfaceErrors: [],
-        }
-      : undefined,
+    runtime: undefined,
     activationEvents: marketplace.manifest.activationEvents ?? [],
     hostCompatibility: ['webapp', 'desktop', 'local backend'],
-    lifecycleState: installed ? (installed.enabled ? 'inactive' : 'installed') : 'available',
+    lifecycleState: installed
+      ? installed.enabled
+        ? 'restart-required'
+        : 'installed'
+      : 'available',
     logs: [],
     packageType: installed?.installSource === 'local' ? 'local' : marketplace.package.type,
+    registryId: marketplace.registryId,
+    registryDisplayName: marketplace.registryDisplayName,
+    compatibility: marketplace.compatible === false ? 'incompatible' : 'compatible',
+    compatibilityReason: marketplace.compatibilityReason,
+    versionStatus: marketplace.versionStatus,
+    integrityState: installed?.integrityState,
+    restartRequired: installed?.restartRequired,
   }
 }
 
@@ -368,6 +480,7 @@ export class MarketplaceCatalogService {
   private runtime: WorkbenchRuntimeApi | null = null
   private loaded = false
   private loadingPromise: Promise<void> | null = null
+  private registryState: MarketplaceRegistryState = defaultRegistryState()
 
   setRuntimeApi(runtime: WorkbenchRuntimeApi) {
     this.runtime = runtime
@@ -392,6 +505,10 @@ export class MarketplaceCatalogService {
 
   getAllExtensions() {
     return Array.from(this.extensions.values())
+  }
+
+  getRegistryState() {
+    return this.registryState
   }
 
   getCategories(): MarketplaceCategory[] {
@@ -447,6 +564,26 @@ export class MarketplaceCatalogService {
     if (filters.featured) results = results.filter((extension) => extension.featured)
     if (filters.recommended) results = results.filter((extension) => extension.recommended)
     if (filters.updatesOnly) results = results.filter((extension) => extension.updateAvailable)
+    if (filters.pricing?.length) {
+      results = results.filter((extension) => filters.pricing?.includes(extension.pricingModel))
+    }
+    if (filters.installed !== undefined) {
+      results = results.filter(
+        (extension) => (extension.installState === 'installed') === filters.installed,
+      )
+    }
+    if (filters.minimumRating !== undefined) {
+      const minimumRating = filters.minimumRating
+      results = results.filter((extension) => extension.rating.average >= minimumRating)
+    }
+    if (filters.verifiedPublisher !== undefined) {
+      results = results.filter(
+        (extension) => extension.publisher.verified === filters.verifiedPublisher,
+      )
+    }
+    if (filters.compatibility) {
+      results = results.filter((extension) => extension.compatibility === filters.compatibility)
+    }
     return this.sortExtensions(
       results,
       filters.sortBy ?? 'recommended',
@@ -471,7 +608,14 @@ export class MarketplaceCatalogService {
     if (!runtime?.host.capabilities.extensions?.install) {
       throw new Error('Extension installation is not supported by this host.')
     }
-    await runtime.extensions.install(extensionId)
+    const extension = this.extensions.get(extensionId)
+    if (!extension) throw new Error(`Extension ${extensionId} is unavailable.`)
+    if (!extension.registryId) throw new Error('The selected extension has no source registry.')
+    if (extension.compatibility === 'incompatible') {
+      throw new Error(extension.compatibilityReason ?? 'This extension is incompatible.')
+    }
+    if (extension.versionStatus === 'yanked') throw new Error('This extension version is yanked.')
+    await runtime.extensions.install(extensionId, extension.version, extension.registryId)
     await this.refresh()
   }
 
@@ -480,6 +624,14 @@ export class MarketplaceCatalogService {
     if (!runtime?.host.capabilities.extensions?.uninstall) {
       throw new Error('Extension uninstallation is not supported by this host.')
     }
+    const accepted =
+      (await runtime.host.capabilities.confirm?.({
+        title: 'Uninstall extension',
+        message: `Remove ${extensionId} and its package-owned files?`,
+        confirmLabel: 'Uninstall',
+        cancelLabel: 'Cancel',
+      })) ?? true
+    if (!accepted) return
     await runtime.extensions.uninstall(extensionId)
     await this.refresh()
   }
@@ -505,9 +657,14 @@ export class MarketplaceCatalogService {
   async updateExtension(extensionId: string) {
     const extension = this.extensions.get(extensionId)
     if (!extension?.updateAvailable) throw new Error('No update is available for this extension.')
-    throw new Error(
-      'Extension updates are not supported until the registry installer can stage and roll back artifacts.',
+    const registryId = extension.registryId
+    if (!registryId) throw new Error('The update source registry is unavailable.')
+    await this.runtime?.extensions.install(
+      extensionId,
+      extension.updateAvailable.version,
+      registryId,
     )
+    await this.refresh()
   }
 
   async installLocalPackage(input: { filePath?: string; fileName?: string; contents?: string }) {
@@ -522,12 +679,13 @@ export class MarketplaceCatalogService {
   }
 
   async refresh() {
-    const [{ marketplace, capabilities }, installed] = await Promise.all([
-      loadCatalogSnapshot(this.backendClient),
+    const [{ marketplace, capabilities, registryState }, installed] = await Promise.all([
+      loadCatalogSnapshot(this.backendClient, this.runtime),
       this.runtime?.extensions.listInstalled() ?? Promise.resolve([] as InstalledExtensionRecord[]),
     ])
 
     this.extensions.clear()
+    this.registryState = registryState
     const installedMap = new Map(installed.map((record) => [record.extensionId, record]))
     for (const record of marketplace) {
       const extension = makeExtension(record, installedMap.get(record.id), capabilities)

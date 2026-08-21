@@ -204,6 +204,7 @@ func main() {
 	// Check for iPhone simulators
 	fmt.Println()
 	fmt.Println("Checking for iPhone simulator devices...")
+
 	if !checkCommand([]string{"xcrun", "simctl", "list", "devices"}) {
 		fmt.Println("❌ Cannot check for iPhone simulators")
 		hasErrors = true
@@ -271,6 +272,7 @@ func main() {
 	// Final summary
 	fmt.Println()
 	fmt.Println("=" + strings.Repeat("=", 50))
+
 	if hasErrors {
 		fmt.Println("❌ Some required dependencies are missing or misconfigured.")
 		fmt.Println()
@@ -289,6 +291,7 @@ func main() {
 }
 
 func checkCommand(args []string) bool {
+
 	if len(args) == 0 {
 		return false
 	}
@@ -301,6 +304,7 @@ func checkCommand(args []string) bool {
 
 func promptUser(question string) bool {
 	// Check if we're in a non-interactive environment
+
 	if os.Getenv("CI") != "" || os.Getenv("TASK_FORCE_YES") == "true" {
 		fmt.Printf("%s [y/N]: y (auto-accepted)\n", question)
 		return true
@@ -310,6 +314,7 @@ func promptUser(question string) bool {
 	fmt.Printf("%s [y/N]: ", question)
 
 	response, err := reader.ReadString('\n')
+
 	if err != nil {
 		return false
 	}

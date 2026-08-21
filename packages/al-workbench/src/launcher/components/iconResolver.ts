@@ -1,7 +1,7 @@
-import { getIcon } from '@activelane/icons'
+import { getIcon, type IconReference } from '@activelane/icons'
 import type { Component } from 'vue'
 
-export function resolveLauncherIcon(icon: Component | string | undefined) {
+export function resolveLauncherIcon(icon: Component | IconReference | undefined) {
   if (!icon) throw new Error('Icon not found')
   if (typeof icon === 'string') return getIcon(icon)
   return icon

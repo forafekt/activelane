@@ -4,7 +4,7 @@ import { Sheet, SheetContent } from '../sheet/index'
 import SheetDescription from '../sheet/SheetDescription.vue'
 import SheetHeader from '../sheet/SheetHeader.vue'
 import SheetTitle from '../sheet/SheetTitle.vue'
-import type { SidebarProps } from './definitions'
+import type { SidebarProps } from '.'
 import { SIDEBAR_WIDTH_MOBILE, useSidebar } from './utils'
 
 defineOptions({

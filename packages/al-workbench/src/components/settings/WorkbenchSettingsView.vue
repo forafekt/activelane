@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {
-  AlBadge,
-  AlButton,
-  AlInput,
+  Badge,
+  Button,
+  Input,
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -51,16 +51,13 @@ const {
   saveKeybinding,
 } = useWorkbenchSettingsViewModel()
 
-const [Braces, Filter, RotateCcw, Search, Settings2, Command, Keyboard] =
-  runtime.workbench.ui.getIcons([
-    'Braces',
-    'Filter',
-    'RotateCcw',
-    'Search',
-    'Settings2',
-    'Command',
-    'Keyboard',
-  ])
+const Braces = runtime.workbench.ui.getIcon('lucide:braces')
+const Filter = runtime.workbench.ui.getIcon('lucide:filter')
+const RotateCcw = runtime.workbench.ui.getIcon('lucide:rotate-ccw')
+const Search = runtime.workbench.ui.getIcon('lucide:search')
+const Settings2 = runtime.workbench.ui.getIcon('lucide:settings-2')
+const Command = runtime.workbench.ui.getIcon('lucide:command')
+const Keyboard = runtime.workbench.ui.getIcon('lucide:keyboard')
 </script>
 
 <template>
@@ -109,33 +106,33 @@ const [Braces, Filter, RotateCcw, Search, Settings2, Command, Keyboard] =
                 <Search
                   class="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
                 />
-                <AlInput
+                <Input
                   v-model="query"
                   class="h-9 pl-8"
                   placeholder="Search settings, commands, extensions, tags"
                 />
               </div>
-              <AlButton
+              <Button
                 size="sm"
                 :variant="showModified ? 'default' : 'outline'"
                 @click="showModified = !showModified"
               >
                 <Filter class="size-4" />
                 Modified
-              </AlButton>
-              <AlButton
+              </Button>
+              <Button
                 size="sm"
                 :variant="showExtensionSettings ? 'default' : 'outline'"
                 @click="showExtensionSettings = !showExtensionSettings"
               >
                 <Braces class="size-4" />
                 Extension
-              </AlButton>
-              <AlButton size="sm" variant="outline" @click="resetShown">
+              </Button>
+              <Button size="sm" variant="outline" @click="resetShown">
                 <RotateCcw class="size-4" />
                 Reset Shown
-              </AlButton>
-              <AlButton size="sm" variant="outline" @click="exportShown">Export</AlButton>
+              </Button>
+              <Button size="sm" variant="outline" @click="exportShown">Export</Button>
             </div>
             <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <span>{{ activeCategoryLabel }}</span>
@@ -143,8 +140,8 @@ const [Braces, Filter, RotateCcw, Search, Settings2, Command, Keyboard] =
                 >{{ isCommandCategory(activeCategory) ? commandRows.length : baseSettings.length }}
                 results</span
               >
-              <AlBadge v-if="showModified" variant="outline">Modified only</AlBadge>
-              <AlBadge v-if="showExtensionSettings" variant="outline">Extension settings</AlBadge>
+              <Badge v-if="showModified" variant="outline">Modified only</Badge>
+              <Badge v-if="showExtensionSettings" variant="outline">Extension settings</Badge>
             </div>
           </header>
 

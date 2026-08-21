@@ -16,9 +16,9 @@ const [
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  AlButton,
-  AlInput,
-  AlLabel,
+  Button,
+  Input,
+  Label,
 ] = runtime.workbench.ui.getComponents([
   'Dialog',
   'DialogContent',
@@ -26,9 +26,9 @@ const [
   'DialogFooter',
   'DialogHeader',
   'DialogTitle',
-  'AlButton',
-  'AlInput',
-  'AlLabel',
+  'Button',
+  'Input',
+  'Label',
 ])
 
 watch(
@@ -56,8 +56,8 @@ function updateOpen(open: boolean) {
         </DialogHeader>
 
         <div class="wb-tab-dialog-field">
-          <AlLabel for="workbench-tab-rename-input">Name</AlLabel>
-          <AlInput
+          <Label for="workbench-tab-rename-input">Name</Label>
+          <Input
             id="workbench-tab-rename-input"
             ref="inputRef"
             v-model="interactions.rename.value"
@@ -71,10 +71,8 @@ function updateOpen(open: boolean) {
         </div>
 
         <DialogFooter>
-          <AlButton type="button" variant="ghost" @click="interactions.cancelRename">
-            Cancel
-          </AlButton>
-          <AlButton type="submit">Save</AlButton>
+          <Button type="button" variant="ghost" @click="interactions.cancelRename"> Cancel </Button>
+          <Button type="submit">Save</Button>
         </DialogFooter>
       </form>
     </DialogContent>

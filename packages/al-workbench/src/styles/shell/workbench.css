@@ -32,6 +32,7 @@
   overflow: hidden;
   background: var(--window-background);
   font-size: var(--font-size, 13px);
+  user-select: none;
 }
 
 .wb-shell[data-density="comfortable"] {
@@ -51,7 +52,7 @@
   min-height: 0;
   overflow: hidden;
   gap: var(--shell-inset, 0.375rem);
-  padding: var(--shell-inset, 0.375rem) var(--shell-inset, 0.375rem) var(--shell-inset, 0.375rem) 0;
+  padding: var(--shell-inset, 0.375rem);
   background: var(--workbench-background);
 }
 
@@ -61,6 +62,7 @@
   height: 100%;
   flex: 0 0 auto;
   background: var(--workbench-background);
+  margin-left: calc(var(--shell-inset, 0.375rem) * -1);
 }
 .wb-shell__body {
   position: relative;

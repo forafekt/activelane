@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { getIcon, getIcons } from '@activelane/icons'
-import { AlButton } from '@activelane/shadcn'
+import { getIcon } from '@activelane/icons'
+import { Button } from '@activelane/shadcn'
 import { useWorkspaceSwitcher } from '../composables/useWorkspaceSwitcher'
 
-const [Check, Plus] = getIcons(['Check', 'Plus'])
+const Check = getIcon('lucide:check')
+const Plus = getIcon('lucide:plus')
 
 defineOptions({ name: 'WorkspaceSwitcher' })
 
@@ -26,7 +27,7 @@ const workspace = useWorkspaceSwitcher()
       </span>
       <Check v-if="item.id === workspace.currentWorkspaceId.value" class="size-4" />
     </button>
-    <AlButton
+    <Button
       variant="outline"
       size="sm"
       class="workspace-switcher__create"
@@ -34,7 +35,7 @@ const workspace = useWorkspaceSwitcher()
     >
       <Plus class="size-4" />
       New Workspace
-    </AlButton>
+    </Button>
   </div>
 </template>
 

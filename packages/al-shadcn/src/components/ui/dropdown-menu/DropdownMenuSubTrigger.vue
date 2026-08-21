@@ -6,7 +6,7 @@ import { DropdownMenuSubTrigger, useForwardProps } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import { cn } from '../../../lib/utils'
 
-const ChevronRight = getIcon('ChevronRight')
+const ChevronRight = getIcon('lucide:chevron-right')
 
 const props = defineProps<
   DropdownMenuSubTriggerProps & { class?: HTMLAttributes['class']; inset?: boolean }

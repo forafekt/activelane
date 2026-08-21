@@ -2,7 +2,7 @@
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { cn } from '../../lib/utils'
 
-defineOptions({ name: 'AlTabs' })
+defineOptions({ name: 'Tabs' })
 
 defineProps<{
   modelValue?: string

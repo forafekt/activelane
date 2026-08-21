@@ -16,7 +16,7 @@ const props = defineProps<{
 
 const runtime = useWorkbenchRuntime()
 
-const [AlAlert, AlButton] = runtime.workbench.ui.getComponents(['AlAlert', 'AlButton'])
+const [Alert, Button] = runtime.workbench.ui.getComponents(['Alert', 'Button'])
 
 const errorMessage = ref<string | null>(null)
 
@@ -46,7 +46,7 @@ onErrorCaptured((error) => {
   <component :is="component" v-if="!errorMessage" v-bind="passThrough ?? {}" />
 
   <div v-else class="p-4">
-    <AlAlert variant="destructive">
+    <Alert variant="destructive">
       <div class="grid gap-2">
         <p class="m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
           {{ surface }}
@@ -56,10 +56,10 @@ onErrorCaptured((error) => {
           {{ extensionName ?? extensionId ?? 'Unknown extension' }}
         </h3>
         <p class="m-0 text-sm leading-relaxed text-muted-foreground">{{ errorMessage }}</p>
-        <AlButton type="button" size="xs" class="justify-self-start" @click="errorMessage = null">
+        <Button type="button" size="xs" class="justify-self-start" @click="errorMessage = null">
           Retry surface
-        </AlButton>
+        </Button>
       </div>
-    </AlAlert>
+    </Alert>
   </div>
 </template>

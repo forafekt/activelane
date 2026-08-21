@@ -11,7 +11,7 @@ import { useSurfaceBridge } from '../composables/useSurfaceBridge'
 import { canUseSurfaceBridge } from '../services/surfacePermissions'
 import { resolveSurfaceSandbox } from '../utils/sandbox'
 
-const Loader2 = getIcon('Loader2')
+const Loader2 = getIcon('lucide:loader-circle')
 
 defineOptions({ name: 'WorkbenchIframeSurface' })
 

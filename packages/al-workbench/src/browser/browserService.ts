@@ -76,7 +76,7 @@ function openResolvedBrowserTab(
       id: result.tabInput.id,
       kind: WORKBENCH_BROWSER_TAB_KIND,
       title: result.tabInput.title,
-      icon: getIcon('Globe'),
+      icon: getIcon('lucide:globe'),
       input: result.tabInput,
       ownerExtensionId: result.tabInput.ownerExtensionId ?? 'activelane.workbench-browser',
       preview: preview ?? true,

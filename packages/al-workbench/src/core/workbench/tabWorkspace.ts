@@ -1,3 +1,4 @@
+import type { IconReference } from '@activelane/icons'
 import type { Disposable, MaybePromise } from '../shared/types'
 import type {
   WorkbenchCommandExecutionContext,
@@ -16,7 +17,7 @@ export interface WorkbenchTabIndicator {
   severity?: WorkbenchTabIndicatorSeverity
   label: string
   tooltip?: string
-  icon?: string
+  icon?: IconReference
   count?: number | string
   pulse?: boolean
   active?: boolean
@@ -136,7 +137,7 @@ export interface WorkbenchTabGroupActionContext extends WorkbenchCommandExecutio
 export interface WorkbenchRegisteredTabAction {
   id: string
   title: string
-  icon?: string
+  icon?: IconReference
   category?: string
   appliesTo?: {
     tabKinds?: string[]
@@ -152,7 +153,7 @@ export interface WorkbenchRegisteredTabAction {
 export interface WorkbenchRegisteredTabGroupAction {
   id: string
   title: string
-  icon?: string
+  icon?: IconReference
   category?: string
   order?: number
   enabled?: boolean | ((context: WorkbenchTabGroupActionContext) => boolean)

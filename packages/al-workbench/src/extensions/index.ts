@@ -6,6 +6,11 @@ export type {
   ActiveLaneCapabilityKind,
   ActiveLaneCapabilityRisk,
 } from '../core/capabilities/types'
+export type {
+  WorkbenchEntitlementResolution,
+  WorkbenchExtensionEntitlements,
+  WorkbenchSubscription,
+} from '../core/entitlements/types'
 export type { ExplorerNode, ExplorerProvider } from '../core/explorer/types'
 export {
   defineExtension,
@@ -15,6 +20,10 @@ export {
   defineWorkbenchManifest,
   registerCapability,
 } from '../core/extensions/helpers'
+export {
+  resolveWorkbenchExtensionModule,
+  type WorkbenchExtensionModuleDescriptor,
+} from '../core/extensions/module'
 export type {
   ServerExtensionContext,
   ServerExtensionDefinition,
@@ -57,4 +66,12 @@ export type {
   WorkbenchTabIndicatorSeverity,
 } from '../core/workbench/tabWorkspace'
 export type * from '../core/workbench/themes'
-export type { WorkbenchComponent, WorkbenchIcon } from '../core/workbench/ui'
+export type {
+  WorkbenchBlockId,
+  WorkbenchBlockMap,
+  WorkbenchComponent,
+  WorkbenchComponentId,
+  WorkbenchComponentMap,
+  WorkbenchIcon,
+  WorkbenchUI,
+} from '../core/workbench/ui'

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
+import { getIcon } from '@activelane/icons'
+import { getComponent } from '@activelane/ui'
+import type { DropdownOption } from '@activelane/ui/components'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useWorkbenchMenus } from '../../../composables/useWorkbenchMenus'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
-import type {
-  WorkbenchResolvedMenuCommandItem,
-  WorkbenchResolvedMenuItem,
-} from '../../../core/menus/menuContracts'
+import type { WorkbenchResolvedMenuItem } from '../../../core/menus/menuContracts'
 
 defineOptions({ name: 'WorkbenchGlobalMenuLauncher' })
 
@@ -15,247 +15,125 @@ const props = defineProps<{
 }>()
 
 const runtime = useWorkbenchRuntime()
-
-const [
-  AlIconButton,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-] = runtime.workbench.ui.getComponents([
-  'AlIconButton',
-  'DropdownMenu',
-  'DropdownMenuContent',
-  'DropdownMenuItem',
-  'DropdownMenuLabel',
-  'DropdownMenuSeparator',
-  'DropdownMenuSub',
-  'DropdownMenuSubContent',
-  'DropdownMenuSubTrigger',
-  'DropdownMenuTrigger',
-])
 const menus = useWorkbenchMenus()
+
+const Icon = getComponent('icon')
+const Image = getComponent('image')
+const Button = getComponent('button')
+const IconButton = getComponent('icon-button')
+const Dropdown = getComponent('dropdown')
+
+const menuRoot = ref<HTMLElement | null>(null)
+const showMenuParentItems = ref(false)
 
 const groups = computed(() => menus.globalMenuGroups(props.placement))
 
-const activeGroupId = ref<string | null>(null)
-const panelLeft = ref(0)
-const panelTop = ref(0)
-
-const activeGroup = computed(
-  () => groups.value.find((group) => group.id === activeGroupId.value) ?? null,
-)
-
-function openGroup(groupId: string, event: MouseEvent) {
-  const target = event.currentTarget as HTMLElement
-  const rect = target.getBoundingClientRect()
-
-  panelLeft.value = rect.left
-  panelTop.value = rect.bottom + 4
-  activeGroupId.value = groupId
+function toggleMenuParentItems() {
+  showMenuParentItems.value = !showMenuParentItems.value
 }
 
-function toggleGroup(groupId: string, event: MouseEvent) {
-  if (activeGroupId.value === groupId) {
-    closeMenuBar()
-    return
-  }
-
-  openGroup(groupId, event)
+function closeMenu() {
+  showMenuParentItems.value = false
 }
 
-function hoverGroup(groupId: string, event: MouseEvent) {
-  if (!activeGroupId.value) return
-  openGroup(groupId, event)
-}
+function toDropdownOptions(items: WorkbenchResolvedMenuItem[]): DropdownOption[] {
+  return items.flatMap((item): DropdownOption[] => {
+    if (item.kind === 'separator') {
+      return [
+        {
+          key: item.id,
+          type: 'divider',
+        },
+      ]
+    }
 
-function closeMenuBar() {
-  activeGroupId.value = null
-}
+    if (item.kind === 'submenu') {
+      return [
+        {
+          key: item.id,
+          label: item.label,
+          children: toDropdownOptions(item.items),
+        },
+      ]
+    }
 
-function onDocumentPointerDown(event: PointerEvent) {
-  const target = event.target as HTMLElement | null
-
-  if (!target) return
-
-  if (
-    target.closest('[data-wb-global-menu-trigger]') ||
-    target.closest('[data-wb-global-menu-panel]')
-  ) {
-    return
-  }
-
-  closeMenuBar()
-}
-
-function onDocumentKeyDown(event: KeyboardEvent) {
-  if (event.key === 'Escape') {
-    closeMenuBar()
-  }
-}
-
-async function enableOutsideListeners() {
-  await nextTick()
-  document.addEventListener('pointerdown', onDocumentPointerDown)
-  document.addEventListener('keydown', onDocumentKeyDown)
+    return [
+      {
+        key: item.commandId,
+        label: item.label,
+        disabled: !item.enabled,
+      },
+    ]
+  })
 }
 
 function execute(commandId: string) {
-  closeMenuBar()
+  closeMenu()
   void runtime.commands.execute(commandId)
 }
 
-function commandItems(items: WorkbenchResolvedMenuItem[]): WorkbenchResolvedMenuCommandItem[] {
-  return items.filter((item): item is WorkbenchResolvedMenuCommandItem => item.kind === 'command')
+function handleSelect(key: string | number) {
+  execute(String(key))
 }
 
-enableOutsideListeners()
+function handleDocumentPointerDown(event: PointerEvent) {
+  if (!showMenuParentItems.value) return
+
+  const target = event.target as Node | null
+
+  if (!target) return
+
+  // Naive UI dropdown menus are teleported to <body>, so they are not
+  // descendants of menuRoot. Ignore clicks inside an open Naive UI dropdown.
+  const element = target instanceof Element ? target : target.parentElement
+
+  if (menuRoot.value?.contains(target) || element?.closest('.n-dropdown-menu')) {
+    return
+  }
+
+  closeMenu()
+}
+
+onMounted(() => {
+  document.addEventListener('pointerdown', handleDocumentPointerDown)
+})
 
 onBeforeUnmount(() => {
-  document.removeEventListener('pointerdown', onDocumentPointerDown)
-  document.removeEventListener('keydown', onDocumentKeyDown)
+  document.removeEventListener('pointerdown', handleDocumentPointerDown)
 })
 </script>
 
 <template>
-  <nav v-if="labels" class="wb-global-menu-bar" aria-label="Application menu">
-    <button
-      v-for="group in groups"
-      :key="group.id"
-      type="button"
-      data-wb-global-menu-trigger
-      class="wb-global-menu-bar__item"
-      :class="{ 'wb-global-menu-bar__item--active': activeGroupId === group.id }"
-      @click="toggleGroup(group.id, $event)"
-      @pointerenter="hoverGroup(group.id, $event)"
-    >
-      {{ group.label }}
-    </button>
+  <nav ref="menuRoot" class="wb-global-menu-bar" aria-label="Application menu">
+    <Icon size="30" :depth="1">
+      <Image src="/assets/resources/activelane-a-logo3.png" width="100%" height="100%" />
+    </Icon>
 
-    <Teleport to="body">
-      <div
-        v-if="activeGroup"
-        data-wb-global-menu-panel
-        class="wb-global-menu-panel"
-        :style="{
-          left: `${panelLeft}px`,
-          top: `${panelTop}px`,
-        }"
+    <IconButton
+      v-if="!showMenuParentItems"
+      label="Workbench menu"
+      :icon="getIcon('lucide:menu')"
+      :aria-expanded="showMenuParentItems"
+      @click="toggleMenuParentItems"
+    />
+
+    <template v-if="showMenuParentItems">
+      <Dropdown
+        v-for="group in groups"
+        :key="group.id"
+        trigger="hover"
+        placement="bottom-start"
+        :options="toDropdownOptions(group.items)"
+        @select="handleSelect"
       >
-        <div class="wb-global-menu-panel__label">
-          {{ activeGroup.label }}
-        </div>
-
-        <div class="wb-global-menu-panel__separator" />
-
-        <template v-for="item in activeGroup.items" :key="item.id">
-          <div v-if="item.kind === 'separator'" class="wb-global-menu-panel__separator" />
-          <button
-            v-else-if="item.kind === 'command'"
-            type="button"
-            class="wb-global-menu-panel__item"
-            :disabled="!item.enabled"
-            @click="execute(item.commandId)"
-          >
-            <span class="wb-global-menu-panel__label-row">
-              <span v-if="item.checked" aria-hidden="true" class="wb-global-menu-panel__check"
-                >*</span
-              >
-              <span>{{ item.label }}</span>
-            </span>
-            <span v-if="item.shortcut" class="wb-global-menu-panel__shortcut">
-              {{ item.shortcut }}
-            </span>
-          </button>
-          <div v-else-if="item.kind === 'submenu'" class="wb-global-menu-panel__submenu">
-            <div class="wb-global-menu-panel__submenu-label">{{ item.label }}</div>
-            <button
-              v-for="child in commandItems(item.items)"
-              :key="child.id"
-              type="button"
-              class="wb-global-menu-panel__item wb-global-menu-panel__item--nested"
-              :disabled="!child.enabled"
-              @click="execute(child.commandId)"
-            >
-              <span class="wb-global-menu-panel__label-row">
-                <span v-if="child.checked" aria-hidden="true" class="wb-global-menu-panel__check"
-                  >*</span
-                >
-                <span>{{ child.label }}</span>
-              </span>
-              <span v-if="child.shortcut" class="wb-global-menu-panel__shortcut">
-                {{ child.shortcut }}
-              </span>
-            </button>
-          </div>
-        </template>
-      </div>
-    </Teleport>
+        <Button
+          type="button"
+          quaternary
+          size="tiny"
+        >
+          {{ group.label }}
+        </Button>
+      </Dropdown>
+    </template>
   </nav>
-
-  <DropdownMenu v-else :modal="false">
-    <DropdownMenuTrigger as-child>
-      <AlIconButton
-        label="Workbench menu"
-        :icon="runtime.workbench.ui.getIcon('Menu')"
-        size="icon"
-        variant="ghost"
-      />
-    </DropdownMenuTrigger>
-
-    <DropdownMenuContent align="start" side="right" class="w-64">
-      <DropdownMenuLabel>Workbench</DropdownMenuLabel>
-      <DropdownMenuSeparator />
-
-      <DropdownMenuSub v-for="group in groups" :key="group.id">
-        <DropdownMenuSubTrigger>{{ group.label }}</DropdownMenuSubTrigger>
-
-        <DropdownMenuSubContent class="w-56">
-          <template v-for="item in group.items" :key="item.id">
-            <DropdownMenuSeparator v-if="item.kind === 'separator'" />
-            <DropdownMenuItem
-              v-else-if="item.kind === 'command'"
-              :disabled="!item.enabled"
-              @select="execute(item.commandId)"
-            >
-              <span class="wb-global-menu-panel__label-row">
-                <span v-if="item.checked" aria-hidden="true" class="wb-global-menu-panel__check"
-                  >*</span
-                >
-                <span>{{ item.label }}</span>
-              </span>
-            </DropdownMenuItem>
-            <DropdownMenuSub v-else-if="item.kind === 'submenu'">
-              <DropdownMenuSubTrigger>{{ item.label }}</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent class="w-56">
-                <template v-for="child in item.items" :key="child.id">
-                  <DropdownMenuSeparator v-if="child.kind === 'separator'" />
-                  <DropdownMenuItem
-                    v-else-if="child.kind === 'command'"
-                    :disabled="!child.enabled"
-                    @select="execute(child.commandId)"
-                  >
-                    <span class="wb-global-menu-panel__label-row">
-                      <span
-                        v-if="child.checked"
-                        aria-hidden="true"
-                        class="wb-global-menu-panel__check"
-                        >*</span
-                      >
-                      <span>{{ child.label }}</span>
-                    </span>
-                  </DropdownMenuItem>
-                </template>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          </template>
-        </DropdownMenuSubContent>
-      </DropdownMenuSub>
-    </DropdownMenuContent>
-  </DropdownMenu>
 </template>

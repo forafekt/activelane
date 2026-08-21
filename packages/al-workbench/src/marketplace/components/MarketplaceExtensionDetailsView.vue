@@ -1,523 +1,763 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import type { WorkbenchSubscription } from '../../core/entitlements/types'
 import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 import type { WorkbenchTab } from '../../core/workbench/contributions'
-
 import { useMarketplace } from '../composables/useMarketplaceStore'
-import type { MarketplaceContributions, MarketplaceExtension } from '../types/marketplace'
-import {
-  extensionIcon,
-  formatCount,
-  formatDate,
-  primaryAction,
-  statusLabel,
-  statusTone,
-} from './MarketplaceShared'
+import MarketplaceContributionsGrid from '../details/MarketplaceContributionsGrid.vue'
+import MarketplaceMediaGallery from '../details/MarketplaceMediaGallery.vue'
+import MarketplacePlanSelector from '../pricing/MarketplacePlanSelector.vue'
+import type { MarketplaceExtension } from '../types/marketplace'
+import { extensionIcon, formatDate, primaryAction } from './MarketplaceShared'
 
 defineOptions({ name: 'MarketplaceExtensionDetailsView' })
-
-const props = defineProps<{
-  tab: WorkbenchTab
-  runtime: WorkbenchRuntimeApi
-}>()
-
-const [
-  AlBadge,
-  AlButton,
-  AlCard,
-  AlEmptyState,
-  AlKeyValueList,
-  AlSection,
-  AlSectionHeader,
-  AlSeparator,
-  AlStatBlock,
-  AlTabs,
-] = props.runtime.workbench.ui.getComponents([
-  'AlBadge',
-  'AlButton',
-  'AlCard',
-  'AlEmptyState',
-  'AlKeyValueList',
-  'AlSection',
-  'AlSectionHeader',
-  'AlSeparator',
-  'AlStatBlock',
-  'AlTabs',
-])
-
-const [AlertCircle, Check, ExternalLink, Layers3, RefreshCcw, Settings, Star, Trash2] =
-  props.runtime.workbench.ui.getIcons([
-    'AlertCircle',
-    'Check',
-    'ExternalLink',
-    'Layers3',
-    'RefreshCcw',
-    'Settings',
-    'Star',
-    'Trash2',
-  ])
-
+const props = defineProps<{ tab: WorkbenchTab; runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
-const activeTab = ref(
-  String(props.tab.input?.surface ?? 'overview') === 'settings' ? 'settings' : 'overview',
-)
-
+const activeTab = ref<'overview' | 'integrations' | 'permissions' | 'releases'>('overview')
+const subscription = ref<WorkbenchSubscription>()
+const Button = props.runtime.workbench.ui.getComponent('Button')
+const ArrowLeft = props.runtime.workbench.ui.getIcon('lucide:arrow-left')
+const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide:badge-check')
+const Check = props.runtime.workbench.ui.getIcon('lucide:check')
+const ExternalLink = props.runtime.workbench.ui.getIcon('lucide:external-link')
+const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide:ellipsis')
+const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide:refresh-ccw')
+const Settings2 = props.runtime.workbench.ui.getIcon('lucide:settings-2')
+const ShieldCheck = props.runtime.workbench.ui.getIcon('lucide:shield-check')
+const Star = props.runtime.workbench.ui.getIcon('lucide:star')
+const Trash2 = props.runtime.workbench.ui.getIcon('lucide:trash-2')
 const extension = computed(() => {
-  const extensionId =
-    typeof props.tab.input?.extensionId === 'string' ? props.tab.input.extensionId : null
-  return extensionId ? marketplace.getExtension(extensionId) : marketplace.selectedExtension.value
+  const id = typeof props.tab.input?.extensionId === 'string' ? props.tab.input.extensionId : ''
+  return marketplace.getExtension(id) ?? marketplace.selectedExtension.value
 })
-
-const tabs = [
-  { value: 'overview', label: 'Overview' },
-  { value: 'contributions', label: 'Contributions' },
-  { value: 'settings', label: 'Settings' },
-  { value: 'changelog', label: 'Changelog' },
-  { value: 'health', label: 'Health' },
-]
-
-const contributionSections = computed(() => {
-  const contributions = extension.value?.contributions
-  if (!contributions) return []
-  return (Object.keys(contributions) as Array<keyof MarketplaceContributions>)
-    .map((key) => ({ key, title: contributionTitle(key), items: contributions[key] ?? [] }))
-    .filter((section) => section.items.length)
+watch(
+  () => extension.value?.id,
+  async (id) => {
+    subscription.value = id
+      ? await props.runtime.host.capabilities.subscriptions?.getSubscription(id)
+      : undefined
+  },
+  { immediate: true },
+)
+const featureItems = computed(() => {
+  const manifest = extension.value?.manifest
+  const highlights =
+    manifest && 'marketplace' in manifest ? manifest.marketplace?.highlights : undefined
+  return (
+    highlights ??
+    extension.value?.plans
+      .flatMap((plan) => plan.features ?? [])
+      .filter((item, index, values) => values.indexOf(item) === index) ??
+    []
+  )
 })
-
-function contributionTitle(key: keyof MarketplaceContributions) {
-  const titles: Record<keyof MarketplaceContributions, string> = {
-    commands: 'Commands',
-    statusBar: 'Status Bar',
-    activityRail: 'Activity Bar',
-    sidebarViews: 'Sidebar Views',
-    tabRenderers: 'Tab Renderers',
-    tabSurfaces: 'Tab Surfaces',
-    inspectorPanels: 'Inspector Panels',
-    settingsPages: 'Settings Pages',
-    menus: 'Menus',
-    workbenchViews: 'Workbench Views',
-    editorBlocks: 'Editor Blocks',
-    captureActions: 'Capture Actions',
-    aiTools: 'AI Tools',
-  }
-  return titles[key]
-}
-
+const pricing = computed(() => {
+  const plans = extension.value?.plans.filter((plan) => plan.priceMinor > 0) ?? []
+  const plan = plans.sort((a, b) => a.priceMinor - b.priceMinor)[0]
+  if (!plan) return 'Free'
+  return `From ${new Intl.NumberFormat(undefined, { style: 'currency', currency: plan.currency, maximumFractionDigits: 0 }).format(plan.priceMinor / 100)}/${plan.interval === 'monthly' ? 'mo' : 'yr'}`
+})
 async function runPrimary(item: MarketplaceExtension) {
   const action = primaryAction(item).action
-  if (action === 'settings') activeTab.value = 'settings'
   if (action === 'install') await marketplace.installExtension(item.id)
-  if (action === 'update') await marketplace.updateExtension(item.id)
-  if (action === 'enable') await marketplace.enableExtension(item.id)
-  if (action === 'disable') await marketplace.disableExtension(item.id)
+  else if (action === 'enable') await marketplace.enableExtension(item.id)
+  else if (action === 'update') await marketplace.updateExtension(item.id)
+  else if (action === 'open') await marketplace.openExtension(item)
+  else activeTab.value = 'overview'
+}
+function back() {
+  marketplace.openMarketplace()
 }
 </script>
 
 <template>
-  <section class="h-full min-h-0 overflow-auto bg-background">
-    <div class="mx-auto grid max-w-6xl gap-5 p-5">
-      <AlEmptyState
-        v-if="!extension"
-        title="No extension selected"
-        description="Open an extension from the marketplace list to inspect details, contributions, settings, and lifecycle status."
-        :icon="Layers3"
-      />
-
-      <template v-else>
-        <header class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto]">
-          <div class="flex min-w-0 items-start gap-4">
-            <div
-              class="grid size-14 shrink-0 place-items-center rounded-lg border border-border bg-muted"
-            >
-              <component :is="extensionIcon(extension)" class="size-7" />
-            </div>
-            <div class="min-w-0">
-              <div class="flex flex-wrap items-center gap-2">
-                <h1 class="m-0 text-2xl font-semibold tracking-tight">
-                  {{ extension.displayName }}
-                </h1>
-                <AlBadge :tone="statusTone(extension)" size="md"
-                  >{{ statusLabel(extension) }}</AlBadge
-                >
-                <AlBadge v-if="extension.publisher.official" tone="success">Official</AlBadge>
-                <AlBadge v-if="extension.publisher.verified" tone="success"
-                  >Verified Publisher</AlBadge
-                >
-                <AlBadge v-if="extension.packageType === 'local'" tone="info"
-                  >Local Package</AlBadge
-                >
-              </div>
-              <p class="m-0 mt-1 text-sm text-muted-foreground">
-                {{ extension.publisher.displayName }}
-                · v{{ extension.version }}
-                <span v-if="extension.installedVersion">
-                  · installed {{ extension.installedVersion }}</span
-                >
-              </p>
-              <p class="m-0 mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                {{ extension.longDescription }}
-              </p>
-            </div>
-          </div>
-          <div class="flex flex-wrap items-start justify-start gap-2 lg:justify-end py-2">
-            <AlButton
-              :variant="primaryAction(extension).variant"
-              :loading="marketplace.isLoading.value"
-              @click="runPrimary(extension)"
-            >
-              {{ primaryAction(extension).label }}
-            </AlButton>
-            <AlButton
-              v-if="extension.installState === 'installed'"
-              variant="outline"
-              :leading-icon="Trash2"
-              :disabled="marketplace.isLoading.value"
-              @click="marketplace.uninstallExtension(extension.id)"
-            >
-              Uninstall
-            </AlButton>
-            <AlButton
-              v-if="extension.settings.length"
-              variant="ghost"
-              :leading-icon="Settings"
-              @click="activeTab = 'settings'"
-            >
-              Settings
-            </AlButton>
-          </div>
-        </header>
-        <!--
-        <div class="grid gap-3 md:grid-cols-4">
-          <AlStatBlock label="Rating" :value="extension.rating.average.toFixed(1)" :delta="`${extension.rating.count} reviews`" />
-          <AlStatBlock label="Installs" :value="formatCount(extension.downloads.total)" :delta="`${formatCount(extension.downloads.weekly)}/week`" />
-          <AlStatBlock label="Updated" :value="formatDate(extension.lastUpdated)" />
-          <AlStatBlock label="Contributions" :value="contributionSections.reduce((sum, section) => sum + section.items.length, 0)" />
-        </div> -->
-
-        <AlCard
-          v-if="extension.updateAvailable"
-          class="flex flex-wrap items-center justify-between gap-3 border-warning/40 p-4"
-        >
+  <section class="details-app">
+    <div v-if="extension" class="details-wrap">
+      <button class="details-back" type="button" @click="back">
+        <ArrowLeft />
+        Marketplace <span>/</span> {{ extension.categories[0] || 'Applications' }}
+      </button>
+      <header class="product-header">
+        <div class="product-identity">
+          <div class="product-icon"><component :is="extensionIcon(extension)" /></div>
           <div>
-            <div class="flex items-center gap-2 text-sm font-semibold">
-              <RefreshCcw class="size-4" />
-              Update {{ extension.updateAvailable.version }} available
-              <AlBadge v-if="extension.updateAvailable.critical" tone="destructive"
-                >Critical</AlBadge
-              >
+            <div class="product-title">
+              <h1>{{ extension.displayName }}</h1>
+              <BadgeCheck v-if="extension.publisher.verified" aria-label="Verified publisher" />
             </div>
-            <p class="m-0 mt-1 text-sm text-muted-foreground">
-              {{ extension.updateAvailable.changelog }}
-            </p>
+            <p>{{ extension.publisher.displayName }} · Version {{ extension.version }}</p>
+            <span>{{ extension.description }}</span>
           </div>
-          <AlButton :leading-icon="RefreshCcw" @click="marketplace.updateExtension(extension.id)"
-            >Apply Update</AlButton
+        </div>
+        <div class="product-metrics">
+          <div>
+            <strong v-if="extension.rating.count"
+              ><Star /> {{ extension.rating.average.toFixed(1) }}</strong
+            ><strong v-else>New</strong
+            ><span
+              >{{ extension.rating.count ? `${extension.rating.count} reviews` : 'Not yet rated' }}</span
+            >
+          </div>
+          <div>
+            <strong>{{ pricing }}</strong
+            ><span
+              >{{ extension.pricingModel === 'free' ? 'No purchase required' : 'Commercial application' }}</span
+            >
+          </div>
+          <div>
+            <strong>{{ extension.categories[0] || 'Application' }}</strong
+            ><span>Updated {{ formatDate(extension.lastUpdated) }}</span>
+          </div>
+        </div>
+        <div class="product-actions">
+          <Button
+            :variant="primaryAction(extension).variant"
+            :loading="Boolean(marketplace.activeOperations.value[extension.id])"
+            @click="runPrimary(extension)"
+            >{{ primaryAction(extension).label }}</Button
+          ><Button
+            v-if="extension.settings.length && extension.installState === 'installed'"
+            variant="outline"
+            :leading-icon="Settings2"
+            @click="marketplace.openExtensionSettings(extension)"
+            >Configure</Button
+          ><Button variant="ghost" :leading-icon="MoreHorizontal" aria-label="More actions" />
+        </div>
+      </header>
+      <div
+        v-if="extension.updateAvailable || extension.restartRequired || extension.compatibility === 'incompatible'"
+        class="product-notice"
+      >
+        <RefreshCcw v-if="extension.updateAvailable" />
+        <ShieldCheck v-else />
+        <div>
+          <strong
+            >{{ extension.updateAvailable ? `Update ${extension.updateAvailable.version} available` : extension.restartRequired ? 'Restart ActiveLane to finish setup' : 'This release is not compatible' }}</strong
+          ><span
+            >{{ extension.updateAvailable?.changelog || extension.compatibilityReason || 'The application will become available after restart.' }}</span
           >
-        </AlCard>
+        </div>
+        <Button
+          v-if="extension.updateAvailable"
+          size="sm"
+          @click="marketplace.updateExtension(extension.id)"
+          >Update</Button
+        >
+      </div>
+      <nav class="details-tabs" aria-label="Application details">
+        <button
+          v-for="item in [{ id: 'overview', label: 'Overview' }, { id: 'integrations', label: 'Adds to ActiveLane' }, { id: 'permissions', label: 'Trust & permissions' }, { id: 'releases', label: 'Releases' }]"
+          :key="item.id"
+          type="button"
+          :class="{ active: activeTab === item.id }"
+          @click="activeTab = item.id as typeof activeTab"
+        >
+          {{ item.label }}
+        </button>
+      </nav>
 
-        <AlTabs v-model="activeTab" :tabs="tabs">
-          <template #overview>
-            <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
-              <div class="grid gap-4">
-                <AlSection>
-                  <AlSectionHeader title="Overview" />
-                  <div class="mt-3 grid gap-3 text-sm leading-relaxed text-muted-foreground">
-                    <p v-for="paragraph in extension.readme" :key="paragraph" class="m-0">
-                      {{ paragraph }}
-                    </p>
-                  </div>
-                </AlSection>
-
-                <AlSection v-if="extension.gallery.length">
-                  <AlSectionHeader
-                    title="Preview"
-                    description="Catalog media scaffold for screenshots and guided previews."
-                  />
-                  <div class="mt-3 grid gap-3 md:grid-cols-2">
-                    <AlCard v-for="item in extension.gallery" :key="item.title" class="p-4">
-                      <h3 class="m-0 text-sm font-semibold">{{ item.title }}</h3>
-                      <p class="m-0 mt-1 text-sm text-muted-foreground">{{ item.description }}</p>
-                    </AlCard>
-                  </div>
-                </AlSection>
-
-                <AlSection>
-                  <AlSectionHeader title="Capabilities and Permissions" />
-                  <div class="mt-3 grid gap-3 md:grid-cols-2">
-                    <AlCard class="p-4">
-                      <h3 class="m-0 text-sm font-semibold">Capabilities</h3>
-                      <div class="mt-3 flex flex-wrap gap-1.5">
-                        <AlBadge
-                          v-for="capability in extension.capabilities"
-                          :key="capability"
-                          variant="secondary"
-                          >{{ capability }}</AlBadge
-                        >
-                        <span
-                          v-if="!extension.capabilities.length"
-                          class="text-sm text-muted-foreground"
-                          >No capabilities declared.</span
-                        >
-                      </div>
-                    </AlCard>
-                    <AlCard class="p-4">
-                      <h3 class="m-0 text-sm font-semibold">Permissions</h3>
-                      <div class="mt-3 flex flex-wrap gap-1.5">
-                        <AlBadge
-                          v-for="permission in extension.permissions"
-                          :key="permission"
-                          variant="outline"
-                          >{{ permission }}</AlBadge
-                        >
-                        <span
-                          v-if="!extension.permissions.length"
-                          class="text-sm text-muted-foreground"
-                          >No permissions requested.</span
-                        >
-                      </div>
-                    </AlCard>
-                  </div>
-                </AlSection>
-
-                <AlSection>
-                  <AlSectionHeader title="Activation and Compatibility" />
-                  <div class="mt-3 grid gap-3 md:grid-cols-3">
-                    <AlCard class="p-4">
-                      <h3 class="m-0 text-sm font-semibold">Lifecycle</h3>
-                      <div class="mt-3 flex flex-wrap gap-1.5">
-                        <AlBadge :tone="extension.status === 'error' ? 'destructive' : 'info'">
-                          {{ extension.lifecycleState ?? extension.runtime?.status ?? extension.status }}
-                        </AlBadge>
-                      </div>
-                    </AlCard>
-                    <AlCard class="p-4">
-                      <h3 class="m-0 text-sm font-semibold">Activation Events</h3>
-                      <div class="mt-3 flex flex-wrap gap-1.5">
-                        <AlBadge
-                          v-for="event in extension.activationEvents"
-                          :key="event"
-                          variant="outline"
-                        >
-                          {{ event }}
-                        </AlBadge>
-                        <span
-                          v-if="!extension.activationEvents.length"
-                          class="text-sm text-muted-foreground"
-                        >
-                          No activation events declared.
-                        </span>
-                      </div>
-                    </AlCard>
-                    <AlCard class="p-4">
-                      <h3 class="m-0 text-sm font-semibold">Host Compatibility</h3>
-                      <div class="mt-3 flex flex-wrap gap-1.5">
-                        <AlBadge
-                          v-for="host in extension.hostCompatibility"
-                          :key="host"
-                          variant="secondary"
-                        >
-                          {{ host }}
-                        </AlBadge>
-                        <span
-                          v-if="!extension.hostCompatibility.length"
-                          class="text-sm text-muted-foreground"
-                        >
-                          Uses workbench compatibility.
-                        </span>
-                      </div>
-                    </AlCard>
-                  </div>
-                </AlSection>
+      <main v-if="activeTab === 'overview'" class="details-main">
+        <div class="details-primary">
+          <MarketplaceMediaGallery
+            v-if="extension.gallery.length"
+            :runtime="runtime"
+            :items="extension.gallery"
+          />
+          <div v-else class="media-fallback">
+            <div>
+              <component :is="extensionIcon(extension)" />
+              <strong>{{ extension.displayName }}</strong
+              ><span>Publisher media has not been provided for this release.</span>
+            </div>
+          </div>
+          <section class="editorial-section">
+            <span>About this application</span>
+            <h2>{{ extension.longDescription }}</h2>
+            <p v-for="paragraph in extension.readme" :key="paragraph">{{ paragraph }}</p>
+          </section>
+          <section v-if="featureItems.length" class="features-section">
+            <span>Highlights</span>
+            <h2>Built for focused work</h2>
+            <div>
+              <article v-for="feature in featureItems" :key="feature">
+                <Check />
+                <p>{{ feature }}</p>
+              </article>
+            </div>
+          </section>
+          <MarketplaceContributionsGrid
+            :runtime="runtime"
+            :contributions="extension.contributions"
+          />
+          <MarketplacePlanSelector
+            v-if="extension.plans.length"
+            :runtime="runtime"
+            :extension="extension"
+            :subscription="subscription"
+            @changed="subscription = $event"
+          />
+        </div>
+        <aside class="details-aside">
+          <section>
+            <h2>About</h2>
+            <dl>
+              <div>
+                <dt>Publisher</dt>
+                <dd>{{ extension.publisher.displayName }}</dd>
               </div>
-
-              <aside class="grid content-start gap-4 py-2">
-                <AlCard class="p-4">
-                  <h3 class="m-0 text-sm font-semibold">Metadata</h3>
-                  <AlKeyValueList
-                    class="mt-3"
-                    :items="[
-                      { key: 'id', label: 'Identifier', value: extension.id },
-                      { key: 'publisher', label: 'Publisher', value: extension.publisher.displayName },
-                      { key: 'published', label: 'Published', value: formatDate(extension.firstPublished) },
-                      { key: 'categories', label: 'Categories', value: extension.categories.join(', ') },
-                      { key: 'tags', label: 'Tags', value: extension.tags.join(', ') },
-                      { key: 'source', label: 'Source', value: extension.manifest?.builtin ? 'built-in' : 'workbench' },
-                    ]"
-                  />
-                </AlCard>
-                <AlCard class="p-4">
-                  <h3 class="m-0 text-sm font-semibold">Links</h3>
-                  <div class="mt-3 grid gap-2">
-                    <AlButton
-                      v-if="extension.homepage"
-                      variant="outline"
-                      size="sm"
-                      :leading-icon="ExternalLink"
-                      >Homepage</AlButton
-                    >
-                    <AlButton
-                      v-if="extension.repository"
-                      variant="outline"
-                      size="sm"
-                      :leading-icon="ExternalLink"
-                      >Repository</AlButton
-                    >
-                  </div>
-                </AlCard>
-              </aside>
-            </div>
-          </template>
-
-          <template #contributions>
-            <div class="grid gap-4">
-              <AlSectionHeader
-                title="Contribution Preview"
-                description="Manifest-shaped declarations this extension contributes to the workbench."
-              />
-              <AlCard v-for="section in contributionSections" :key="section.key" class="p-4">
-                <h3 class="m-0 text-sm font-semibold">{{ section.title }}</h3>
-                <div class="mt-3 grid gap-2">
-                  <div
-                    v-for="item in section.items"
-                    :key="item.id"
-                    class="rounded-md border border-border p-3"
-                  >
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                      <span class="text-sm font-medium">{{ item.title }}</span>
-                      <AlBadge variant="outline">{{ item.id }}</AlBadge>
-                    </div>
-                    <p
-                      v-if="item.description || item.kind"
-                      class="m-0 mt-1 text-sm text-muted-foreground"
-                    >
-                      {{ item.description || item.kind }}
-                    </p>
-                  </div>
-                </div>
-              </AlCard>
-              <AlEmptyState
-                v-if="!contributionSections.length"
-                title="No contribution points"
-                description="This extension only provides background behavior."
-                :icon="Layers3"
-              />
-            </div>
-          </template>
-
-          <template #settings>
-            <div class="grid gap-4">
-              <AlSectionHeader
-                title="Settings Entry Points"
-                description="Settings are catalog-backed scaffolds until a host settings service is added."
-              />
-              <AlCard v-if="extension.settings.length" class="divide-y divide-border">
-                <div
-                  v-for="setting in extension.settings"
-                  :key="setting.key"
-                  class="grid gap-2 p-4 md:grid-cols-[minmax(0,1fr)_12rem] md:items-center"
-                >
-                  <div>
-                    <h3 class="m-0 text-sm font-semibold">{{ setting.title }}</h3>
-                    <p class="m-0 mt-1 text-sm text-muted-foreground">{{ setting.description }}</p>
-                    <p class="m-0 mt-1 text-xs text-muted-foreground">
-                      {{ setting.key }}
-                      · {{ setting.type }}
-                    </p>
-                  </div>
-                  <AlBadge variant="outline">Default: {{ setting.defaultValue }}</AlBadge>
-                </div>
-              </AlCard>
-              <AlEmptyState
-                v-else
-                title="No settings"
-                description="This extension does not expose configurable settings."
-                :icon="Settings"
-              />
-            </div>
-          </template>
-
-          <template #changelog>
-            <div class="grid gap-3">
-              <AlCard v-for="entry in extension.changelog" :key="entry.version" class="p-4">
-                <div class="flex flex-wrap items-center gap-2">
-                  <h3 class="m-0 text-sm font-semibold">Version {{ entry.version }}</h3>
-                  <AlBadge v-if="entry.breaking" tone="warning">Breaking</AlBadge>
-                  <span class="text-xs text-muted-foreground">{{ formatDate(entry.date) }}</span>
-                </div>
-                <ul class="m-0 mt-3 grid gap-1 pl-4 text-sm text-muted-foreground">
-                  <li v-for="change in entry.changes" :key="change">{{ change }}</li>
-                </ul>
-              </AlCard>
-            </div>
-          </template>
-
-          <template #health>
-            <div class="grid gap-4">
-              <AlSectionHeader
-                title="Status and Runtime Health"
-                description="Local install state, runtime activation, warnings, and provider errors."
-              />
-              <AlCard class="p-4">
-                <div class="flex flex-wrap gap-2">
-                  <AlBadge :tone="statusTone(extension)" size="md"
-                    >{{ statusLabel(extension) }}</AlBadge
-                  >
-                  <AlBadge variant="outline">Install state: {{ extension.installState }}</AlBadge>
-                  <AlBadge v-if="extension.runtime" variant="outline"
-                    >Runtime: {{ extension.runtime.status }}</AlBadge
-                  >
-                </div>
-                <AlSeparator class="my-4" />
-                <div class="grid gap-3">
-                  <div
-                    v-for="issue in [...extension.errors, ...extension.warnings]"
-                    :key="issue.id"
-                    class="rounded-md border border-border p-3"
-                  >
-                    <div class="flex items-center gap-2">
-                      <AlertCircle class="size-4" />
-                      <span class="text-sm font-medium">{{ issue.message }}</span>
-                      <AlBadge :tone="issue.severity === 'error' ? 'destructive' : 'warning'"
-                        >{{ issue.severity }}</AlBadge
-                      >
-                    </div>
-                    <p class="m-0 mt-1 text-xs text-muted-foreground">
-                      {{ issue.source }}
-                      · {{ formatDate(issue.timestamp) }}
-                    </p>
-                  </div>
-                  <div
-                    v-if="!extension.errors.length && !extension.warnings.length && !extension.logs.length"
-                    class="flex items-center gap-2 text-sm text-muted-foreground"
-                  >
-                    <Check class="size-4" />
-                    No runtime errors or catalog warnings.
-                  </div>
-                </div>
-              </AlCard>
-              <AlCard v-if="extension.logs.length" class="divide-y divide-border">
-                <div class="p-4">
-                  <h3 class="m-0 text-sm font-semibold">Extension Logs</h3>
-                  <p class="m-0 mt-1 text-sm text-muted-foreground">
-                    Recent structured logs emitted by the extension runtime.
-                  </p>
-                </div>
-                <div
-                  v-for="entry in extension.logs.slice(-10)"
-                  :key="`${entry.timestamp}-${entry.message}`"
-                  class="grid gap-1 p-4"
-                >
-                  <div class="flex flex-wrap items-center justify-between gap-2">
-                    <AlBadge variant="outline">{{ entry.level }}</AlBadge>
-                    <span class="text-xs text-muted-foreground">{{ entry.timestamp }}</span>
-                  </div>
-                  <p class="m-0 text-sm">{{ entry.message }}</p>
-                </div>
-              </AlCard>
-            </div>
-          </template>
-        </AlTabs>
-      </template>
+              <div>
+                <dt>Version</dt>
+                <dd>{{ extension.version }}</dd>
+              </div>
+              <div>
+                <dt>Updated</dt>
+                <dd>{{ formatDate(extension.lastUpdated) }}</dd>
+              </div>
+              <div>
+                <dt>Compatibility</dt>
+                <dd>{{ extension.compatibility }}</dd>
+              </div>
+              <div>
+                <dt>Package</dt>
+                <dd>{{ extension.packageType || 'marketplace' }}</dd>
+              </div>
+              <div>
+                <dt>Registry</dt>
+                <dd>{{ extension.registryDisplayName || 'ActiveLane' }}</dd>
+              </div>
+            </dl>
+          </section>
+          <section>
+            <h2>Trust</h2>
+            <p>
+              <ShieldCheck />
+              {{ extension.publisher.verified ? 'Verified publisher' : 'Publisher not verified' }}
+            </p>
+            <p><ShieldCheck /> {{ extension.integrityState || 'Validated during installation' }}</p>
+          </section>
+          <section v-if="extension.homepage || extension.repository">
+            <h2>Links</h2>
+            <a v-if="extension.homepage" :href="extension.homepage"
+              >Documentation <ExternalLink /></a
+            ><a v-if="extension.repository" :href="extension.repository"
+              >Source repository <ExternalLink /></a
+            >
+          </section>
+          <section v-if="extension.installState === 'installed'">
+            <h2>Management</h2>
+            <Button
+              v-if="extension.status === 'enabled' || extension.status === 'update-available'"
+              size="sm"
+              variant="outline"
+              @click="marketplace.disableExtension(extension.id)"
+              >Disable</Button
+            ><Button
+              size="sm"
+              variant="ghost"
+              :leading-icon="Trash2"
+              @click="marketplace.uninstallExtension(extension.id)"
+              >Uninstall</Button
+            >
+          </section>
+        </aside>
+      </main>
+      <main v-else-if="activeTab === 'integrations'" class="focused-panel">
+        <MarketplaceContributionsGrid :runtime="runtime" :contributions="extension.contributions" />
+      </main>
+      <main v-else-if="activeTab === 'permissions'" class="focused-panel">
+        <header>
+          <span>Security review</span>
+          <h2>Capabilities and permissions</h2>
+          <p>Review what this application can access before installation.</p>
+        </header>
+        <div class="permission-grid">
+          <section>
+            <h3>Permissions</h3>
+            <article v-for="permission in extension.permissions" :key="permission">
+              <ShieldCheck />
+              <div>
+                <strong>{{ permission }}</strong><span>Declared by the extension manifest</span>
+              </div>
+            </article>
+            <p v-if="!extension.permissions.length">No privileged permissions requested.</p>
+          </section>
+          <section>
+            <h3>Capabilities</h3>
+            <article v-for="capability in extension.capabilities" :key="capability">
+              <Check />
+              <div>
+                <strong>{{ capability }}</strong><span>Registered ActiveLane capability</span>
+              </div>
+            </article>
+            <p v-if="!extension.capabilities.length">No host capabilities declared.</p>
+          </section>
+        </div>
+      </main>
+      <main v-else class="focused-panel">
+        <header>
+          <span>Release history</span>
+          <h2>What’s new</h2>
+          <p>Version notes and compatibility changes from the publisher.</p>
+        </header>
+        <article v-for="entry in extension.changelog" :key="entry.version" class="release-entry">
+          <div>
+            <strong>Version {{ entry.version }}</strong><span>{{ formatDate(entry.date) }}</span>
+          </div>
+          <ul>
+            <li v-for="change in entry.changes" :key="change">{{ change }}</li>
+          </ul>
+        </article>
+      </main>
+    </div>
+    <div v-else class="details-missing">
+      <h1>Application unavailable</h1>
+      <p>This marketplace item may have been removed or its registry is offline.</p>
+      <Button @click="back">Return to Marketplace</Button>
     </div>
   </section>
 </template>
+
+<style scoped>
+.details-app {
+  height: 100%;
+  overflow: auto;
+  background: var(--background);
+  color: var(--foreground);
+}
+.details-wrap {
+  width: min(1500px, 100%);
+  margin: 0 auto;
+  padding: 20px 30px 60px;
+}
+.details-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  cursor: pointer;
+}
+.details-back:hover {
+  color: var(--foreground);
+}
+.details-back svg {
+  width: 13px;
+}
+.details-back span {
+  opacity: 0.5;
+}
+.product-header {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) auto;
+  gap: 20px;
+  padding: 21px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--card);
+}
+.product-identity {
+  display: flex;
+  gap: 15px;
+}
+.product-icon {
+  display: grid;
+  width: 62px;
+  height: 62px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--muted);
+}
+.product-icon :deep(svg),
+.product-icon :deep(img) {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.product-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.product-title h1 {
+  margin: 0;
+  font-size: 23px;
+  letter-spacing: -0.025em;
+}
+.product-title svg {
+  width: 16px;
+  color: var(--info);
+}
+.product-identity p {
+  margin: 3px 0 8px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+}
+.product-identity > div > span {
+  display: block;
+  max-width: 700px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.product-metrics {
+  display: flex;
+  grid-column: 1;
+  gap: 0;
+  padding-top: 15px;
+  border-top: 1px solid var(--border);
+}
+.product-metrics > div {
+  display: grid;
+  min-width: 145px;
+  gap: 2px;
+  padding-right: 22px;
+  margin-right: 22px;
+  border-right: 1px solid var(--border);
+}
+.product-metrics > div:last-child {
+  border: 0;
+}
+.product-metrics strong {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  text-transform: capitalize;
+}
+.product-metrics strong svg {
+  width: 12px;
+}
+.product-metrics span {
+  color: var(--muted-foreground);
+  font-size: 9px;
+}
+.product-actions {
+  display: flex;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-items: start;
+  gap: 6px;
+}
+.product-notice {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  align-items: center;
+  gap: 9px;
+  margin-top: 10px;
+  padding: 10px 13px;
+  border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--warning) 5%, transparent);
+}
+.product-notice > svg {
+  width: 15px;
+  color: var(--warning);
+}
+.product-notice div {
+  display: grid;
+}
+.product-notice strong {
+  font-size: 10px;
+}
+.product-notice span {
+  margin-top: 2px;
+  color: var(--muted-foreground);
+  font-size: 9px;
+}
+.details-tabs {
+  display: flex;
+  gap: 22px;
+  margin-top: 17px;
+  border-bottom: 1px solid var(--border);
+}
+.details-tabs button {
+  position: relative;
+  padding: 0 1px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  cursor: pointer;
+}
+.details-tabs button:hover {
+  color: var(--foreground);
+}
+.details-tabs button.active {
+  color: var(--foreground);
+  font-weight: 600;
+}
+.details-tabs button.active::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: var(--foreground);
+  content: "";
+}
+.details-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 245px;
+  gap: 24px;
+  padding-top: 20px;
+}
+.details-primary {
+  display: grid;
+  min-width: 0;
+  gap: 28px;
+}
+.media-fallback {
+  display: grid;
+  min-height: 270px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--muted) 30%, transparent);
+}
+.media-fallback > div {
+  display: grid;
+  justify-items: center;
+}
+.media-fallback :deep(svg),
+.media-fallback :deep(img) {
+  width: 38px;
+  height: 38px;
+  margin-bottom: 10px;
+}
+.media-fallback strong {
+  font-size: 14px;
+}
+.media-fallback span {
+  margin-top: 5px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+}
+.editorial-section > span,
+.features-section > span,
+.focused-panel > header span {
+  color: var(--muted-foreground);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.editorial-section h2 {
+  max-width: 780px;
+  margin: 5px 0 10px;
+  font-size: 18px;
+  line-height: 1.35;
+}
+.editorial-section p {
+  max-width: 820px;
+  margin: 0 0 9px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 1.65;
+}
+.features-section h2 {
+  margin: 5px 0 12px;
+  font-size: 17px;
+}
+.features-section > div {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+}
+.features-section article {
+  display: flex;
+  gap: 7px;
+  padding: 10px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--muted) 45%, transparent);
+}
+.features-section svg {
+  width: 13px;
+  flex: none;
+  color: var(--success);
+}
+.features-section p {
+  margin: 0;
+  font-size: 10px;
+}
+.details-aside {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+.details-aside section {
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}
+.details-aside h2 {
+  margin: 0 0 10px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.details-aside dl {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.details-aside dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 9px;
+}
+.details-aside dt {
+  color: var(--muted-foreground);
+}
+.details-aside dd {
+  margin: 0;
+  text-align: right;
+  text-transform: capitalize;
+}
+.details-aside p,
+.details-aside a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 6px 0;
+  color: var(--muted-foreground);
+  font-size: 9px;
+  text-decoration: none;
+}
+.details-aside p svg,
+.details-aside a svg {
+  width: 12px;
+}
+.details-aside a:hover {
+  color: var(--foreground);
+}
+.details-aside section > :deep(button) {
+  width: 100%;
+  margin-top: 5px;
+}
+.focused-panel {
+  width: min(960px, 100%);
+  padding-top: 28px;
+}
+.focused-panel > header h2 {
+  margin: 5px 0 4px;
+  font-size: 18px;
+}
+.focused-panel > header p {
+  margin: 0 0 18px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.permission-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.permission-grid > section {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.permission-grid h3 {
+  margin: 0 0 12px;
+  font-size: 12px;
+}
+.permission-grid article {
+  display: flex;
+  gap: 8px;
+  padding: 9px 0;
+  border-top: 1px solid var(--border);
+}
+.permission-grid article > svg {
+  width: 14px;
+  flex: none;
+  color: var(--success);
+}
+.permission-grid article div {
+  display: grid;
+}
+.permission-grid strong {
+  font-size: 10px;
+}
+.permission-grid span,
+.permission-grid > section > p {
+  color: var(--muted-foreground);
+  font-size: 9px;
+}
+.release-entry {
+  margin-top: 12px;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.release-entry > div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+}
+.release-entry span {
+  color: var(--muted-foreground);
+  font-size: 9px;
+}
+.release-entry ul {
+  margin: 10px 0 0;
+  padding-left: 17px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+}
+.details-missing {
+  display: grid;
+  height: 100%;
+  place-content: center;
+  justify-items: center;
+}
+.details-missing h1 {
+  font-size: 17px;
+}
+.details-missing p {
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+@media (max-width: 1000px) {
+  .details-main {
+    grid-template-columns: 1fr;
+  }
+  .details-aside {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .product-header {
+    grid-template-columns: 1fr;
+  }
+  .product-actions {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .product-metrics {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 700px) {
+  .details-wrap {
+    padding: 16px;
+  }
+  .details-aside,
+  .permission-grid,
+  .features-section > div {
+    grid-template-columns: 1fr;
+  }
+  .product-metrics > div {
+    min-width: 110px;
+  }
+  .details-tabs {
+    gap: 12px;
+    overflow: auto;
+  }
+}
+</style>

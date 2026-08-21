@@ -3,9 +3,9 @@ import { getIcon } from '@activelane/icons'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 import { cn } from '../../lib/utils'
 
-const Check = getIcon('Check')
+const Check = getIcon('lucide:check')
 
-defineOptions({ name: 'AlCheckbox' })
+defineOptions({ name: 'Checkbox' })
 
 defineProps<{
   modelValue?: boolean | 'indeterminate'

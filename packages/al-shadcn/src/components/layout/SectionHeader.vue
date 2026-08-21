@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { cn } from '../../lib/utils'
 
-defineOptions({ name: 'AlSectionHeader' })
+defineOptions({ name: 'SectionHeader' })
 
 defineProps<{
   title?: string

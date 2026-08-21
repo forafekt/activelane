@@ -18,6 +18,7 @@ func main() {
 	errors := []string{}
 
 	// Check Go
+
 	if !checkCommand("go", "version") {
 		errors = append(errors, "Go is not installed. Install from https://go.dev/dl/")
 	} else {
@@ -26,9 +27,11 @@ func main() {
 
 	// Check ANDROID_HOME
 	androidHome := os.Getenv("ANDROID_HOME")
+
 	if androidHome == "" {
 		androidHome = os.Getenv("ANDROID_SDK_ROOT")
 	}
+
 	if androidHome == "" {
 		// Try common default locations
 		home, _ := os.UserHomeDir()
@@ -37,6 +40,7 @@ func main() {
 			filepath.Join(home, "Library", "Android", "sdk"),
 			"/usr/local/share/android-sdk",
 		}
+
 		for _, p := range possiblePaths {
 			if _, err := os.Stat(p); err == nil {
 				androidHome = p
@@ -45,6 +49,7 @@ func main() {
 		}
 	}
 
+
 	if androidHome == "" {
 		errors = append(errors, "ANDROID_HOME not set. Install Android Studio and set ANDROID_HOME environment variable")
 	} else {
@@ -52,6 +57,7 @@ func main() {
 	}
 
 	// Check adb
+
 	if !checkCommand("adb", "version") {
 		if androidHome != "" {
 			platformTools := filepath.Join(androidHome, "platform-tools")
@@ -64,6 +70,7 @@ func main() {
 	}
 
 	// Check emulator
+
 	if !checkCommand("emulator", "-list-avds") {
 		if androidHome != "" {
 			emulatorPath := filepath.Join(androidHome, "emulator")
@@ -77,6 +84,7 @@ func main() {
 
 	// Check NDK
 	ndkHome := os.Getenv("ANDROID_NDK_HOME")
+
 	if ndkHome == "" && androidHome != "" {
 		// Look for NDK in default location
 		ndkDir := filepath.Join(androidHome, "ndk")
@@ -90,6 +98,7 @@ func main() {
 		}
 	}
 
+
 	if ndkHome == "" {
 		errors = append(errors, "Android NDK not found. Install NDK via Android Studio > SDK Manager > SDK Tools > NDK (Side by side)")
 	} else {
@@ -97,6 +106,7 @@ func main() {
 	}
 
 	// Check Java
+
 	if !checkCommand("java", "-version") {
 		errors = append(errors, "Java not found. Install JDK 11+ (OpenJDK recommended)")
 	} else {
@@ -104,6 +114,7 @@ func main() {
 	}
 
 	// Check for AVD (Android Virtual Device)
+
 	if checkCommand("emulator", "-list-avds") {
 		cmd := exec.Command("emulator", "-list-avds")
 		output, err := cmd.Output()
@@ -119,8 +130,10 @@ func main() {
 
 	fmt.Println()
 
+
 	if len(errors) > 0 {
 		fmt.Println("❌ Missing dependencies:")
+
 		for _, err := range errors {
 			fmt.Printf("   - %s\n", err)
 		}
@@ -160,6 +173,7 @@ func checkCommand(name string, args ...string) bool {
 // prompt is a surprise the user should trigger themselves).
 func offerCreateAVD(androidHome string) {
 	abi := "x86_64"
+
 	if runtime.GOARCH == "arm64" {
 		abi = "arm64-v8a"
 	}
@@ -168,9 +182,11 @@ func offerCreateAVD(androidHome string) {
 	// The API level must be compared numerically: lexicographic sorting
 	// would rank android-9 above android-35.
 	var img string
+
 	if androidHome != "" {
 		matches, _ := filepath.Glob(filepath.Join(androidHome, "system-images", "android-*", "*", abi))
 		bestAPI := -1
+
 		for _, m := range matches {
 			apiDir := filepath.Base(filepath.Dir(filepath.Dir(m)))
 			api, err := strconv.Atoi(strings.TrimPrefix(apiDir, "android-"))
@@ -185,6 +201,7 @@ func offerCreateAVD(androidHome string) {
 	}
 
 	avdmanager := findAVDManager(androidHome)
+
 
 	if img == "" || avdmanager == "" {
 		fmt.Println("⚠ No Android Virtual Devices found.")
@@ -202,6 +219,7 @@ func offerCreateAVD(androidHome string) {
 
 	fmt.Println("⚠ No Android Virtual Devices found.")
 	fmt.Printf("   Would you like to create a 'wails' AVD from %s?\n", pkg)
+
 	if !promptUser("Create AVD?") {
 		fmt.Println("   Skipping AVD creation.")
 		fmt.Printf("   Create manually: avdmanager create avd --name wails --package '%s' --device pixel_7\n", pkg)
@@ -212,6 +230,7 @@ func offerCreateAVD(androidHome string) {
 	cmd.Stdin = strings.NewReader("no\n") // decline the custom hardware-profile prompt
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+
 	if err := cmd.Run(); err != nil {
 		fmt.Printf("   Failed to create AVD: %v\n", err)
 	} else {
@@ -222,15 +241,18 @@ func offerCreateAVD(androidHome string) {
 // findAVDManager returns the avdmanager path from PATH, or from the SDK's
 // cmdline-tools (preferring the newest version), or "" if not found.
 func findAVDManager(androidHome string) string {
+
 	if p, err := exec.LookPath("avdmanager"); err == nil {
 		return p
 	}
+
 	if androidHome != "" {
 		matches, _ := filepath.Glob(filepath.Join(androidHome, "cmdline-tools", "*", "bin", "avdmanager"))
 		// Prefer the "latest" alias; otherwise compare versions numerically
 		// ("9.0" would lexicographically outrank "11.0").
 		best := ""
 		bestVersion := -1.0
+
 		for _, m := range matches {
 			version := filepath.Base(filepath.Dir(filepath.Dir(m)))
 			if version == "latest" {
@@ -251,6 +273,7 @@ func findAVDManager(androidHome string) string {
 }
 
 func promptUser(question string) bool {
+
 	if os.Getenv("CI") != "" || os.Getenv("TASK_FORCE_YES") == "true" {
 		fmt.Printf("%s [y/N]: y (auto-accepted)\n", question)
 		return true
@@ -258,6 +281,7 @@ func promptUser(question string) bool {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Printf("%s [y/N]: ", question)
 	response, err := reader.ReadString('\n')
+
 	if err != nil {
 		return false
 	}

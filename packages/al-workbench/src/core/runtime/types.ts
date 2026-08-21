@@ -1,5 +1,6 @@
 import type { ActiveLaneCapabilityService } from '../capabilities/types'
 import type { ExplorerRuntime } from '../explorer/types'
+import type { WorkbenchEntitlementService } from '../entitlements/types'
 import type {
   InstalledExtensionRecord,
   WorkbenchExtensionCatalogEntry,
@@ -49,11 +50,12 @@ export interface WorkbenchRuntimeApi {
   fileOpeners: FileOpenerService
   capabilities: ActiveLaneCapabilityService
   explorer: ExplorerRuntime
+  entitlements: WorkbenchEntitlementService
   registry: WorkbenchRegisteredContributions
   extensions: {
     records: WorkbenchRuntimeExtensionRecord[]
     discovered: WorkbenchExtensionCatalogEntry[]
-    install: (extensionId: string, version?: string) => Promise<void>
+    install: (extensionId: string, version?: string, registryId?: string) => Promise<void>
     installFromPackage: (packageBytes: ArrayBuffer | Uint8Array) => Promise<void>
     uninstall: (extensionId: string) => Promise<void>
     enable: (extensionId: string) => Promise<void>

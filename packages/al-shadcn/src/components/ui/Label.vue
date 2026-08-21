@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { cn } from '../../lib/utils'
 
-defineOptions({ name: 'AlLabel' })
+defineOptions({ name: 'Label' })
 
 defineProps<{
   for?: string

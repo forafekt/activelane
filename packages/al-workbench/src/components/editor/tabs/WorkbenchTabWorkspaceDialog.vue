@@ -12,23 +12,16 @@ type Mode = 'sessions' | 'templates' | 'share'
 type Item = WorkbenchTabSession | WorkbenchTabTemplate
 
 const runtime = useWorkbenchRuntime()
-const [
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  AlButton,
-] = runtime.workbench.ui.getComponents([
-  'Dialog',
-  'DialogContent',
-  'DialogDescription',
-  'DialogFooter',
-  'DialogHeader',
-  'DialogTitle',
-  'AlButton',
-])
+const [Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Button] =
+  runtime.workbench.ui.getComponents([
+    'Dialog',
+    'DialogContent',
+    'DialogDescription',
+    'DialogFooter',
+    'DialogHeader',
+    'DialogTitle',
+    'Button',
+  ])
 
 const open = ref(false)
 const mode = ref<Mode>('sessions')
@@ -263,54 +256,44 @@ onUnmounted(() => {
 
       <DialogFooter>
         <template v-if="mode !== 'share'">
-          <AlButton type="button" variant="outline" @click="saveCurrent">Save Current</AlButton>
-          <AlButton type="button" variant="outline" :disabled="!selected" @click="renameSelected">
+          <Button type="button" variant="outline" @click="saveCurrent">Save Current</Button>
+          <Button type="button" variant="outline" :disabled="!selected" @click="renameSelected">
             Rename
-          </AlButton>
-          <AlButton
-            type="button"
-            variant="outline"
-            :disabled="!selected"
-            @click="duplicateSelected"
-          >
+          </Button>
+          <Button type="button" variant="outline" :disabled="!selected" @click="duplicateSelected">
             Duplicate
-          </AlButton>
-          <AlButton type="button" variant="outline" :disabled="!selected" @click="copyExport">
+          </Button>
+          <Button type="button" variant="outline" :disabled="!selected" @click="copyExport">
             Export
-          </AlButton>
-          <AlButton
+          </Button>
+          <Button
             type="button"
             variant="outline"
             :disabled="!importJson.trim()"
             @click="importCollectionItem"
           >
             Import
-          </AlButton>
-          <AlButton
-            type="button"
-            variant="destructive"
-            :disabled="!selected"
-            @click="deleteSelected"
-          >
+          </Button>
+          <Button type="button" variant="destructive" :disabled="!selected" @click="deleteSelected">
             Delete
-          </AlButton>
-          <AlButton
+          </Button>
+          <Button
             type="button"
             variant="secondary"
             :disabled="!selected"
             @click="applySelected(false)"
           >
             Restore Into Current
-          </AlButton>
-          <AlButton type="button" :disabled="!selected" @click="applySelected(true)">
+          </Button>
+          <Button type="button" :disabled="!selected" @click="applySelected(true)">
             Replace Workspace
-          </AlButton>
+          </Button>
         </template>
         <template v-else>
-          <AlButton type="button" variant="secondary" @click="applyShared(false)">
+          <Button type="button" variant="secondary" @click="applyShared(false)">
             Apply Into Current
-          </AlButton>
-          <AlButton type="button" @click="applyShared(true)">Replace Workspace</AlButton>
+          </Button>
+          <Button type="button" @click="applyShared(true)">Replace Workspace</Button>
         </template>
       </DialogFooter>
     </DialogContent>

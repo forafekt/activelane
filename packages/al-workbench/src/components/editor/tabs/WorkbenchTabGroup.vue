@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 import { useWorkbenchTabs } from '../../../composables/useWorkbenchTabs'
+import { shouldShowActiveGroupIndicator } from '../../../core/runtime/workbenchStore/layout'
 import type { WorkbenchTabGroupNode } from '../../../core/workbench/shell'
 import WorkbenchSurfaceRenderer from '../../layout/WorkbenchSurfaceRenderer.vue'
 import { provideWorkbenchTabInteractions } from './useWorkbenchTabInteractions'
@@ -11,16 +13,26 @@ defineOptions({ name: 'WorkbenchTabGroup' })
 
 const props = defineProps<{
   group: WorkbenchTabGroupNode
+  groupCount: number
 }>()
 
 const runtime = useWorkbenchRuntime()
 
-const [Shield, Snowflake, Star] = runtime.workbench.ui.getIcons(['Shield', 'Snowflake', 'Star'])
-const [AlButton, AlEmptyState] = runtime.workbench.ui.getComponents(['AlButton', 'AlEmptyState'])
+const Shield = runtime.workbench.ui.getIcon('lucide:shield')
+const Snowflake = runtime.workbench.ui.getIcon('lucide:snowflake')
+const Star = runtime.workbench.ui.getIcon('lucide:star')
+const [Button, EmptyState] = runtime.workbench.ui.getComponents(['Button', 'EmptyState'])
 
 const tabs = useWorkbenchTabs(props.group)
 const tabInteractions = provideWorkbenchTabInteractions(props.group)
 const activeTab = tabs.activeTab
+const showActiveGroupIndicator = computed(() =>
+  shouldShowActiveGroupIndicator(
+    props.groupCount,
+    props.group.id,
+    runtime.workbench.state.activeGroupId,
+  ),
+)
 
 function markActiveTabEngaged() {
   if (activeTab.value?.preview) tabs.markEngaged(activeTab.value.id)
@@ -47,7 +59,7 @@ function wakeActiveTab() {
     :data-active-group-id="runtime.workbench.state.activeGroupId"
     :data-active-tab-id="activeTab?.id"
     class="wb-tab-group wb-structural-pane"
-    :class="{ 'wb-tab-group--active': runtime.workbench.state.activeGroupId === group.id }"
+    :class="{ 'wb-tab-group--active': showActiveGroupIndicator }"
     @mousedown="runtime.workbench.setActiveGroup(group.id)"
   >
     <WorkbenchTabStrip
@@ -68,7 +80,7 @@ function wakeActiveTab() {
         <WorkbenchSurfaceRenderer :tab="activeTab" />
       </div>
 
-      <AlEmptyState
+      <EmptyState
         v-else-if="activeTab?.hibernation?.hibernated"
         class="p-3"
         title="Hibernated tab"
@@ -76,11 +88,11 @@ function wakeActiveTab() {
       >
         <template #icon><Snowflake class="size-5" /></template>
         <template #action>
-          <AlButton size="sm" variant="secondary" @click="wakeActiveTab"> Wake Tab </AlButton>
+          <Button size="sm" variant="secondary" @click="wakeActiveTab"> Wake Tab </Button>
         </template>
-      </AlEmptyState>
+      </EmptyState>
 
-      <AlEmptyState
+      <EmptyState
         v-else-if="activeTab"
         class="p-3"
         title="Protected tab"
@@ -88,11 +100,11 @@ function wakeActiveTab() {
       >
         <template #icon><Shield class="size-5" /></template>
         <template #action>
-          <AlButton size="sm" variant="secondary" @click="unlockActiveTab"> Unlock </AlButton>
+          <Button size="sm" variant="secondary" @click="unlockActiveTab"> Unlock </Button>
         </template>
-      </AlEmptyState>
+      </EmptyState>
 
-      <AlEmptyState
+      <EmptyState
         v-else
         class="p-3"
         title="No tabs in this group"
@@ -100,15 +112,15 @@ function wakeActiveTab() {
       >
         <template #icon><Star class="size-5" /></template>
         <template #action>
-          <AlButton
+          <Button
             size="sm"
             variant="secondary"
             @click="runtime.commands.execute('workbench.showApps')"
           >
             Show Apps
-          </AlButton>
+          </Button>
         </template>
-      </AlEmptyState>
+      </EmptyState>
     </div>
 
     <WorkbenchTabInteractionDialogs />

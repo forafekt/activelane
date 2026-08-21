@@ -8,13 +8,14 @@ const runtime = useWorkbenchRuntime()
 const canGoBack = computed(() => runtime.workbench.state.navigation.back.length > 0)
 const canGoForward = computed(() => runtime.workbench.state.navigation.forward.length > 0)
 
-const [ChevronLeft, ChevronRight] = runtime.workbench.ui.getIcons(['ChevronLeft', 'ChevronRight'])
-const [AlIconButton] = runtime.workbench.ui.getComponents(['AlIconButton'])
+const ChevronLeft = runtime.workbench.ui.getIcon('lucide:chevron-left')
+const ChevronRight = runtime.workbench.ui.getIcon('lucide:chevron-right')
+const [IconButton] = runtime.workbench.ui.getComponents(['IconButton'])
 </script>
 
 <template>
   <div class="workbench-window-header__navigation" data-workbench-no-drag>
-    <AlIconButton
+    <IconButton
       label="Back"
       :icon="ChevronLeft"
       size="icon-xs"
@@ -22,7 +23,7 @@ const [AlIconButton] = runtime.workbench.ui.getComponents(['AlIconButton'])
       :disabled="!canGoBack"
       @click="runtime.workbench.navigateBack()"
     />
-    <AlIconButton
+    <IconButton
       label="Forward"
       :icon="ChevronRight"
       size="icon-xs"

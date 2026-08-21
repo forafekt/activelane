@@ -4,6 +4,7 @@ import type {
   ActiveLaneCapabilityRecord,
   ActiveLaneCapabilityService,
 } from '../capabilities/types'
+import { createEntitlementService } from '../entitlements/createEntitlementService'
 import type {
   InstalledExtensionRecord,
   WorkbenchExtensionCatalogEntry,
@@ -158,6 +159,7 @@ export async function createExtensionRuntime(
   const explorerStorage =
     options.host.capabilities.storage?.scope('workbench.explorer') ?? createMemoryStorageScope()
   const explorer = await createExplorerService(explorerStorage, reactivity)
+  const entitlements = createEntitlementService(options.host.capabilities.subscriptions)
   const fileOpenerStorage =
     options.host.capabilities.storage?.scope('workbench.fileOpeners') ?? createMemoryStorageScope()
   const ui = createWorkbenchUI(options.ui)
@@ -247,6 +249,7 @@ export async function createExtensionRuntime(
   })
 
   const definitions = new Map<string, WorkbenchExtensionDefinition>()
+  const definitionSources = new Map<string, WorkbenchExtensionCatalogEntry['source']>()
   const extensionState = new Map<string, ActiveExtensionState>()
   const discovered = reactivity.reactive<WorkbenchExtensionCatalogEntry[]>([])
   const records = reactivity.reactive<WorkbenchRuntimeExtensionRecord[]>([])
@@ -902,15 +905,44 @@ export async function createExtensionRuntime(
     fileOpeners,
     capabilities: rootCapabilities,
     explorer,
+    entitlements,
     registry,
     extensions: {
       records,
       discovered,
-      async install(extensionId: string, version?: string) {
+      async install(extensionId: string, version?: string, registryId?: string) {
+        const previousInstalled = installedRecords.find((item) => item.extensionId === extensionId)
+        const previousDefinition = definitions.get(extensionId)
+        const previousRecord = records.find((item) => item.extensionId === extensionId)
+        const wasActive = previousRecord?.active ?? false
+        const isUpdate = Boolean(
+          previousInstalled && version && previousInstalled.version !== version,
+        )
+        if (isUpdate && wasActive) await runtime.extensions.deactivate(extensionId)
+        let installed: InstalledExtensionRecord | undefined
+        try {
+          installed = await host.capabilities.extensions?.install?.(
+            extensionId,
+            version,
+            registryId,
+          )
+        } catch (error) {
+          if (isUpdate && wasActive) await runtime.extensions.activate(extensionId)
+          throw error
+        }
+        if (installed) upsertInstalledRecord(installed)
+        try {
+          if (installed && (!definitions.has(extensionId) || isUpdate)) {
+            await loadInstalledDefinition(installed, isUpdate)
+          }
+        } catch (error) {
+          if (isUpdate && previousDefinition) definitions.set(extensionId, previousDefinition)
+          if (isUpdate && previousInstalled) upsertInstalledRecord(previousInstalled)
+          if (isUpdate && wasActive) await runtime.extensions.activate(extensionId)
+          throw error
+        }
         const record = records.find((item) => item.extensionId === extensionId)
         const definition = definitions.get(extensionId)
-        const installed = await host.capabilities.extensions?.install?.(extensionId, version)
-        if (installed) upsertInstalledRecord(installed)
         if (!record || !definition) return
         if (
           isExperimentalExtension(definition) &&
@@ -919,14 +951,20 @@ export async function createExtensionRuntime(
           throw new Error('Experimental extensions are disabled in Workbench Settings.')
         }
         record.installed = true
-        record.enabled = true
+        let enabledRecord = installed
+        if (installed && !installed.enabled) {
+          enabledRecord = (await host.capabilities.extensions?.enable?.(extensionId)) ?? installed
+          upsertInstalledRecord(enabledRecord)
+        }
+        record.enabled = enabledRecord?.enabled ?? false
         refreshRecordStatus(record)
-        await runtime.extensions.activate(extensionId)
+        if (record.enabled) await runtime.extensions.activate(extensionId)
       },
       async installFromPackage(packageBytes: ArrayBuffer | Uint8Array) {
         const installed = await host.capabilities.extensions?.installFromPackage?.(packageBytes)
         if (installed) {
           upsertInstalledRecord(installed)
+          if (!definitions.has(installed.extensionId)) await loadInstalledDefinition(installed)
           const record = records.find((item) => item.extensionId === installed.extensionId)
           if (record) {
             record.installed = true
@@ -938,24 +976,41 @@ export async function createExtensionRuntime(
       },
       async uninstall(extensionId: string) {
         const record = records.find((item) => item.extensionId === extensionId)
-        if (!record) return
-        const wasActive = record.active
-        await runtime.extensions.deactivate(extensionId)
+        const installedRecord = installedRecords.find((item) => item.extensionId === extensionId)
+        const wasActive = record?.active ?? false
+        const wasEnabled = installedRecord?.enabled ?? record?.enabled ?? false
+        if (record) await runtime.extensions.deactivate(extensionId)
         try {
+          if (wasEnabled) await host.capabilities.extensions?.disable?.(extensionId)
           await host.capabilities.extensions?.uninstall?.(extensionId)
         } catch (error) {
-          if (wasActive) await runtime.extensions.activate(extensionId)
+          if (wasEnabled) await host.capabilities.extensions?.enable?.(extensionId)
+          if (wasActive && record) await runtime.extensions.activate(extensionId)
           throw error
         }
-        record.installed = false
-        record.enabled = false
-        record.active = false
-        record.error = undefined
-        record.surfaceErrors = []
-        refreshRecordStatus(record)
+        if (record) {
+          record.installed = false
+          record.enabled = false
+          record.active = false
+          record.error = undefined
+          record.surfaceErrors = []
+          refreshRecordStatus(record)
+        }
         removeInstalledRecord(extensionId)
+        if (definitionSources.get(extensionId) === 'remote') {
+          definitions.delete(extensionId)
+          definitionSources.delete(extensionId)
+          const discoveredIndex = discovered.findIndex(
+            (item) => item.definition.manifest.id === extensionId,
+          )
+          if (discoveredIndex >= 0) discovered.splice(discoveredIndex, 1)
+        }
       },
       async enable(extensionId: string) {
+        const installedBefore = installedRecords.find((item) => item.extensionId === extensionId)
+        if (installedBefore && !definitions.has(extensionId)) {
+          await loadInstalledDefinition(installedBefore)
+        }
         const record = records.find((item) => item.extensionId === extensionId)
         const definition = definitions.get(extensionId)
         if (
@@ -984,18 +1039,18 @@ export async function createExtensionRuntime(
       },
       async disable(extensionId: string) {
         const record = records.find((item) => item.extensionId === extensionId)
-        if (!record) return
-        const wasActive = record.active
-        await runtime.extensions.deactivate(extensionId)
+        const wasActive = record?.active ?? false
+        if (record) await runtime.extensions.deactivate(extensionId)
         let installed: InstalledExtensionRecord | undefined
         try {
           installed = await host.capabilities.extensions?.disable?.(extensionId)
         } catch (error) {
-          if (wasActive) await runtime.extensions.activate(extensionId)
+          if (wasActive && record) await runtime.extensions.activate(extensionId)
           throw error
         }
-        record.enabled = false
         if (installed) upsertInstalledRecord(installed)
+        if (!record) return
+        record.enabled = false
         refreshRecordStatus(record)
       },
       async listInstalled() {
@@ -1021,6 +1076,7 @@ export async function createExtensionRuntime(
           commands: runtime.commands,
           capabilities: createCapabilityService(extensionId),
           explorer,
+          entitlements: entitlements.forExtension(extensionId),
           runtime: runtime as WorkbenchRuntimeApi,
           contribute: {
             activityRail: (...items: WorkbenchActivityContribution[]) =>
@@ -1155,6 +1211,10 @@ export async function createExtensionRuntime(
             shell.setActiveActivity(registry.activityRail[0].id)
           }
         } catch (error) {
+          dynamicDisposables.forEach((item) => {
+            item.dispose()
+          })
+          extensionState.delete(extensionId)
           record.active = false
           record.error = error instanceof Error ? error.message : String(error)
           refreshRecordStatus(record)
@@ -1164,28 +1224,42 @@ export async function createExtensionRuntime(
         const record = records.find((item) => item.extensionId === extensionId)
         const definition = definitions.get(extensionId)
         if (!record || !definition) return
-        await definition.deactivate?.({
-          extensionId,
-          manifest: definition.manifest,
-          host,
-          storage:
-            host.capabilities.storage?.scope(`extension:${extensionId}`) ??
-            createMemoryStorageScope(),
-          workbench,
-          commands: runtime.commands,
-          capabilities: createCapabilityService(extensionId),
-          explorer,
-          runtime: runtime as WorkbenchRuntimeApi,
-          contribute: createRegistrar(extensionId),
-        })
         const active = extensionState.get(extensionId)
-        active?.dynamicDisposables.forEach((item) => {
-          item.dispose()
-        })
-        active?.disposable?.dispose?.()
-        extensionState.delete(extensionId)
-        record.active = false
-        refreshRecordStatus(record)
+        if (!active) {
+          record.active = false
+          refreshRecordStatus(record)
+          return
+        }
+        try {
+          await definition.deactivate?.({
+            extensionId,
+            manifest: definition.manifest,
+            host,
+            storage:
+              host.capabilities.storage?.scope(`extension:${extensionId}`) ??
+              createMemoryStorageScope(),
+            workbench,
+            commands: runtime.commands,
+            capabilities: createCapabilityService(extensionId),
+            explorer,
+            entitlements: entitlements.forExtension(extensionId),
+            runtime: runtime as WorkbenchRuntimeApi,
+            contribute: createRegistrar(extensionId),
+          })
+        } catch (error) {
+          console.error(
+            `[extensions] ${extensionId}@${definition.manifest.version} failed during deactivate:`,
+            error,
+          )
+        } finally {
+          active?.dynamicDisposables.forEach((item) => {
+            item.dispose()
+          })
+          active?.disposable?.dispose?.()
+          extensionState.delete(extensionId)
+          record.active = false
+          refreshRecordStatus(record)
+        }
       },
       reportSurfaceError,
       clearSurfaceErrors,
@@ -1289,11 +1363,18 @@ export async function createExtensionRuntime(
   })
 
   function registerDefinition(entry: WorkbenchExtensionCatalogEntry) {
+    if (definitions.has(entry.definition.manifest.id)) return
     definitions.set(entry.definition.manifest.id, entry.definition)
+    definitionSources.set(entry.definition.manifest.id, entry.source)
     discovered.push(entry)
     const installed = installedRecords.find(
       (item) => item.extensionId === entry.definition.manifest.id,
     )
+    const existing = records.find((item) => item.extensionId === entry.definition.manifest.id)
+    if (existing) {
+      existing.manifest = entry.definition.manifest
+      return
+    }
     const record: WorkbenchRuntimeExtensionRecord = {
       extensionId: entry.definition.manifest.id,
       manifest: entry.definition.manifest,
@@ -1326,6 +1407,33 @@ export async function createExtensionRuntime(
     }
   }
 
+  async function loadInstalledDefinition(installed: InstalledExtensionRecord, replace = false) {
+    if (!replace && definitions.has(installed.extensionId))
+      return definitions.get(installed.extensionId)
+    const definition = await host.capabilities.extensions?.load?.(installed)
+    if (!definition) return undefined
+    if (definition.manifest.id !== installed.extensionId) {
+      throw new Error(
+        `Loaded extension identity ${definition.manifest.id} does not match ${installed.extensionId}.`,
+      )
+    }
+    if (replace) {
+      definitions.set(installed.extensionId, definition)
+      definitionSources.set(installed.extensionId, 'remote')
+      const discoveredIndex = discovered.findIndex(
+        (item) => item.definition.manifest.id === installed.extensionId,
+      )
+      const entry: WorkbenchExtensionCatalogEntry = { definition, source: 'remote' }
+      if (discoveredIndex >= 0) discovered.splice(discoveredIndex, 1, entry)
+      else discovered.push(entry)
+      const record = records.find((item) => item.extensionId === installed.extensionId)
+      if (record) record.manifest = definition.manifest
+    } else {
+      registerDefinition({ definition, source: 'remote' })
+    }
+    return definition
+  }
+
   function upsertInstalledRecord(record: InstalledExtensionRecord) {
     const index = installedRecords.findIndex((item) => item.extensionId === record.extensionId)
     if (index >= 0) installedRecords.splice(index, 1, record)
@@ -1338,6 +1446,40 @@ export async function createExtensionRuntime(
   }
 
   options.extensions?.forEach(registerDefinition)
+
+  for (const installed of installedRecords) {
+    if (definitions.has(installed.extensionId)) continue
+    if (!installed.enabled) {
+      records.push({
+        extensionId: installed.extensionId,
+        manifest: installed.manifest,
+        installed: true,
+        enabled: false,
+        active: false,
+        status: 'installed',
+        surfaceErrors: [],
+      })
+      continue
+    }
+    try {
+      await loadInstalledDefinition(installed)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      console.error(
+        `[extensions] ${installed.extensionId}@${installed.version} failed during load: ${message}`,
+      )
+      records.push({
+        extensionId: installed.extensionId,
+        manifest: installed.manifest,
+        installed: true,
+        enabled: installed.enabled,
+        active: false,
+        status: 'error',
+        error: message,
+        surfaceErrors: [],
+      })
+    }
+  }
 
   for (const record of records) {
     const activationEvents = record.manifest.activationEvents ?? ['onStartup']

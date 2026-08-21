@@ -1,6 +1,12 @@
-import type { InstalledExtensionRecord, WorkbenchExtensionDefinition } from '../extensions/types'
+import type {
+  InstalledExtensionRecord,
+  WorkbenchExtensionDefinition,
+  WorkbenchRegistrySearchResponse,
+  WorkbenchRegistryStatusResponse,
+} from '../extensions/types'
 import type { ActiveLaneHostKind } from '../runtime/context'
 import type { ActiveLaneServerRuntime } from '../serverRuntime'
+import type { WorkbenchSubscriptionProvider } from '../entitlements/types'
 
 export interface WorkbenchStorageScope {
   get: <T>(key: string) => Promise<T | undefined>
@@ -96,12 +102,27 @@ export interface WorkbenchHostCapabilities {
   }
   network?: {
     fetch?: typeof fetch
+    request?: (request: {
+      method: string
+      url: string
+      headers?: Record<string, string>
+      body?: string
+    }) => Promise<{
+      status: number
+      statusText: string
+      durationMs: number
+      sizeBytes: number
+      headers: Record<string, string[]>
+      body: string
+    }>
   }
+  subscriptions?: WorkbenchSubscriptionProvider
   extensions?: {
     listInstalled?: () => Promise<InstalledExtensionRecord[]>
     install?: (
       extensionId: string,
       version?: string,
+      registryId?: string,
     ) => Promise<InstalledExtensionRecord | undefined>
     installFromPackage?: (
       packageBytes: ArrayBuffer | Uint8Array,
@@ -109,7 +130,12 @@ export interface WorkbenchHostCapabilities {
     uninstall?: (extensionId: string) => Promise<void>
     enable?: (extensionId: string) => Promise<InstalledExtensionRecord | undefined>
     disable?: (extensionId: string) => Promise<InstalledExtensionRecord | undefined>
+    load?: (record: InstalledExtensionRecord) => Promise<WorkbenchExtensionDefinition>
     discover?: () => Promise<WorkbenchExtensionDefinition[]>
+  }
+  registry?: {
+    status: () => Promise<WorkbenchRegistryStatusResponse>
+    search: (query: string) => Promise<WorkbenchRegistrySearchResponse>
   }
 }
 

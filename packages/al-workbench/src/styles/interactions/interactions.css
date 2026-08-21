@@ -1,6 +1,6 @@
 .wb-shell :where(button, input, textarea, select, [tabindex]):focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: -2px;
+  outline: 1px solid var(--workbench-focus-outline);
+  outline-offset: -1px;
 }
 .wb-tab-strip__filter:focus-visible {
   outline-offset: 1px;
@@ -42,13 +42,13 @@
 .wb-resize-handle--horizontal span {
   inset-block: 0.5rem;
   left: 50%;
-  width: 2px;
+  width: 1px;
   transform: translateX(-50%) scaleX(0.5);
 }
 .wb-resize-handle--vertical span {
   inset-inline: 0.5rem;
   top: 50%;
-  height: 2px;
+  height: 1px;
   transform: translateY(-50%) scaleY(0.5);
 }
 .wb-resize-handle:hover,

@@ -26,6 +26,7 @@ import type {
 import type { WorkbenchContributionRegistrar, WorkbenchShellApi } from '../workbench/shell'
 import type { WorkbenchTabSurfaceContribution } from '../workbench/surfaces'
 import type { WorkbenchThemeContribution } from '../workbench/themes'
+import type { WorkbenchExtensionEntitlements } from '../entitlements/types'
 
 export interface WorkbenchMarketplaceEntry {
   categories?: string[]
@@ -33,6 +34,31 @@ export interface WorkbenchMarketplaceEntry {
   keywords?: string[]
   longDescription?: string
   screenshots?: Array<{ title: string; src: string }>
+}
+
+export interface WorkbenchSubscriptionPlan {
+  id: string
+  name: string
+  description?: string
+  interval: 'none' | 'monthly' | 'yearly'
+  priceMinor: number
+  currency: string
+  trialDays?: number
+  features?: string[]
+  entitlements?: string[]
+}
+
+export interface WorkbenchMarketplaceMetadata {
+  icon?: string
+  summary?: string
+  longDescription?: string
+  categories?: string[]
+  capabilities?: string[]
+  highlights?: string[]
+  media?: Array<{ type: 'image' | 'video'; source: string; title?: string; altText?: string }>
+  releaseNotes?: string
+  plans?: WorkbenchSubscriptionPlan[]
+  featured?: boolean
 }
 
 export interface WorkbenchApiRouteDefinition {
@@ -144,6 +170,9 @@ export interface ActiveLaneExtensionManifest
   permissions?: string[] | WorkbenchExtensionPermissions | Record<string, unknown>
   extensionKind?: ActiveLaneExtensionKind[]
   visibility?: ActiveLaneExtensionVisibility
+  os?: Array<'linux' | 'darwin' | 'windows'>
+  architecture?: Array<'amd64' | 'arm64' | '386'>
+  marketplace?: WorkbenchMarketplaceMetadata
 }
 
 export interface ExtensionPackageRef {
@@ -181,6 +210,12 @@ export interface MarketplaceExtensionRecord {
   createdAt: string
   updatedAt: string
   featured?: boolean
+  plans?: WorkbenchSubscriptionPlan[]
+  registryId?: string
+  registryDisplayName?: string
+  versionStatus?: ExtensionVersionStatus
+  compatible?: boolean
+  compatibilityReason?: string
 }
 
 export interface InstalledExtensionRecord {
@@ -205,6 +240,9 @@ export interface InstalledExtensionRecord {
   }
   digest?: string
   packagePath?: string
+  manifestDigest?: string
+  integrityState?: 'verified' | 'missing' | 'invalid' | 'mismatch'
+  restartRequired?: boolean
 }
 
 export type ExtensionInstallState = 'installed' | 'enabled' | 'disabled' | 'uninstalled'
@@ -256,6 +294,66 @@ export interface RegistryExtensionRecord {
   visibility: ActiveLaneExtensionVisibility
   latestVersion?: string
   versions: ExtensionVersionMetadata[]
+  registryId?: string
+  registryDisplayName?: string
+}
+
+export interface WorkbenchRegistryError {
+  code: string
+  message: string
+  detail?: string
+}
+
+export interface WorkbenchRegistrySearchItem {
+  registryId: string
+  registryDisplayName: string
+  id: string
+  namespace: string
+  name: string
+  displayName: string
+  description: string
+  version: string
+  versionStatus: ExtensionVersionStatus
+  manifest: ActiveLaneExtensionManifest
+  manifestDigest: string
+  packageDigest: string
+  publishedAt: string
+  compatible: boolean
+  compatibilityReason?: string
+}
+
+export interface WorkbenchRegistryFailure {
+  registryId: string
+  registryDisplayName: string
+  error: WorkbenchRegistryError
+}
+
+export interface WorkbenchRegistrySearchResponse {
+  items: WorkbenchRegistrySearchItem[]
+  failures: WorkbenchRegistryFailure[]
+  mode: 'none' | 'local-only' | 'connected'
+  publicRegistryEnabled: boolean
+  error?: WorkbenchRegistryError
+}
+
+export interface WorkbenchRegistryStatus {
+  id: string
+  displayName: string
+  type: 'remote' | 'directory'
+  source: string
+  enabled: boolean
+  priority: number
+  scopes: string[]
+  state: 'disabled' | 'available' | 'unavailable'
+  capabilities?: Record<string, boolean>
+  error?: WorkbenchRegistryError
+}
+
+export interface WorkbenchRegistryStatusResponse {
+  registries: WorkbenchRegistryStatus[]
+  mode: 'none' | 'local-only' | 'connected'
+  publicRegistryEnabled: boolean
+  error?: WorkbenchRegistryError
 }
 
 export interface ExtensionPackage {
@@ -400,6 +498,7 @@ export interface WorkbenchExtensionContext {
   commands: import('../runtime/types').WorkbenchCommandService
   capabilities: ActiveLaneCapabilityService
   explorer: import('../explorer/types').ExplorerRuntime
+  entitlements: WorkbenchExtensionEntitlements
   runtime: import('../runtime/types').WorkbenchRuntimeApi
   contribute: WorkbenchContributionRegistrar
 }

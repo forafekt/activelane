@@ -12,7 +12,7 @@ import {
 import type { HTMLAttributes } from 'vue'
 import { cn } from '../../../lib/utils'
 
-const X = getIcon('X')
+const X = getIcon('lucide:x')
 
 defineOptions({
   inheritAttrs: false,

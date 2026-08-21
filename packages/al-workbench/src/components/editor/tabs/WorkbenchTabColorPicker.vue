@@ -10,23 +10,16 @@ defineOptions({ name: 'WorkbenchTabColorPicker' })
 const runtime = useWorkbenchRuntime()
 const interactions = useWorkbenchTabInteractions()
 
-const [
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  AlButton,
-] = runtime.workbench.ui.getComponents([
-  'Dialog',
-  'DialogContent',
-  'DialogDescription',
-  'DialogFooter',
-  'DialogHeader',
-  'DialogTitle',
-  'AlButton',
-])
+const [Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Button] =
+  runtime.workbench.ui.getComponents([
+    'Dialog',
+    'DialogContent',
+    'DialogDescription',
+    'DialogFooter',
+    'DialogHeader',
+    'DialogTitle',
+    'Button',
+  ])
 
 const selectedLabel = computed(() => colorLabel(interactions.color.selected))
 
@@ -65,10 +58,10 @@ function swatchClass(color: WorkbenchTabColorId) {
       </div>
 
       <DialogFooter>
-        <AlButton type="button" variant="ghost" @click="interactions.applyColor('default')">
+        <Button type="button" variant="ghost" @click="interactions.applyColor('default')">
           Clear
-        </AlButton>
-        <AlButton type="button" @click="interactions.color.open = false">Done</AlButton>
+        </Button>
+        <Button type="button" @click="interactions.color.open = false">Done</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>

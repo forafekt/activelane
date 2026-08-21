@@ -1,226 +1,505 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
-import { useMarketplace } from '../composables/useMarketplaceStore'
+import { type MarketplacePage, useMarketplace } from '../composables/useMarketplaceStore'
+import MarketplaceSidebarItem from '../sidebar/MarketplaceSidebarItem.vue'
+import MarketplaceSidebarSection from '../sidebar/MarketplaceSidebarSection.vue'
 import type { MarketplaceExtension } from '../types/marketplace'
-import { extensionIcon, primaryAction, statusLabel, statusTone } from './MarketplaceShared'
 
-defineOptions({ name: 'MarketplaceSidebarView' })
-
-const props = defineProps<{
-  runtime: WorkbenchRuntimeApi
-}>()
-
-const [
-  AlSearchBar,
-  AlBadge,
-  AlButton,
-  AlSelectableItem,
-  AlSidebarSection,
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-] = props.runtime.workbench.ui.getComponents([
-  'AlSearchBar',
-  'AlBadge',
-  'AlButton',
-  'AlSelectableItem',
-  'AlSidebarSection',
-  'Collapsible',
-  'CollapsibleContent',
-  'CollapsibleTrigger',
-])
-
+const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
+const [DropdownMenu, Input] = props.runtime.workbench.ui.getComponents(['DropdownMenu', 'Input'])
+const Filter = props.runtime.workbench.ui.getIcon('lucide:filter')
+const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide:ellipsis')
+const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide:refresh-ccw')
+const Search = props.runtime.workbench.ui.getIcon('lucide:search')
+const X = props.runtime.workbench.ui.getIcon('lucide:x')
 
-const filteredExtensions = computed(() => marketplace.extensions.value)
-
-console.log({ filteredExtensions: filteredExtensions.value })
-
-async function runPrimary(extension: MarketplaceExtension) {
-  const action = primaryAction(extension).action
-  if (action === 'details') marketplace.openExtensionDetails(extension)
-  if (action === 'settings') marketplace.openExtensionSettings(extension)
-  if (action === 'install') await marketplace.installExtension(extension.id)
-  if (action === 'update') await marketplace.updateExtension(extension.id)
-  if (action === 'enable') await marketplace.enableExtension(extension.id)
-  if (action === 'disable') await marketplace.disableExtension(extension.id)
-}
-
-const items = [
-  {
-    key: 'installed',
-    label: 'Installed',
-    actions: [],
-  },
-  {
-    key: 'recommended',
-    label: 'Recommended',
-    actions: [],
-  },
-]
-
-const installedItem = items[0]
-const recommendedItem = items[1]
-const hasInstalledOrRecommended = computed(() =>
-  Boolean(
-    installedItem &&
-      recommendedItem &&
-      (getIsInstalled(installedItem) || getIsRecommended(recommendedItem)),
-  ),
+const installedOpen = ref(true)
+const updatesOpen = ref(true)
+const recommendedOpen = ref(true)
+const popularOpen = ref(false)
+const searching = computed(() => marketplace.searchQuery.value.trim().length > 0)
+const installed = computed(() =>
+  marketplace.extensions.value.filter((extension) => extension.installState === 'installed'),
+)
+const updates = computed(() => marketplace.updateAvailableExtensions.value)
+const recommended = computed(() =>
+  marketplace.recommendedExtensions.value
+    .filter((extension) => extension.installState !== 'installed')
+    .slice(0, 8),
+)
+const popular = computed(() =>
+  marketplace.extensions.value
+    .filter((extension) => extension.installState !== 'installed')
+    .slice()
+    .sort((left, right) => right.downloads.total - left.downloads.total)
+    .slice(0, 10),
 )
 
-function getIsInstalled(item: (typeof items)[number]) {
-  return marketplace.extensions.value.some(
-    (extension) =>
-      extension.runtime && extension.runtime[item.key as keyof typeof extension.runtime] === true,
-  )
+const navigationItems = computed(() => [
+  { id: 'discover', label: 'Open Discover' },
+  { id: 'browse', label: 'Browse all extensions' },
+  { id: 'installed', label: 'Manage installed extensions' },
+  { id: 'updates', label: 'Review updates' },
+  { id: 'subscriptions', label: 'Manage subscriptions' },
+  { id: 'separator', label: '' },
+  { id: 'refresh', label: 'Refresh Marketplace' },
+  { id: 'clear', label: 'Clear search', disabled: !searching.value },
+])
+const filterItems = computed(() => [
+  {
+    id: 'verified',
+    label: 'Verified publishers',
+    checked: marketplace.verifiedPublisherOnly.value,
+  },
+  {
+    id: 'compatible',
+    label: 'Compatible only',
+    checked: marketplace.compatibilityFilter.value === 'compatible',
+  },
+  { id: 'separator', label: '' },
+  { id: 'free', label: 'Free', checked: marketplace.pricingFilter.value === 'free' },
+  {
+    id: 'subscription',
+    label: 'Subscription',
+    checked: marketplace.pricingFilter.value === 'subscription',
+  },
+  { id: 'all-pricing', label: 'Any pricing', checked: marketplace.pricingFilter.value === 'all' },
+])
+
+function navigate(page: MarketplacePage) {
+  marketplace.setPage(page)
+  marketplace.openMarketplace()
 }
 
-function getIsRecommended(item: (typeof items)[number]) {
-  return marketplace.extensions.value.some(
-    (extension) => item.key in extension && extension[item.key as keyof typeof extension] === true,
-  )
+function handleNavigation(id: string) {
+  if (id === 'refresh') marketplace.refresh()
+  else if (id === 'clear') marketplace.searchQuery.value = ''
+  else navigate(id as MarketplacePage)
 }
 
-function getIsInstalledOrRecommended(item: (typeof items)[number]) {
-  return getIsInstalled(item) || getIsRecommended(item)
+function handleFilter(id: string) {
+  if (id === 'verified')
+    marketplace.verifiedPublisherOnly.value = !marketplace.verifiedPublisherOnly.value
+  if (id === 'compatible') {
+    marketplace.compatibilityFilter.value =
+      marketplace.compatibilityFilter.value === 'compatible' ? 'all' : 'compatible'
+  }
+  if (id === 'free' || id === 'subscription') {
+    marketplace.pricingFilter.value = marketplace.pricingFilter.value === id ? 'all' : id
+  }
+  if (id === 'all-pricing') marketplace.pricingFilter.value = 'all'
+}
+
+function selectExtension(extension: MarketplaceExtension) {
+  marketplace.selectExtension(extension)
+  marketplace.openExtensionDetails(extension, 'persistent')
+}
+
+async function runAction(
+  extension: MarketplaceExtension,
+  action: 'install' | 'open' | 'update' | 'enable' | 'subscribe',
+) {
+  try {
+    if (action === 'install') await marketplace.installExtension(extension.id)
+    if (action === 'open') await marketplace.openExtension(extension)
+    if (action === 'update') await marketplace.updateExtension(extension.id)
+    if (action === 'enable') await marketplace.enableExtension(extension.id)
+    if (action === 'subscribe') selectExtension(extension)
+  } catch (error) {
+    await props.runtime.host.capabilities.notify?.({
+      title: `Could not update ${extension.displayName}`,
+      message: error instanceof Error ? error.message : String(error),
+      tone: 'error',
+    })
+  }
+}
+
+async function manage(extension: MarketplaceExtension, action: string) {
+  if (action === 'manage') selectExtension(extension)
+  if (action === 'open') await marketplace.openExtension(extension)
+  if (action === 'enable') await marketplace.enableExtension(extension.id)
+  if (action === 'disable') await marketplace.disableExtension(extension.id)
+  if (action === 'update') await runAction(extension, 'update')
+  if (action === 'uninstall') await marketplace.uninstallExtension(extension.id)
 }
 </script>
 
 <template>
-  <AlSearchBar class="m-2" />
-  <template v-if="hasInstalledOrRecommended">
-    <Collapsible v-for="item in items" :key="item.key" :default-open="item.key === 'installed'">
-      <CollapsibleTrigger>
-        {{ item.label }}
-        <template #actions>
-          {{ marketplace.extensions.value.length }}
-        </template>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <section v-if="getIsInstalledOrRecommended(item)">
-          <div>
-            <div
-              v-if="filteredExtensions.length === 0"
-              class="grid place-items-center rounded-md border border-dashed border-border p-5 text-center text-sm text-muted-foreground"
-            >
-              No extensions match the current filters.
-            </div>
-            <div v-else class="grid min-h-0 overflow-auto">
-              <AlSelectableItem
-                v-for="extension in filteredExtensions"
-                :key="extension.id"
-                dense
-                :selected="marketplace.selectedExtension.value?.id === extension.id"
-                class="items-start rounded-none"
-                @click="marketplace.openExtensionDetails(extension)"
-                @dblclick="marketplace.openExtensionDetails(extension, 'persistent')"
-              >
-                <div
-                  class="mt-0.5 grid size-8 shrink-0 place-items-center rounded-md border border-border bg-muted"
-                >
-                  <component :is="extensionIcon(extension)" class="size-4" />
-                </div>
-                <div class="min-w-0 flex-1">
-                  <div class="flex min-w-0 items-center gap-2">
-                    <span class="truncate text-sm font-medium font-semibold"
-                      >{{ extension.displayName }}</span
-                    >
-                    <AlBadge size="sm" :tone="statusTone(extension)" class="shrink-0"
-                      >{{ statusLabel(extension) }}
-                    </AlBadge>
-                  </div>
-                  <p class="m-0 truncate text-xs">
-                    <a :href="`/${extension.publisher.name}`" class="font-semibold hover:underline"
-                      >{{ extension.publisher.displayName }}</a
-                    >
-                    <span class="text-muted-foreground italic">· v{{ extension.version }}</span>
-                    <span class="text-muted-foreground"
-                      >·
-                      {{ extension.pricingModel === 'free' ? 'Free' :
-                    extension.pricingModel }}</span
-                    >
-                  </p>
-                  <p class="m-0 mt-0.5 line-clamp-2 text-xs leading-snug text-muted-foreground">
-                    {{ extension.description }}
-                  </p>
-                </div>
-                <AlButton
-                  size="sm"
-                  :variant="primaryAction(extension).variant"
-                  :disabled="marketplace.isLoading.value"
-                  @click.stop="runPrimary(extension)"
-                >
-                  {{ primaryAction(extension).label }}
-                </AlButton>
-              </AlSelectableItem>
-            </div>
-          </div>
-        </section>
-      </CollapsibleContent>
-    </Collapsible>
-  </template>
-  <section
-    v-if="!hasInstalledOrRecommended"
-    class="grid h-full min-h-0 grid-rows-[minmax(0,1fr)] gap-3 p-3"
-  >
-    <AlSidebarSection label="" class="min-h-0 overflow-hidden">
-      <div
-        v-if="filteredExtensions.length === 0"
-        class="grid place-items-center rounded-md border border-dashed border-border p-5 text-center text-sm text-muted-foreground"
+  <div class="marketplace-sidebar-navigator">
+    <header class="sidebar-navigator-header">
+      <strong>Marketplace</strong>
+      <div>
+        <button type="button" aria-label="Refresh Marketplace" @click="marketplace.refresh()">
+          <RefreshCcw />
+        </button>
+        <DropdownMenu :items="navigationItems" class="w-52" @select="handleNavigation">
+          <template #trigger>
+            <button type="button" aria-label="Marketplace actions"><MoreHorizontal /></button>
+          </template>
+        </DropdownMenu>
+      </div>
+    </header>
+
+    <div class="sidebar-search">
+      <Search aria-hidden="true" />
+      <Input
+        v-model="marketplace.searchQuery.value"
+        aria-label="Search Marketplace"
+        placeholder="Search apps and extensions"
+      />
+      <button
+        v-if="searching"
+        type="button"
+        class="search-clear"
+        aria-label="Clear Marketplace search"
+        @click="marketplace.searchQuery.value = ''"
       >
-        No extensions match the current filters.
-      </div>
-      <div v-else class="grid min-h-0 gap-1 overflow-auto pr-1">
-        <AlSelectableItem
-          v-for="extension in filteredExtensions"
+        <X />
+      </button>
+      <DropdownMenu :items="filterItems" class="w-48" @select="handleFilter">
+        <template #trigger>
+          <button type="button" class="search-filter" aria-label="Filter Marketplace results">
+            <Filter />
+          </button>
+        </template>
+      </DropdownMenu>
+    </div>
+
+    <div v-if="marketplace.registryState.value.failures.length" class="sidebar-registry-error">
+      <span>Some registries are unavailable.</span>
+      <button type="button" @click="marketplace.refresh()">Retry</button>
+    </div>
+
+    <div class="sidebar-navigator-content">
+      <template v-if="marketplace.isLoading.value && !marketplace.extensions.value.length">
+        <div v-for="index in 6" :key="index" class="sidebar-row-skeleton">
+          <i />
+          <div><b /><span /><span /></div>
+        </div>
+      </template>
+
+      <MarketplaceSidebarSection
+        v-else-if="searching"
+        :runtime="runtime"
+        title="Search results"
+        :count="marketplace.extensions.value.length"
+        :open="true"
+      >
+        <MarketplaceSidebarItem
+          v-for="extension in marketplace.extensions.value"
           :key="extension.id"
-          dense
+          :runtime="runtime"
+          :extension="extension"
+          mode="search"
           :selected="marketplace.selectedExtension.value?.id === extension.id"
-          class="items-start"
-          @click="marketplace.openExtensionDetails(extension)"
-          @dblclick="marketplace.openExtensionDetails(extension, 'persistent')"
+          @select="selectExtension(extension)"
+          @action="runAction(extension, $event)"
+        />
+        <div v-if="!marketplace.extensions.value.length" class="sidebar-empty">
+          No extensions found for “{{ marketplace.searchQuery.value }}”.
+        </div>
+      </MarketplaceSidebarSection>
+
+      <template v-else>
+        <MarketplaceSidebarSection
+          :runtime="runtime"
+          title="Installed"
+          :count="installed.length"
+          :open="installedOpen"
+          @toggle="installedOpen = !installedOpen"
         >
-          <div
-            class="mt-0.5 grid size-8 shrink-0 place-items-center rounded-md border border-border bg-muted"
-          >
-            <component :is="extensionIcon(extension)" class="size-4" />
+          <MarketplaceSidebarItem
+            v-for="extension in installed"
+            :key="extension.id"
+            :runtime="runtime"
+            :extension="extension"
+            mode="installed"
+            :selected="marketplace.selectedExtension.value?.id === extension.id"
+            @select="selectExtension(extension)"
+            @manage="manage(extension, $event)"
+          />
+          <div v-if="!installed.length" class="sidebar-empty">
+            No extensions installed.
+            <button type="button" @click="navigate('discover')">Explore Marketplace</button>
           </div>
-          <div class="min-w-0 flex-1">
-            <div class="flex min-w-0 items-center gap-2">
-              <span class="truncate text-sm font-medium font-semibold"
-                >{{ extension.displayName }}</span
-              >
-              <AlBadge size="sm" :tone="statusTone(extension)" class="shrink-0"
-                >{{ statusLabel(extension) }}</AlBadge
-              >
-            </div>
-            <p class="m-0 truncate text-xs">
-              <a :href="`/${extension.publisher.name}`" class="font-semibold hover:underline"
-                >{{ extension.publisher.displayName }}</a
-              >
-              <span class="text-muted-foreground italic">· v{{ extension.version }}</span>
-              <span class="text-muted-foreground"
-                >·
-                {{ extension.pricingModel === 'free' ? 'Free' :
-                extension.pricingModel }}</span
-              >
-            </p>
-            <p class="m-0 mt-0.5 line-clamp-2 text-xs leading-snug text-muted-foreground">
-              {{ extension.description }}
-            </p>
+        </MarketplaceSidebarSection>
+
+        <MarketplaceSidebarSection
+          :runtime="runtime"
+          title="Updates"
+          :count="updates.length"
+          :open="updatesOpen"
+          @toggle="updatesOpen = !updatesOpen"
+        >
+          <MarketplaceSidebarItem
+            v-for="extension in updates"
+            :key="extension.id"
+            :runtime="runtime"
+            :extension="extension"
+            mode="update"
+            :selected="marketplace.selectedExtension.value?.id === extension.id"
+            @select="selectExtension(extension)"
+            @action="runAction(extension, $event)"
+          />
+          <div v-if="!updates.length" class="sidebar-empty compact">Everything is up to date.</div>
+        </MarketplaceSidebarSection>
+
+        <MarketplaceSidebarSection
+          :runtime="runtime"
+          title="Recommended"
+          :count="recommended.length || undefined"
+          :open="recommendedOpen"
+          @toggle="recommendedOpen = !recommendedOpen"
+        >
+          <MarketplaceSidebarItem
+            v-for="extension in recommended"
+            :key="extension.id"
+            :runtime="runtime"
+            :extension="extension"
+            mode="recommended"
+            :selected="marketplace.selectedExtension.value?.id === extension.id"
+            @select="selectExtension(extension)"
+            @action="runAction(extension, $event)"
+          />
+          <div v-if="!recommended.length" class="sidebar-empty compact">
+            No recommendations available.
           </div>
-          <AlButton
-            size="sm"
-            :variant="primaryAction(extension).variant"
-            :disabled="marketplace.isLoading.value"
-            @click.stop="runPrimary(extension)"
-          >
-            {{ primaryAction(extension).label }}
-          </AlButton>
-        </AlSelectableItem>
-      </div>
-    </AlSidebarSection>
-  </section>
+        </MarketplaceSidebarSection>
+
+        <MarketplaceSidebarSection
+          v-if="popular.length"
+          :runtime="runtime"
+          title="Popular"
+          :count="popular.length"
+          :open="popularOpen"
+          @toggle="popularOpen = !popularOpen"
+        >
+          <MarketplaceSidebarItem
+            v-for="extension in popular"
+            :key="extension.id"
+            :runtime="runtime"
+            :extension="extension"
+            mode="recommended"
+            :selected="marketplace.selectedExtension.value?.id === extension.id"
+            @select="selectExtension(extension)"
+            @action="runAction(extension, $event)"
+          />
+        </MarketplaceSidebarSection>
+      </template>
+    </div>
+
+    <footer>
+      <span>{{ marketplace.stats.value.totalExtensions }} apps</span>
+      <button type="button" @click="marketplace.installLocalPackage()">
+        Install local package
+      </button>
+    </footer>
+  </div>
 </template>
+
+<style scoped>
+.marketplace-sidebar-navigator {
+  container-type: inline-size;
+  display: grid;
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: 34px auto auto minmax(0, 1fr) 27px;
+  overflow: hidden;
+  background: var(--pane-surface);
+  color: var(--foreground);
+}
+.sidebar-navigator-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7px 0 9px;
+  border-bottom: 1px solid var(--border);
+  background: var(--toolbar-surface);
+}
+.sidebar-navigator-header strong {
+  font-size: 10px;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+.sidebar-navigator-header > div {
+  display: flex;
+  gap: 1px;
+}
+.sidebar-navigator-header button {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.sidebar-navigator-header button:hover {
+  background: var(--hover);
+  color: var(--foreground);
+}
+.sidebar-navigator-header svg {
+  width: 13px;
+}
+.sidebar-search {
+  position: relative;
+  margin: 7px;
+}
+.sidebar-search > svg {
+  position: absolute;
+  z-index: 1;
+  left: 8px;
+  top: 8px;
+  width: 13px;
+  color: var(--text-muted);
+}
+.sidebar-search :deep(input) {
+  height: 29px;
+  padding: 0 49px 0 27px;
+  border-color: var(--border);
+  border-radius: 4px;
+  background: var(--pane-inset);
+  font-size: 10px;
+}
+.sidebar-search :deep(input:focus) {
+  border-color: var(--focus-ring);
+}
+.search-clear,
+.search-filter {
+  position: absolute;
+  top: 3px;
+  display: grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.search-clear {
+  right: 27px;
+}
+.search-filter {
+  right: 3px;
+}
+.search-clear:hover,
+.search-filter:hover {
+  background: var(--hover);
+  color: var(--foreground);
+}
+.search-clear svg,
+.search-filter svg {
+  width: 12px;
+}
+.sidebar-registry-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
+  border-top: 1px solid var(--warning);
+  border-bottom: 1px solid var(--warning);
+  background: color-mix(in srgb, var(--warning) 8%, transparent);
+  color: var(--text-muted);
+  font-size: 8px;
+}
+.sidebar-registry-error button {
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  font-size: 8px;
+  cursor: pointer;
+}
+.sidebar-navigator-content {
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.sidebar-empty {
+  display: grid;
+  gap: 5px;
+  padding: 16px 10px;
+  color: var(--text-muted);
+  font-size: 9px;
+  text-align: center;
+}
+.sidebar-empty.compact {
+  padding: 10px;
+}
+.sidebar-empty button {
+  justify-self: center;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  font-size: 9px;
+  cursor: pointer;
+}
+.sidebar-empty button:hover {
+  text-decoration: underline;
+}
+.sidebar-row-skeleton {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 8px;
+  padding: 8px;
+}
+.sidebar-row-skeleton i {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--pane-inset);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.sidebar-row-skeleton div {
+  display: grid;
+  gap: 4px;
+}
+.sidebar-row-skeleton b,
+.sidebar-row-skeleton span {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--pane-inset);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.sidebar-row-skeleton b {
+  width: 55%;
+}
+.sidebar-row-skeleton span:last-child {
+  width: 35%;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+.marketplace-sidebar-navigator > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  border-top: 1px solid var(--border);
+  background: var(--toolbar-surface);
+  color: var(--text-muted);
+  font-size: 8px;
+}
+.marketplace-sidebar-navigator > footer button {
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 8px;
+  cursor: pointer;
+}
+.marketplace-sidebar-navigator > footer button:hover {
+  color: var(--foreground);
+}
+@container (max-width: 280px) {
+  .marketplace-sidebar-navigator > footer button {
+    display: none;
+  }
+}
+</style>

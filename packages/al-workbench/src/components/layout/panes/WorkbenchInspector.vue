@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 import type { WorkbenchTab } from '../../../core/workbench/contributions'
 import type { WorkbenchLayoutNode } from '../../../core/workbench/shell'
+import WorkbenchExtensionBoundary from '../WorkbenchExtensionBoundary.vue'
 
 import InspectorPanel from './InspectorPanel.vue'
 
@@ -10,12 +11,9 @@ defineOptions({ name: 'WorkbenchInspector' })
 
 const runtime = useWorkbenchRuntime()
 
-const X = runtime.workbench.ui.getIcon('X')
+const X = runtime.workbench.ui.getIcon('lucide:x')
 
-const [AlEmptyState, AlIconButton] = runtime.workbench.ui.getComponents([
-  'AlEmptyState',
-  'AlIconButton',
-])
+const [EmptyState, IconButton] = runtime.workbench.ui.getComponents(['EmptyState', 'IconButton'])
 
 function findActiveTab(node: WorkbenchLayoutNode, activeGroupId: string): WorkbenchTab | null {
   if (node.kind === 'group') {
@@ -49,7 +47,7 @@ const panels = computed(() =>
     class="wb-inspector-pane h-full min-h-0"
   >
     <template #actions>
-      <AlIconButton
+      <IconButton
         label="Close inspector"
         :icon="X"
         variant="ghost"
@@ -58,7 +56,7 @@ const panels = computed(() =>
       />
     </template>
 
-    <div class="wb-inspector-pane__content grid min-h-0 gap-3">
+    <div class="wb-inspector-pane__content grid min-h-0 gap-1.5">
       <WorkbenchExtensionBoundary
         v-for="panel in panels"
         :key="panel.id"
@@ -69,10 +67,10 @@ const panels = computed(() =>
         surface="inspector"
         :pass-through="{ tab: activeTab, runtime }"
       />
-      <AlEmptyState
+      <EmptyState
         v-if="!panels.length"
         title="No inspector panels"
-        description="Extensions can contribute constextual inspector surfaces for the active tab kind."
+        description="Extensions can contribute contextual inspector surfaces for the active tab kind."
       />
     </div>
   </InspectorPanel>

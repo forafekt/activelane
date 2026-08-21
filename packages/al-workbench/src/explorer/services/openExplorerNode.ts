@@ -64,7 +64,7 @@ export function openExplorerFileInfo(runtime: WorkbenchRuntimeApi, node: Explore
       id: `file:${node.uri}`,
       kind: EXPLORER_FILE_TAB_KIND,
       title: node.label,
-      icon: runtime.workbench.ui.getIcon(node.icon ?? 'File'),
+      icon: runtime.workbench.ui.getIcon(node.icon ?? 'lucide:file'),
       closable: true,
       preview: true,
       input: {
