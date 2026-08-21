@@ -16,14 +16,11 @@ const props = defineProps<{
 
 const runtime = useWorkbenchRuntime()
 
-const [AlIconButton, ScrollArea] = runtime.workbench.ui.getComponents([
-  'IconButton',
-  'ScrollArea',
-])
-const ChevronLeft = runtime.workbench.ui.getIcon('lucide.chevron-left')
-const ChevronRight = runtime.workbench.ui.getIcon('lucide.chevron-right')
-const Plus = runtime.workbench.ui.getIcon('lucide.plus')
-const Settings = runtime.workbench.ui.getIcon('lucide.settings')
+const [IconButton, ScrollArea] = runtime.workbench.ui.getComponents(['IconButton', 'ScrollArea'])
+const ChevronLeft = runtime.workbench.ui.getIcon('lucide:chevron-left')
+const ChevronRight = runtime.workbench.ui.getIcon('lucide:chevron-right')
+const Plus = runtime.workbench.ui.getIcon('lucide:plus')
+const Settings = runtime.workbench.ui.getIcon('lucide:settings')
 
 const activities = useWorkbenchActivities()
 const items = activities.items
@@ -76,7 +73,7 @@ function closeTab(tab: WorkbenchTab) {
     :aria-label="expanded ? 'Expanded activity rail' : 'Activity rail'"
   >
     <div class="wb-activity-bar__header">
-      <AlIconButton
+      <IconButton
         :label="expanded ? 'Collapse activity rail' : 'Expand activity rail'"
         :icon="expanded ? ChevronLeft : ChevronRight"
         variant="ghost"

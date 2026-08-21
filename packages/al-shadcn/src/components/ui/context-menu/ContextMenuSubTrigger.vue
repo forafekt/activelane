@@ -6,7 +6,7 @@ import { ContextMenuSubTrigger, useForwardProps } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import { cn } from '../../../lib/utils'
 
-const ChevronRight = getIcon('lucide.chevron-right')
+const ChevronRight = getIcon('lucide:chevron-right')
 
 const props = defineProps<
   ContextMenuSubTriggerProps & { class?: HTMLAttributes['class']; inset?: boolean }

@@ -10,10 +10,10 @@ const props = defineProps<{
   runtime: WorkbenchRuntimeApi
 }>()
 
-const File = props.runtime.workbench.ui.getIcon('lucide.file')
-const Copy = props.runtime.workbench.ui.getIcon('lucide.copy')
-const ExternalLink = props.runtime.workbench.ui.getIcon('lucide.external-link')
-const [AlBadge] = props.runtime.workbench.ui.getComponents(['Badge'])
+const File = props.runtime.workbench.ui.getIcon('lucide:file')
+const Copy = props.runtime.workbench.ui.getIcon('lucide:copy')
+const ExternalLink = props.runtime.workbench.ui.getIcon('lucide:external-link')
+const [Badge] = props.runtime.workbench.ui.getComponents(['Badge'])
 
 const path = computed(() => String(props.tab.input?.path ?? props.tab.input?.uri ?? ''))
 const size = computed(() =>
@@ -37,7 +37,7 @@ function reveal() {
         <h1>{{ tab.title }}</h1>
         <p>{{ path }}</p>
       </div>
-      <AlBadge variant="outline">Preview</AlBadge>
+      <Badge variant="outline">Preview</Badge>
     </header>
 
     <dl class="explorer-file-tab__meta">

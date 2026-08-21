@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { cn } from '../../lib/utils'
 
-defineOptions({ name: 'AlTextarea' })
+defineOptions({ name: 'Textarea' })
 
 withDefaults(
   defineProps<{
@@ -27,7 +27,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
     :disabled="disabled"
     :class="
       cn(
-        'flex min-h-16 w-full rounded-[var(--control-radius,0.3125rem)] border border-[var(--control-border,var(--input))] bg-[var(--control-surface,var(--background))] px-2.5 py-2 text-xs leading-relaxed text-foreground transition-[border-color,background-color] placeholder:text-muted-foreground/75 hover:border-foreground/20 focus-visible:border-[var(--focus-outline,var(--ring))] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-1px] focus-visible:outline-[var(--focus-outline,var(--ring))] disabled:cursor-not-allowed disabled:opacity-50',
+        'flex min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50',
         $props.class,
       )
     "

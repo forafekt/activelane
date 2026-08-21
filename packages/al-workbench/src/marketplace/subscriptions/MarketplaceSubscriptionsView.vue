@@ -12,9 +12,9 @@ const records = ref<
   Array<{ extension: MarketplaceExtension; subscription: WorkbenchSubscription }>
 >([])
 const loading = ref(true)
-const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
-const CreditCard = props.runtime.workbench.ui.getIcon('lucide.credit-card')
-const WalletCards = props.runtime.workbench.ui.getIcon('lucide.wallet-cards')
+const [Badge, Button] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
+const CreditCard = props.runtime.workbench.ui.getIcon('lucide:credit-card')
+const WalletCards = props.runtime.workbench.ui.getIcon('lucide:wallet-cards')
 
 onMounted(async () => {
   const provider = props.runtime.host.capabilities.subscriptions
@@ -64,8 +64,8 @@ function price(item: (typeof records.value)[number]) {
               {{ item.extension.displayName }}
               · {{ planFor(item)?.name || item.subscription.planId }}
             </h2>
-            <AlBadge :tone="item.subscription.cancelAtPeriodEnd ? 'warning' : 'success'"
-              >{{ item.subscription.cancelAtPeriodEnd ? 'Cancels at period end' : 'Active' }}</AlBadge
+            <Badge :tone="item.subscription.cancelAtPeriodEnd ? 'warning' : 'success'"
+              >{{ item.subscription.cancelAtPeriodEnd ? 'Cancels at period end' : 'Active' }}</Badge
             >
           </div>
           <strong>{{ price(item) }}</strong>
@@ -78,13 +78,13 @@ function price(item: (typeof records.value)[number]) {
           </p>
         </div>
         <div class="subscription-actions">
-          <AlButton size="sm" @click="marketplace.openExtensionDetails(item.extension)"
-            >Manage plan</AlButton
-          ><AlButton
+          <Button size="sm" @click="marketplace.openExtensionDetails(item.extension)"
+            >Manage plan</Button
+          ><Button
             size="sm"
             variant="outline"
             @click="marketplace.openExtensionDetails(item.extension)"
-            >View application</AlButton
+            >View application</Button
           >
         </div>
       </article>
@@ -93,11 +93,8 @@ function price(item: (typeof records.value)[number]) {
       <div><WalletCards /></div>
       <h2>No active subscriptions</h2>
       <p>Applications with paid plans will appear here after you subscribe.</p>
-      <AlButton
-        :leading-icon="CreditCard"
-        variant="outline"
-        @click="marketplace.setPage('discover')"
-        >Explore applications</AlButton
+      <Button :leading-icon="CreditCard" variant="outline" @click="marketplace.setPage('discover')"
+        >Explore applications</Button
       >
     </div>
   </div>

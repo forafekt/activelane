@@ -9,7 +9,7 @@ extension behavior, persistence, and host integration do not belong here.
 
 ```ts
 import '@activelane/shadcn/styles.css'
-import { AlButton, Dialog, DialogContent } from '@activelane/shadcn'
+import { Button, Dialog, DialogContent } from '@activelane/shadcn'
 ```
 
 The root export is intentional and usage-driven. Generated shadcn components are retained only

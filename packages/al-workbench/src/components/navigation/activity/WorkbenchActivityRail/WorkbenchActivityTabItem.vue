@@ -17,7 +17,7 @@ const emit = defineEmits<{
 }>()
 
 const runtime = useWorkbenchRuntime()
-const X = runtime.workbench.ui.getIcon('lucide.x')
+const X = runtime.workbench.ui.getIcon('lucide:x')
 
 const favicon = computed(() => {
   const value = props.tab.input?.favicon
@@ -29,7 +29,7 @@ const icon = computed(() => {
   try {
     return runtime.workbench.ui.getIcon(props.tab.icon)
   } catch {
-    return runtime.workbench.ui.getIcon('lucide.globe')
+    return runtime.workbench.ui.getIcon('lucide:globe')
   }
 })
 </script>

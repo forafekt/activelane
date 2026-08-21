@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlPanelHeader } from '@activelane/shadcn'
+import { PanelHeader } from '@activelane/shadcn'
 
 defineOptions({ name: 'PaneHeader' })
 
@@ -11,8 +11,8 @@ defineProps<{
 </script>
 
 <template>
-  <AlPanelHeader :title="title" :description="description" :sticky="sticky">
+  <PanelHeader :title="title" :description="description" :sticky="sticky">
     <slot />
     <template v-if="$slots.actions" #actions><slot name="actions" /></template>
-  </AlPanelHeader>
+  </PanelHeader>
 </template>

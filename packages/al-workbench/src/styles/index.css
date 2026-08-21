@@ -1,5 +1,6 @@
 @import "@activelane/shadcn/styles.css";
 
+@import "./foundation/atmosphere.css";
 @import "./foundation/tokens.css";
 @import "./foundation/base.css";
 @import "./shell/workbench.css";

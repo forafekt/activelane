@@ -3,7 +3,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { badgeVariants } from '../../lib/variants'
 
-defineOptions({ name: 'AlBadge' })
+defineOptions({ name: 'Badge' })
 
 type BadgeVariants = VariantProps<typeof badgeVariants>
 

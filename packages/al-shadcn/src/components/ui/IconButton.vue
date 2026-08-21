@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { IconComponent } from '../../componentTypes'
+import type { IconComponent } from '../../componentTypes.ts'
 import Button from './Button.vue'
 
-defineOptions({ name: 'AlIconButton' })
+defineOptions({ name: 'IconButton' })
 
 withDefaults(
   defineProps<{

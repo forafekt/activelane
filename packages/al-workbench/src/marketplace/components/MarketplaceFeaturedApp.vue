@@ -7,9 +7,9 @@ import { extensionIcon } from './MarketplaceShared'
 
 const props = defineProps<{ runtime: WorkbenchRuntimeApi; extension: MarketplaceExtension }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
-const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
-const ArrowRight = props.runtime.workbench.ui.getIcon('lucide.arrow-right')
-const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide.badge-check')
+const [Badge, Button] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
+const ArrowRight = props.runtime.workbench.ui.getIcon('lucide:arrow-right')
+const BadgeCheck = props.runtime.workbench.ui.getIcon('lucide:badge-check')
 const media = props.extension.gallery.find((item) => item.type === 'image')
 const mediaFailed = ref(false)
 </script>
@@ -17,7 +17,7 @@ const mediaFailed = ref(false)
 <template>
   <article class="marketplace-featured">
     <div class="featured-copy">
-      <AlBadge variant="outline">Featured application</AlBadge>
+      <Badge variant="outline">Featured application</Badge>
       <div class="featured-heading">
         <div class="featured-icon"><component :is="extensionIcon(extension)" /></div>
         <div>
@@ -30,8 +30,8 @@ const mediaFailed = ref(false)
       </div>
       <p>{{ extension.longDescription || extension.description }}</p>
       <div class="featured-actions">
-        <AlButton :trailing-icon="ArrowRight" @click="marketplace.openExtensionDetails(extension)"
-          >Explore {{ extension.displayName }}</AlButton
+        <Button :trailing-icon="ArrowRight" @click="marketplace.openExtensionDetails(extension)"
+          >Explore {{ extension.displayName }}</Button
         >
         <span v-if="extension.plans.some((plan) => plan.priceMinor)">Plans available</span
         ><span v-else>Free to install</span>

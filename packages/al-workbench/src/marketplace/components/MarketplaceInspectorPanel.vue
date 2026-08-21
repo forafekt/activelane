@@ -13,7 +13,7 @@ const props = defineProps<{
   runtime: WorkbenchRuntimeApi
 }>()
 
-const [AlBadge, AlButton, AlCard, AlKeyValueList, AlSection, AlSectionHeader, AlStatBlock] =
+const [Badge, Button, Card, KeyValueList, Section, SectionHeader, StatBlock] =
   props.runtime.workbench.ui.getComponents([
     'Badge',
     'Button',
@@ -24,10 +24,10 @@ const [AlBadge, AlButton, AlCard, AlKeyValueList, AlSection, AlSectionHeader, Al
     'StatBlock',
   ])
 
-const AlertCircle = props.runtime.workbench.ui.getIcon('lucide.circle-alert')
-const Layers3 = props.runtime.workbench.ui.getIcon('lucide.layers-3')
-const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
-const Sparkles = props.runtime.workbench.ui.getIcon('lucide.sparkles')
+const AlertCircle = props.runtime.workbench.ui.getIcon('lucide:circle-alert')
+const Layers3 = props.runtime.workbench.ui.getIcon('lucide:layers-3')
+const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide:refresh-ccw')
+const Sparkles = props.runtime.workbench.ui.getIcon('lucide:sparkles')
 
 const marketplace = useMarketplace({ runtime: props.runtime })
 
@@ -46,33 +46,33 @@ const problemExtensions = computed(() =>
 
 <template>
   <section class="grid gap-4 p-3">
-    <AlCard class="p-3">
+    <Card class="p-3">
       <div class="flex items-center justify-between gap-3">
         <div class="flex min-w-0 items-center gap-2">
           <Sparkles class="size-4" />
           <h3 class="m-0 truncate text-sm font-semibold">Extension Runtime</h3>
         </div>
-        <AlButton
+        <Button
           size="sm"
           variant="ghost"
           :loading="marketplace.isLoading.value"
           @click="marketplace.refresh()"
         >
           <RefreshCcw class="size-4" />
-        </AlButton>
+        </Button>
       </div>
-    </AlCard>
+    </Card>
 
     <div class="grid grid-cols-2 gap-2">
-      <AlStatBlock label="Installed" :value="marketplace.stats.value.installedExtensions" />
-      <AlStatBlock label="Enabled" :value="marketplace.stats.value.enabledExtensions" />
-      <AlStatBlock label="Updates" :value="marketplace.stats.value.updateAvailableExtensions" />
-      <AlStatBlock label="Errors" :value="marketplace.stats.value.errorExtensions" />
+      <StatBlock label="Installed" :value="marketplace.stats.value.installedExtensions" />
+      <StatBlock label="Enabled" :value="marketplace.stats.value.enabledExtensions" />
+      <StatBlock label="Updates" :value="marketplace.stats.value.updateAvailableExtensions" />
+      <StatBlock label="Errors" :value="marketplace.stats.value.errorExtensions" />
     </div>
 
-    <AlSection v-if="selected">
-      <AlSectionHeader title="Selected Extension" />
-      <AlCard class="mt-2 grid gap-3 p-3">
+    <Section v-if="selected">
+      <SectionHeader title="Selected Extension" />
+      <Card class="mt-2 grid gap-3 p-3">
         <div class="flex items-start gap-3">
           <div class="grid size-8 place-items-center rounded-md border border-border bg-muted">
             <Layers3 class="size-4" />
@@ -86,23 +86,23 @@ const problemExtensions = computed(() =>
           </div>
         </div>
         <div class="flex flex-wrap gap-1.5">
-          <AlBadge :tone="statusTone(selected)">{{ statusLabel(selected) }}</AlBadge>
-          <AlBadge v-if="selected.updateAvailable" tone="warning"
-            >Update {{ selected.updateAvailable.version }}</AlBadge
+          <Badge :tone="statusTone(selected)">{{ statusLabel(selected) }}</Badge>
+          <Badge v-if="selected.updateAvailable" tone="warning"
+            >Update {{ selected.updateAvailable.version }}</Badge
           >
-          <AlBadge v-if="selected.errors.length" tone="destructive"
+          <Badge v-if="selected.errors.length" tone="destructive"
             >{{ selected.errors.length }}
-            errors</AlBadge
+            errors</Badge
           >
         </div>
-        <AlButton size="sm" variant="outline" @click="marketplace.openExtensionDetails(selected)"
-          >Open Details</AlButton
+        <Button size="sm" variant="outline" @click="marketplace.openExtensionDetails(selected)"
+          >Open Details</Button
         >
-      </AlCard>
-    </AlSection>
+      </Card>
+    </Section>
 
-    <AlSection>
-      <AlSectionHeader title="Attention" />
+    <Section>
+      <SectionHeader title="Attention" />
       <div v-if="problemExtensions.length" class="mt-2 grid gap-2">
         <button
           v-for="extension in problemExtensions"
@@ -113,9 +113,9 @@ const problemExtensions = computed(() =>
         >
           <div class="flex items-center justify-between gap-2">
             <span class="truncate text-sm font-medium">{{ extension.displayName }}</span>
-            <AlBadge :tone="extension.status === 'error' ? 'destructive' : 'warning'">
+            <Badge :tone="extension.status === 'error' ? 'destructive' : 'warning'">
               {{ extension.status === 'error' ? 'Error' : 'Update' }}
-            </AlBadge>
+            </Badge>
           </div>
           <p class="m-0 mt-1 text-xs text-muted-foreground">
             {{ extension.errors[0]?.message || extension.updateAvailable?.changelog }}
@@ -129,11 +129,11 @@ const problemExtensions = computed(() =>
         <Sparkles class="size-4" />
         No extension issues.
       </div>
-    </AlSection>
+    </Section>
 
-    <AlSection>
-      <AlSectionHeader title="Runtime Records" />
-      <AlKeyValueList
+    <Section>
+      <SectionHeader title="Runtime Records" />
+      <KeyValueList
         class="mt-2"
         :items="[
           { key: 'discovered', label: 'Discovered', value: runtime.extensions.discovered.length },
@@ -143,13 +143,13 @@ const problemExtensions = computed(() =>
           { key: 'synced', label: 'Last Sync', value: formatDate(new Date().toISOString()) },
         ]"
       />
-    </AlSection>
+    </Section>
 
-    <AlSection v-if="marketplace.error.value">
-      <AlCard class="flex gap-3 p-3">
+    <Section v-if="marketplace.error.value">
+      <Card class="flex gap-3 p-3">
         <AlertCircle class="size-4 text-destructive" />
         <p class="m-0 text-sm text-muted-foreground">{{ marketplace.error.value }}</p>
-      </AlCard>
-    </AlSection>
+      </Card>
+    </Section>
   </section>
 </template>

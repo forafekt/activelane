@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
-import { AlButton } from '@activelane/shadcn'
+import { Button } from '@activelane/shadcn'
 
 const Download = getIcon('lucide.download')
 const Upload = getIcon('lucide.upload')
@@ -33,7 +33,7 @@ const emit = defineEmits<{
         @input="emit('update:importDraft', ($event.target as HTMLTextAreaElement).value)"
       />
       <div class="flex items-center gap-2">
-        <AlButton size="sm" @click="emit('import')">Import</AlButton>
+        <Button size="sm" @click="emit('import')">Import</Button>
         <span class="text-xs text-muted-foreground">{{ importMessage }}</span>
       </div>
     </div>

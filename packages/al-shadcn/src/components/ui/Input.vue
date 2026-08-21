@@ -3,7 +3,7 @@ import type { HTMLAttributes } from 'vue'
 import { cn } from '../../lib/utils'
 import { inputClass } from '../../lib/variants'
 
-defineOptions({ name: 'AlInput' })
+defineOptions({ name: 'Input' })
 
 defineProps<{
   modelValue?: string | number

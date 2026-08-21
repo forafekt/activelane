@@ -8,13 +8,13 @@ defineOptions({ name: 'WorkbenchSidebar' })
 
 const runtime = useWorkbenchRuntime()
 
-const ChevronsUpDown = runtime.workbench.ui.getIcon('lucide.chevrons-up-down')
+const ChevronsUpDown = runtime.workbench.ui.getIcon('lucide:chevrons-up-down')
 
 const [
-  AlEmptyState,
-  AlIconButton,
-  AlPanelHeader,
-  AlScrollArea,
+  EmptyState,
+  IconButton,
+  PanelHeader,
+  ScrollArea,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -51,7 +51,7 @@ const [
   'ContextMenuLabel',
   'ContextMenuSeparator',
   'ContextMenuTrigger',
-  'DropdownMenuRoot',
+  'DropdownMenu',
   'DropdownMenuContent',
   'DropdownMenuItem',
   'DropdownMenuLabel',
@@ -119,11 +119,11 @@ watchEffect(() => {
 <template>
   <Sidebar v-if="activeView" collapsible="none" class="wb-sidebar-pane static flex h-full">
     <SidebarHeader class="wb-sidebar-pane__header p-0">
-      <AlPanelHeader :title="activeView.title" class="border-0">
+      <PanelHeader :title="activeView.title" class="border-0">
         <template #actions>
           <DropdownMenu v-if="activityViews.length > 1">
             <DropdownMenuTrigger as-child>
-              <AlIconButton
+              <IconButton
                 label="Switch sidebar view"
                 :icon="ChevronsUpDown"
                 variant="ghost"
@@ -147,7 +147,7 @@ watchEffect(() => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <AlIconButton
+          <IconButton
             v-for="action in activeView.actions ?? []"
             :key="action.id"
             :label="action.title"
@@ -157,11 +157,11 @@ watchEffect(() => {
             @click="runtime.commands.execute(action.commandId)"
           />
         </template>
-      </AlPanelHeader>
+      </PanelHeader>
     </SidebarHeader>
 
     <SidebarContent class="wb-sidebar-pane__content">
-      <AlScrollArea class="flex-1">
+      <ScrollArea class="flex-1">
         <SidebarGroup v-if="activityViews.length > 1" class="wb-sidebar-pane__view-group">
           <Collapsible default-open>
             <SidebarGroupLabel as-child>
@@ -216,11 +216,11 @@ watchEffect(() => {
             :pass-through="{ runtime }"
           />
         </footer>
-      </AlScrollArea>
+      </ScrollArea>
     </SidebarContent>
   </Sidebar>
 
-  <AlEmptyState
+  <EmptyState
     v-else
     class="m-0 h-full rounded-none border-0"
     title="No sidebar views"

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button } from '@activelane/shadcn'
 import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import { useWorkbenchMenus } from '../../../composables/useWorkbenchMenus'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
@@ -17,7 +18,7 @@ const props = defineProps<{
 const runtime = useWorkbenchRuntime()
 
 const [
-  AlIconButton,
+  IconButton,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -29,7 +30,7 @@ const [
   DropdownMenuTrigger,
 ] = runtime.workbench.ui.getComponents([
   'IconButton',
-  'DropdownMenuRoot',
+  'DropdownMenu',
   'DropdownMenuContent',
   'DropdownMenuItem',
   'DropdownMenuLabel',
@@ -124,7 +125,7 @@ onBeforeUnmount(() => {
 
 <template>
   <nav v-if="labels" class="wb-global-menu-bar" aria-label="Application menu">
-    <button
+    <Button
       v-for="group in groups"
       :key="group.id"
       type="button"
@@ -135,7 +136,7 @@ onBeforeUnmount(() => {
       @pointerenter="hoverGroup(group.id, $event)"
     >
       {{ group.label }}
-    </button>
+    </Button>
 
     <Teleport to="body">
       <div
@@ -200,9 +201,9 @@ onBeforeUnmount(() => {
 
   <DropdownMenu v-else :modal="false">
     <DropdownMenuTrigger as-child>
-      <AlIconButton
+      <IconButton
         label="Workbench menu"
-        :icon="runtime.workbench.ui.getIcon('lucide.menu')"
+        :icon="runtime.workbench.ui.getIcon('lucide:menu')"
         size="icon"
         variant="ghost"
       />

@@ -12,11 +12,11 @@ const props = defineProps<{
   runtime: WorkbenchRuntimeApi
 }>()
 
-const ChevronRight = props.runtime.workbench.ui.getIcon('lucide.chevron-right')
-const RefreshCw = props.runtime.workbench.ui.getIcon('lucide.refresh-cw')
-const FoldVertical = props.runtime.workbench.ui.getIcon('lucide.fold-vertical')
-const AlertTriangle = props.runtime.workbench.ui.getIcon('lucide.triangle-alert')
-const AlIconButton = props.runtime.workbench.ui.getComponent('IconButton')
+const ChevronRight = props.runtime.workbench.ui.getIcon('lucide:chevron-right')
+const RefreshCw = props.runtime.workbench.ui.getIcon('lucide:refresh-cw')
+const FoldVertical = props.runtime.workbench.ui.getIcon('lucide:fold-vertical')
+const AlertTriangle = props.runtime.workbench.ui.getIcon('lucide:triangle-alert')
+const IconButton = props.runtime.workbench.ui.getComponent('IconButton')
 
 const providers = computed(() => props.runtime.explorer.state.providers)
 const providerRootRows = computed<Record<string, ExplorerNode[]>>(() => {
@@ -73,14 +73,14 @@ function providerChildren(provider: ExplorerProvider) {
           <span>{{ provider.title }}</span>
         </button>
         <div class="explorer-provider__actions">
-          <AlIconButton
+          <IconButton
             label="Refresh"
             :icon="RefreshCw"
             variant="ghost"
             size="icon-xs"
             @click="runtime.explorer.refresh(provider.id)"
           />
-          <AlIconButton
+          <IconButton
             label="Collapse all"
             :icon="FoldVertical"
             variant="ghost"

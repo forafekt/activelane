@@ -56,7 +56,7 @@ function openTextTab(
       id: handle.path ? `file:text:${handle.path}` : `untitled:${Date.now()}`,
       kind: WORKBENCH_TEXT_FILE_TAB_KIND,
       title: name,
-      icon: runtime.workbench.ui.getIcon('lucide.file-text'),
+      icon: runtime.workbench.ui.getIcon('lucide:file-text'),
       closable: true,
       preview: false,
       dirty,

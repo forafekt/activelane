@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { cn } from '../../lib/utils'
 
-defineOptions({ name: 'AlSidebarSection' })
+defineOptions({ name: 'SidebarSection' })
 
 defineProps<{
   label?: string

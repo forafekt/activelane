@@ -8,12 +8,12 @@ import WorkbenchTabIndicator from './WorkbenchTabIndicator.vue'
 defineOptions({ name: 'WorkbenchTabItem' })
 
 const runtime = useWorkbenchRuntime()
-const Lock = runtime.workbench.ui.getIcon('lucide.lock')
-const Pin = runtime.workbench.ui.getIcon('lucide.pin')
-const Shield = runtime.workbench.ui.getIcon('lucide.shield')
-const Snowflake = runtime.workbench.ui.getIcon('lucide.snowflake')
-const X = runtime.workbench.ui.getIcon('lucide.x')
-const [AlIconButton, ContextMenu, ContextMenuTrigger] = runtime.workbench.ui.getComponents([
+const Lock = runtime.workbench.ui.getIcon('lucide:lock')
+const Pin = runtime.workbench.ui.getIcon('lucide:pin')
+const Shield = runtime.workbench.ui.getIcon('lucide:shield')
+const Snowflake = runtime.workbench.ui.getIcon('lucide:snowflake')
+const X = runtime.workbench.ui.getIcon('lucide:x')
+const [IconButton, ContextMenu, ContextMenuTrigger] = runtime.workbench.ui.getComponents([
   'IconButton',
   'ContextMenu',
   'ContextMenuTrigger',
@@ -102,7 +102,7 @@ const computedClass = computed(() => {
           <Lock v-if="tab.locked" class="wb-tab__state-icon" aria-label="Locked tab" />
           <Shield v-if="tab.protection" class="wb-tab__state-icon" aria-label="Protected tab" />
         </button>
-        <AlIconButton
+        <IconButton
           v-if="tab.closable !== false && !closeBlocked"
           label="Close tab"
           :icon="X"

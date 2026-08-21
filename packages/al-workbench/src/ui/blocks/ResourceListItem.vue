@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlBadge, AlSelectableItem } from '@activelane/shadcn'
+import { Badge, SelectableItem } from '@activelane/shadcn'
 import type { Component } from 'vue'
 
 defineOptions({ name: 'ResourceListItem' })
@@ -22,7 +22,7 @@ defineEmits<{ select: [] }>()
 
 <template>
   <div class="group flex min-w-0 items-center gap-0.5">
-    <AlSelectableItem
+    <SelectableItem
       dense
       :selected="selected"
       :disabled="disabled"
@@ -36,9 +36,9 @@ defineEmits<{ select: [] }>()
           {{ description }}
         </div>
       </div>
-      <AlBadge v-if="badge !== undefined" variant="outline">{{ badge }}</AlBadge>
+      <Badge v-if="badge !== undefined" variant="outline">{{ badge }}</Badge>
       <slot />
-    </AlSelectableItem>
+    </SelectableItem>
     <div
       v-if="$slots.actions"
       class="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"

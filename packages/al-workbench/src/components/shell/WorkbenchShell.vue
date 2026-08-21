@@ -23,7 +23,7 @@ const props = withDefaults(
   },
 )
 
-const [SidebarProvider] = props.runtime.workbench.ui.getComponents(['SidebarProvider'])
+const SidebarProvider = props.runtime.workbench.ui.getComponent('SidebarProvider')
 
 provideWorkbenchRuntime(props.runtime)
 const launcher = createApplicationRegistryService(props.runtime)
@@ -64,13 +64,20 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="wb-shell-root">
+  <div data-workbench-part="root" class="wb-shell-root">
+    <div class="wb-shell-atmosphere"></div>
+
     <slot name="window-header" :host="props.host">
       <WorkbenchWindowHeader :host="props.host" />
     </slot>
-    <div class="wb-shell-container">
+    <div data-workbench-part="container" class="wb-shell-container">
       <SidebarProvider :open="sidebarOpen" @update:open="sidebarOpen = $event">
-        <section ref="hostRef" :class="shellClass" :data-host-mode="shellRuntime.host.mode">
+        <section
+          data-workbench-part="layout"
+          ref="hostRef"
+          :class="shellClass"
+          :data-host-mode="shellRuntime.host.mode"
+        >
           <WorkbenchLayout />
           <LauncherOverlay />
           <WorkbenchTabWorkspaceDialog />

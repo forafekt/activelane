@@ -110,7 +110,7 @@ onBeforeUnmount(cleanup)
       </p>
       <h3 class="m-0 text-sm font-semibold tracking-tight text-foreground">Surface failed</h3>
       <p class="m-0 text-sm leading-relaxed text-muted-foreground">{{ errorMessage }}</p>
-      <AlButton
+      <Button
         type="button"
         size="sm"
         variant="secondary"
@@ -118,7 +118,7 @@ onBeforeUnmount(cleanup)
         @click="mountSurface"
       >
         Retry surface
-      </AlButton>
+      </Button>
     </section>
   </div>
 </template>

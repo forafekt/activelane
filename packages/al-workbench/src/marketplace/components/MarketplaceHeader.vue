@@ -5,10 +5,10 @@ import { useMarketplace } from '../composables/useMarketplaceStore'
 const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const emit = defineEmits<{ search: [] }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
-const [AlButton, AlInput] = props.runtime.workbench.ui.getComponents(['Button', 'Input'])
-const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
-const Search = props.runtime.workbench.ui.getIcon('lucide.search')
-const WalletCards = props.runtime.workbench.ui.getIcon('lucide.wallet-cards')
+const [Button, Input] = props.runtime.workbench.ui.getComponents(['Button', 'Input'])
+const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide:refresh-ccw')
+const Search = props.runtime.workbench.ui.getIcon('lucide:search')
+const WalletCards = props.runtime.workbench.ui.getIcon('lucide:wallet-cards')
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const WalletCards = props.runtime.workbench.ui.getIcon('lucide.wallet-cards')
     </div>
     <div class="marketplace-search">
       <Search aria-hidden="true" />
-      <AlInput
+      <Input
         v-model="marketplace.searchQuery.value"
         aria-label="Search marketplace"
         placeholder="Search apps, integrations and publishers"
@@ -32,15 +32,15 @@ const WalletCards = props.runtime.workbench.ui.getIcon('lucide.wallet-cards')
       <kbd>⌘ K</kbd>
     </div>
     <div class="marketplace-header-actions">
-      <AlButton
+      <Button
         variant="ghost"
         size="sm"
         :leading-icon="WalletCards"
         @click="marketplace.setPage('subscriptions')"
       >
         Subscriptions
-      </AlButton>
-      <AlButton
+      </Button>
+      <Button
         variant="ghost"
         size="sm"
         :leading-icon="RefreshCcw"

@@ -6,7 +6,7 @@ import IconButton from '../ui/IconButton.vue'
 const Search = getIcon('lucide.search')
 const X = getIcon('lucide.x')
 
-defineOptions({ name: 'AlSearchBar' })
+defineOptions({ name: 'SearchBar' })
 
 withDefaults(
   defineProps<{

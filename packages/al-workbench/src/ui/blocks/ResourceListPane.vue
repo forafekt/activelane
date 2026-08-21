@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlScrollArea, AlSearchBar, AlTabs } from '@activelane/shadcn'
+import { ScrollArea, SearchBar, Tabs } from '@activelane/shadcn'
 import PaneHeader from './PaneHeader.vue'
 import PaneToolbar from './PaneToolbar.vue'
 
@@ -36,7 +36,7 @@ const emit = defineEmits<{
       <template v-if="$slots.actions" #actions><slot name="actions" /></template>
     </PaneHeader>
     <PaneToolbar v-if="search !== undefined || $slots.toolbar">
-      <AlSearchBar
+      <SearchBar
         v-if="search !== undefined"
         :model-value="search"
         :placeholder="searchPlaceholder"
@@ -46,8 +46,8 @@ const emit = defineEmits<{
       <slot name="toolbar" />
       <template v-if="$slots.toolbarActions" #actions><slot name="toolbarActions" /></template>
     </PaneToolbar>
-    <AlScrollArea class="min-h-0">
-      <AlTabs
+    <ScrollArea class="min-h-0">
+      <Tabs
         v-if="tabs?.length"
         :model-value="activeTab"
         :tabs="tabs"
@@ -57,9 +57,9 @@ const emit = defineEmits<{
         <template v-for="tab in tabs" :key="tab.value" #[tab.value]>
           <slot :name="`tab-${tab.value}`" />
         </template>
-      </AlTabs>
+      </Tabs>
       <slot v-else />
-    </AlScrollArea>
+    </ScrollArea>
     <footer
       v-if="$slots.footer"
       class="flex min-h-[var(--workbench-toolbar-height)] items-center border-t border-border bg-[var(--toolbar-surface,var(--background))] px-2.5 py-1 text-[0.6875rem] text-muted-foreground"

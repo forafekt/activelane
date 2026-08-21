@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
-import { AlButton } from '@activelane/shadcn'
+import { Button } from '@activelane/shadcn'
 
 defineOptions({ name: 'WorkbenchBrowserErrorState' })
 
@@ -21,9 +21,9 @@ const ExternalLink = getIcon('lucide.external-link')
     <h2>{{ title ?? 'This page cannot be shown inside ActiveLane' }}</h2>
     <p>{{ message }}</p>
     <p v-if="url" class="browser-error__url">{{ url }}</p>
-    <AlButton variant="outline" size="sm" :leading-icon="ExternalLink" @click="emit('external')">
+    <Button variant="outline" size="sm" :leading-icon="ExternalLink" @click="emit('external')">
       Open Externally
-    </AlButton>
+    </Button>
   </section>
 </template>
 

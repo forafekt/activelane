@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlIconButton } from '@activelane/shadcn'
+import { IconButton } from '@activelane/shadcn'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 import type { WorkbenchWindowHost } from '../../../core/host/types'
 import { getWorkbenchIcon, getWorkbenchIcons } from '../../../workbenchIcons'
@@ -36,7 +36,7 @@ async function closeWindow() {
 
 <template>
   <div class="flex flex-row gap-2 ml-2 pl-2 border-l" data-workbench-no-drag>
-    <AlIconButton
+    <IconButton
       label="Minimize"
       :icon="MinimizeWindow"
       size="icon-xs"
@@ -44,7 +44,7 @@ async function closeWindow() {
       class="rounded-full"
       @click="minimizeWindow"
     />
-    <AlIconButton
+    <IconButton
       :label="windowHost.state.maximized ? 'Restore' : 'Maximize'"
       :icon="getWorkbenchIcon('MaximizeWindow', 'RestoreDownWindow', windowHost.state.maximized)"
       size="icon-xs"
@@ -52,7 +52,7 @@ async function closeWindow() {
       class="rounded-full"
       @click="maximizeWindow"
     />
-    <AlIconButton
+    <IconButton
       label="Close"
       :icon="CloseWindow"
       size="icon-xs"

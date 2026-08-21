@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
-import { AlBadge, AlButton } from '@activelane/shadcn'
+import { Badge, Button } from '@activelane/shadcn'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useWorkbenchRuntime } from '../../composables/useWorkbenchRuntime'
 import { useApplications } from '../composables/useApplications'
@@ -104,9 +104,9 @@ watch(
                 <p>{{ allApps.length }} launchable apps</p>
               </div>
             </div>
-            <AlButton variant="ghost" size="icon" aria-label="Close app launcher" @click="close">
+            <Button variant="ghost" size="icon" aria-label="Close app launcher" @click="close">
               <X class="size-4" />
-            </AlButton>
+            </Button>
           </header>
 
           <LauncherSearch :model-value="launcher.query" @update:model-value="launcher.setQuery" />
@@ -159,13 +159,13 @@ watch(
               :count="results.length"
             >
               <div v-if="!launcher.query && showCategories" class="launcher-overlay__categories">
-                <AlBadge
+                <Badge
                   v-for="category in launcher.getCategories()"
                   :key="category.name"
                   variant="outline"
                 >
                   {{ category.name }}
-                </AlBadge>
+                </Badge>
               </div>
               <LauncherAppGrid
                 :apps="results"

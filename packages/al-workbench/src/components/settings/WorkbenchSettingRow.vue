@@ -1,14 +1,6 @@
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
-import {
-  AlBadge,
-  AlButton,
-  AlCheckbox,
-  AlInput,
-  AlSelect,
-  AlSwitch,
-  AlTextarea,
-} from '@activelane/shadcn'
+import { Badge, Button, Checkbox, Input, Select, Switch, Textarea } from '@activelane/shadcn'
 import { computed, ref } from 'vue'
 import type { WorkbenchSettingEntry } from '../../settings/types'
 
@@ -77,18 +69,18 @@ function displayValue(value: unknown) {
       <div class="flex min-w-0 flex-wrap items-center gap-2">
         <h3 class="m-0 truncate text-sm font-medium text-foreground">{{ setting.label }}</h3>
         <span v-if="setting.modified" class="size-1.5 rounded-full bg-primary" title="Modified" />
-        <AlBadge v-if="setting.requiresReload" variant="outline">Requires Reload</AlBadge>
-        <AlBadge v-if="setting.experimental" variant="secondary">Experimental</AlBadge>
-        <AlBadge v-if="setting.ownerExtensionId" variant="outline">
+        <Badge v-if="setting.requiresReload" variant="outline">Requires Reload</Badge>
+        <Badge v-if="setting.experimental" variant="secondary">Experimental</Badge>
+        <Badge v-if="setting.ownerExtensionId" variant="outline">
           {{ setting.ownerExtensionName ?? 'Extension' }}
-        </AlBadge>
-        <AlBadge v-if="setting.missingOwner" variant="secondary">Missing Extension</AlBadge>
-        <AlBadge v-if="setting.integration?.status === 'integration-point'" variant="outline">
+        </Badge>
+        <Badge v-if="setting.missingOwner" variant="secondary">Missing Extension</Badge>
+        <Badge v-if="setting.integration?.status === 'integration-point'" variant="outline">
           Integration Point
-        </AlBadge>
-        <AlBadge v-if="setting.integration?.status === 'reserved'" variant="secondary">
+        </Badge>
+        <Badge v-if="setting.integration?.status === 'reserved'" variant="secondary">
           Reserved
-        </AlBadge>
+        </Badge>
       </div>
       <p v-if="setting.description" class="m-0 mt-1 text-xs leading-5 text-muted-foreground">
         {{ setting.description }}
@@ -113,7 +105,7 @@ function displayValue(value: unknown) {
     </div>
 
     <div class="flex min-w-0 items-start justify-end gap-2">
-      <AlSwitch
+      <Switch
         v-if="setting.type === 'boolean'"
         class="mt-1"
         :disabled="setting.readonly"
@@ -121,7 +113,7 @@ function displayValue(value: unknown) {
         @update:model-value="emit('change', setting.id, $event)"
       />
 
-      <AlSelect
+      <Select
         v-else-if="setting.type === 'enum'"
         class="w-full"
         :disabled="setting.readonly"
@@ -131,7 +123,7 @@ function displayValue(value: unknown) {
       />
 
       <div v-else-if="setting.type === 'number'" class="grid w-full gap-2">
-        <AlInput
+        <Input
           type="number"
           :disabled="setting.readonly"
           :model-value="Number(setting.value)"
@@ -150,7 +142,7 @@ function displayValue(value: unknown) {
         >
       </div>
 
-      <AlInput
+      <Input
         v-else-if="setting.type === 'string' || setting.type === 'path' || setting.type === 'keybinding' || setting.type === 'color'"
         class="w-full"
         :type="setting.type === 'color' ? 'color' : 'text'"
@@ -166,7 +158,7 @@ function displayValue(value: unknown) {
           :key="String(option.value)"
           class="flex items-center gap-2 text-sm"
         >
-          <AlCheckbox
+          <Checkbox
             :disabled="setting.readonly"
             :model-value="Array.isArray(setting.value) && setting.value.includes(option.value)"
             @update:model-value="toggleMultiSelect(option.value, Boolean($event))"
@@ -175,7 +167,7 @@ function displayValue(value: unknown) {
         </div>
       </div>
 
-      <AlTextarea
+      <Textarea
         v-else
         class="min-h-24 w-full font-mono text-xs"
         :disabled="setting.readonly"
@@ -184,7 +176,7 @@ function displayValue(value: unknown) {
         @update:model-value="updateJson"
       />
 
-      <AlButton
+      <Button
         size="icon"
         variant="ghost"
         :disabled="!setting.modified || setting.readonly"
@@ -192,7 +184,7 @@ function displayValue(value: unknown) {
         @click="emit('reset', setting.id)"
       >
         <RotateCcw class="size-4" />
-      </AlButton>
+      </Button>
     </div>
   </article>
 </template>

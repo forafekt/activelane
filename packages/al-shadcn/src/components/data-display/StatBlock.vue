@@ -2,7 +2,7 @@
 import { cn } from '../../lib/utils'
 import Badge from '../ui/Badge.vue'
 
-defineOptions({ name: 'AlStatBlock' })
+defineOptions({ name: 'StatBlock' })
 
 defineProps<{
   label: string

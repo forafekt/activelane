@@ -8,15 +8,12 @@ import type { MarketplaceExtension } from '../types/marketplace'
 
 const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
-const [AlDropdownMenu, AlInput] = props.runtime.workbench.ui.getComponents([
-  'DropdownMenu',
-  'Input',
-])
-const Filter = props.runtime.workbench.ui.getIcon('lucide.filter')
-const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide.ellipsis')
-const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
-const Search = props.runtime.workbench.ui.getIcon('lucide.search')
-const X = props.runtime.workbench.ui.getIcon('lucide.x')
+const [DropdownMenu, Input] = props.runtime.workbench.ui.getComponents(['DropdownMenu', 'Input'])
+const Filter = props.runtime.workbench.ui.getIcon('lucide:filter')
+const MoreHorizontal = props.runtime.workbench.ui.getIcon('lucide:ellipsis')
+const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide:refresh-ccw')
+const Search = props.runtime.workbench.ui.getIcon('lucide:search')
+const X = props.runtime.workbench.ui.getIcon('lucide:x')
 
 const installedOpen = ref(true)
 const updatesOpen = ref(true)
@@ -37,7 +34,7 @@ const popular = computed(() =>
     .filter((extension) => extension.installState !== 'installed')
     .slice()
     .sort((left, right) => right.downloads.total - left.downloads.total)
-    .slice(0, 6),
+    .slice(0, 10),
 )
 
 const navigationItems = computed(() => [
@@ -137,17 +134,17 @@ async function manage(extension: MarketplaceExtension, action: string) {
         <button type="button" aria-label="Refresh Marketplace" @click="marketplace.refresh()">
           <RefreshCcw />
         </button>
-        <AlDropdownMenu :items="navigationItems" class="w-52" @select="handleNavigation">
+        <DropdownMenu :items="navigationItems" class="w-52" @select="handleNavigation">
           <template #trigger>
             <button type="button" aria-label="Marketplace actions"><MoreHorizontal /></button>
           </template>
-        </AlDropdownMenu>
+        </DropdownMenu>
       </div>
     </header>
 
     <div class="sidebar-search">
       <Search aria-hidden="true" />
-      <AlInput
+      <Input
         v-model="marketplace.searchQuery.value"
         aria-label="Search Marketplace"
         placeholder="Search apps and extensions"
@@ -161,13 +158,13 @@ async function manage(extension: MarketplaceExtension, action: string) {
       >
         <X />
       </button>
-      <AlDropdownMenu :items="filterItems" class="w-48" @select="handleFilter">
+      <DropdownMenu :items="filterItems" class="w-48" @select="handleFilter">
         <template #trigger>
           <button type="button" class="search-filter" aria-label="Filter Marketplace results">
             <Filter />
           </button>
         </template>
-      </AlDropdownMenu>
+      </DropdownMenu>
     </div>
 
     <div v-if="marketplace.registryState.value.failures.length" class="sidebar-registry-error">

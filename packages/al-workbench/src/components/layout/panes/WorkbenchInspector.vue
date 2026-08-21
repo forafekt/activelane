@@ -11,12 +11,9 @@ defineOptions({ name: 'WorkbenchInspector' })
 
 const runtime = useWorkbenchRuntime()
 
-const X = runtime.workbench.ui.getIcon('lucide.x')
+const X = runtime.workbench.ui.getIcon('lucide:x')
 
-const [AlEmptyState, AlIconButton] = runtime.workbench.ui.getComponents([
-  'EmptyState',
-  'IconButton',
-])
+const [EmptyState, IconButton] = runtime.workbench.ui.getComponents(['EmptyState', 'IconButton'])
 
 function findActiveTab(node: WorkbenchLayoutNode, activeGroupId: string): WorkbenchTab | null {
   if (node.kind === 'group') {
@@ -50,7 +47,7 @@ const panels = computed(() =>
     class="wb-inspector-pane h-full min-h-0"
   >
     <template #actions>
-      <AlIconButton
+      <IconButton
         label="Close inspector"
         :icon="X"
         variant="ghost"
@@ -70,7 +67,7 @@ const panels = computed(() =>
         surface="inspector"
         :pass-through="{ tab: activeTab, runtime }"
       />
-      <AlEmptyState
+      <EmptyState
         v-if="!panels.length"
         title="No inspector panels"
         description="Extensions can contribute contextual inspector surfaces for the active tab kind."

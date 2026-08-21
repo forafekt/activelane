@@ -15,13 +15,13 @@ const props = defineProps<{
   depth: number
 }>()
 
-const ChevronRight = props.runtime.workbench.ui.getIcon('lucide.chevron-right')
-const Loader2 = props.runtime.workbench.ui.getIcon('lucide.loader-circle')
-const AlertTriangle = props.runtime.workbench.ui.getIcon('lucide.triangle-alert')
-const Copy = props.runtime.workbench.ui.getIcon('lucide.copy')
-const ExternalLink = props.runtime.workbench.ui.getIcon('lucide.external-link')
-const Info = props.runtime.workbench.ui.getIcon('lucide.info')
-const AppWindow = props.runtime.workbench.ui.getIcon('lucide.app-window')
+const ChevronRight = props.runtime.workbench.ui.getIcon('lucide:chevron-right')
+const Loader2 = props.runtime.workbench.ui.getIcon('lucide:loader-circle')
+const AlertTriangle = props.runtime.workbench.ui.getIcon('lucide:triangle-alert')
+const Copy = props.runtime.workbench.ui.getIcon('lucide:copy')
+const ExternalLink = props.runtime.workbench.ui.getIcon('lucide:external-link')
+const Info = props.runtime.workbench.ui.getIcon('lucide:info')
+const AppWindow = props.runtime.workbench.ui.getIcon('lucide:app-window')
 
 const [
   ContextMenu,

@@ -12,10 +12,7 @@ const props = defineProps<{
   tab: WorkbenchTab
 }>()
 
-const [AlBadge, AlEmptyState] = props.runtime.workbench.ui.getComponents([
-  'Badge',
-  'EmptyState',
-])
+const [Badge, EmptyState] = props.runtime.workbench.ui.getComponents(['Badge', 'EmptyState'])
 
 const { servers } = useServerRuntime(props.runtime)
 const selectedServerId = computed(
@@ -37,10 +34,10 @@ watch(selectedServerId, bind)
         <p class="server-logs__eyebrow">Server Logs</p>
         <h1>{{ selectedServer?.label ?? tab.title }}</h1>
       </div>
-      <AlBadge variant="outline">{{ logs.length }} entries</AlBadge>
+      <Badge variant="outline">{{ logs.length }} entries</Badge>
     </header>
 
-    <AlEmptyState
+    <EmptyState
       v-if="!selectedServer"
       title="No server selected"
       description="Open logs from the Servers view to stream a server log channel."

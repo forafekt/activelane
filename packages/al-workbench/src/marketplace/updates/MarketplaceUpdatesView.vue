@@ -5,9 +5,9 @@ import { useMarketplace } from '../composables/useMarketplaceStore'
 
 const props = defineProps<{ runtime: WorkbenchRuntimeApi }>()
 const marketplace = useMarketplace({ runtime: props.runtime })
-const [AlBadge, AlButton] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
-const CheckCircle2 = props.runtime.workbench.ui.getIcon('lucide.circle-check-big')
-const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
+const [Badge, Button] = props.runtime.workbench.ui.getComponents(['Badge', 'Button'])
+const CheckCircle2 = props.runtime.workbench.ui.getIcon('lucide:circle-check-big')
+const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide:refresh-ccw')
 </script>
 
 <template>
@@ -18,12 +18,12 @@ const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
         <h1>Application updates</h1>
         <p>Review version changes before applying them to your workbench.</p>
       </div>
-      <AlButton
+      <Button
         v-if="marketplace.updateAvailableExtensions.value.length > 1"
         :leading-icon="RefreshCcw"
         disabled
         title="Bulk staging is not supported by this host"
-        >Update all</AlButton
+        >Update all</Button
       >
     </header>
     <div v-if="marketplace.updateAvailableExtensions.value.length" class="updates-list">
@@ -32,7 +32,7 @@ const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
         <div class="update-copy">
           <div>
             <h2>{{ extension.displayName }}</h2>
-            <AlBadge tone="warning">Update available</AlBadge>
+            <Badge tone="warning">Update available</Badge>
           </div>
           <p class="version">
             {{ extension.installedVersion }} <span>→</span> {{ extension.updateAvailable?.version }}
@@ -44,14 +44,14 @@ const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
           >
         </div>
         <div class="update-actions">
-          <AlButton size="sm" variant="ghost" @click="marketplace.openExtensionDetails(extension)"
-            >View changelog</AlButton
-          ><AlButton
+          <Button size="sm" variant="ghost" @click="marketplace.openExtensionDetails(extension)"
+            >View changelog</Button
+          ><Button
             size="sm"
             :leading-icon="RefreshCcw"
             :loading="Boolean(marketplace.activeOperations.value[extension.id])"
             @click="marketplace.updateExtension(extension.id)"
-            >Update</AlButton
+            >Update</Button
           >
         </div>
       </article>
@@ -62,7 +62,7 @@ const RefreshCcw = props.runtime.workbench.ui.getIcon('lucide.refresh-ccw')
       <p>
         Your installed applications are using the latest releases available from their registries.
       </p>
-      <AlButton variant="outline" @click="marketplace.refresh()">Check again</AlButton>
+      <Button variant="outline" @click="marketplace.refresh()">Check again</Button>
     </div>
   </div>
 </template>

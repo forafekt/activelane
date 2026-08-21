@@ -6,7 +6,7 @@ defineOptions({ name: 'WorkbenchLayoutControls' })
 
 const runtime = useWorkbenchRuntime()
 
-const [AlIconButton] = runtime.workbench.ui.getComponents(['IconButton'])
+const [IconButton] = runtime.workbench.ui.getComponents(['IconButton'])
 
 function toggleSidebar() {
   runtime.workbench.setSidebarCollapsed(!runtime.workbench.state.sidebar.collapsed)
@@ -26,21 +26,21 @@ function toggleInspector() {
 
 <template>
   <div class="wb-layout-controls">
-    <AlIconButton
+    <IconButton
       label="Toggle sidebar"
       :icon="getWorkbenchIcon('PanelLeft' , 'PanelLeftFill', !runtime.workbench.state.sidebar.collapsed)"
       size="icon-xs"
       variant="ghost"
       @click="toggleSidebar"
     />
-    <AlIconButton
+    <IconButton
       label="Toggle bottom panel"
       :icon="getWorkbenchIcon( 'PanelBottom', 'PanelBottomFill', runtime.workbench.state.bottomPanel.open)"
       size="icon-xs"
       variant="ghost"
       @click="toggleBottomPanel"
     />
-    <AlIconButton
+    <IconButton
       label="Toggle inspector"
       :icon="getWorkbenchIcon('PanelRight', 'PanelRightFill', !runtime.workbench.state.inspector.collapsed)"
       size="icon-xs"

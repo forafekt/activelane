@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const runtime = useWorkbenchRuntime()
 
-const [AlAlert, AlButton] = runtime.workbench.ui.getComponents(['Alert', 'Button'])
+const [Alert, Button] = runtime.workbench.ui.getComponents(['Alert', 'Button'])
 
 const errorMessage = ref<string | null>(null)
 const surfaceProps = computed(() => ({
@@ -55,7 +55,7 @@ onErrorCaptured((error) => {
   />
 
   <div v-else class="p-4">
-    <AlAlert variant="destructive">
+    <Alert variant="destructive">
       <div class=" grid gap-3 ">
         <p class="m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
           Native Vue surface
@@ -66,7 +66,7 @@ onErrorCaptured((error) => {
         <p class="m-0 text-sm leading-relaxed text-muted-foreground">
           {{ errorMessage ?? `No Vue component was provided for ${surface.title ?? tab.title}.` }}
         </p>
-        <AlButton
+        <Button
           v-if="errorMessage"
           type="button"
           size="xs"
@@ -74,8 +74,8 @@ onErrorCaptured((error) => {
           @click="errorMessage = null"
         >
           Retry surface
-        </AlButton>
+        </Button>
       </div>
-    </AlAlert>
+    </Alert>
   </div>
 </template>
