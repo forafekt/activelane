@@ -6,10 +6,17 @@ import { join } from 'node:path'
 import { defineConfig, transformWithEsbuild, type Plugin } from 'vite'
 
 function safariDevDependencyTarget(): Plugin {
+  // Only execute the plugin logic if the host machine is macOS
+  const isMac = process.platform === 'darwin'
+
   return {
     name: 'activelane:safari-dev-dependency-target',
-    apply: 'serve',
+    // Ensures it only executes during 'npm run dev'
+    apply: 'serve', 
     configureServer(server) {
+      // Completely skip adding the middleware if not on macOS
+      if (!isMac) return
+
       server.middlewares.use(async (request, response, next) => {
         if (!request.url?.startsWith('/node_modules/.vite/deps/naive-ui.js')) {
           next()
@@ -39,7 +46,6 @@ function safariDevDependencyTarget(): Plugin {
   }
 }
 
-// https://vitejs.dev/config/
 export default defineConfig({
   server: {
     host: '127.0.0.1',
@@ -52,11 +58,4 @@ export default defineConfig({
     },
   },
   plugins: [safariDevDependencyTarget(), vue(), tailwindcss(), wails('./bindings')],
-  build: {
-    // target: ['safari15'],
-    // Force Vite to compile syntax down into universally understood JS
-    target: ['es2020', 'edge80', 'firefox78', 'safari14'],
-    // Prevents issues with asset inlining crashing the webview runtime
-    assetsInlineLimit: 0,
-  },
 })
