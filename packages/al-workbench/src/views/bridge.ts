@@ -90,7 +90,7 @@ export class ViewBridge implements Disposable {
       case 'view.ready':
         return { instanceId: instance.id }
       case 'view.getContext':
-        return instance.context
+        return cloneViewContext(instance.context)
       case 'view.setTitle':
         instance.title = requiredString(parameters, 'title')
         this.runtime.workbench.setTabTitle(instance.id, instance.title)
@@ -224,5 +224,17 @@ function currentTheme(runtime: WorkbenchRuntimeApi) {
         value,
       ]),
     ),
+  }
+}
+
+function cloneViewContext(value: unknown) {
+  if (value === undefined) return undefined
+  try {
+    return JSON.parse(JSON.stringify(value)) as unknown
+  } catch {
+    throw new ViewBridgeError(
+      'INVALID_CONTEXT',
+      'Extension view context must be JSON-serializable.',
+    )
   }
 }

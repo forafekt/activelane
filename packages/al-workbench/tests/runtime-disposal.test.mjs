@@ -55,7 +55,13 @@ test('install dynamically loads, enables, and activates an undiscovered extensio
     installSource: 'marketplace',
     installedAt: '2026-08-15T00:00:00Z',
     updatedAt: '2026-08-15T00:00:00Z',
-    manifest: { id: '@local/example', name: 'example', displayName: 'Example', version: '1.0.0' },
+    manifest: {
+      id: '@local/example',
+      name: 'example',
+      displayName: 'Example',
+      version: '1.0.0',
+      contributes: { commands: [{ id: 'example.manifest-command', title: 'Manifest command' }] },
+    },
   }
   const calls = []
   const runtime = await createExtensionRuntime({
@@ -72,7 +78,12 @@ test('install dynamically loads, enables, and activates an undiscovered extensio
           },
           enable: async () => ({ ...installed, enabled: true }),
           load: async () => ({
-            manifest: installed.manifest,
+            manifest: {
+              id: installed.extensionId,
+              name: 'example',
+              displayName: 'Module identity only',
+              version: installed.version,
+            },
             activate() {
               activations++
               return { dispose() {} }
@@ -89,6 +100,7 @@ test('install dynamically loads, enables, and activates an undiscovered extensio
   assert.equal(record?.enabled, true)
   assert.equal(record?.active, true)
   assert.equal(activations, 1)
+  assert.equal(runtime.registry.commands.some((item) => item.id === 'example.manifest-command'), true)
   await runtime.dispose()
 })
 

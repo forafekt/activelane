@@ -16,6 +16,9 @@
       { "id": "api-studio.request-inspector", "container": "api-studio.inspector", "title": "Inspector", "renderer": { "type": "isolated", "entry": "dist/views/inspector/index.html" } },
       { "id": "api-studio.request-log", "container": "api-studio.log", "title": "Request Log", "renderer": { "type": "isolated", "entry": "dist/views/log/index.html" } }
     ],
-    "commands": [{ "id": "api-studio.open-request", "title": "API Studio: Open Request" }]
+    "commands": [
+      { "id": "api-studio.open-users", "title": "API Studio: Open Users Request" },
+      { "id": "api-studio.open-orders", "title": "API Studio: Open Orders Request" }
+    ]
   }
 }

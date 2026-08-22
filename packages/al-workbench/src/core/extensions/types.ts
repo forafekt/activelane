@@ -494,7 +494,7 @@ export interface WorkbenchRuntimeExtensionRecord {
 
 export interface WorkbenchExtensionContext {
   extensionId: string
-  manifest: WorkbenchExtensionManifest
+  manifest: ActiveLaneExtensionManifest
   host: WorkbenchHostAdapter
   storage: WorkbenchStorageScope
   workbench: WorkbenchShellApi
@@ -507,7 +507,7 @@ export interface WorkbenchExtensionContext {
 }
 
 export interface WorkbenchExtensionDefinition {
-  manifest: WorkbenchExtensionManifest
+  manifest: ActiveLaneExtensionManifest
   activate?: (context: WorkbenchExtensionContext) => MaybePromise<undefined | Disposable>
   deactivate?: (context: WorkbenchExtensionContext) => MaybePromise<void>
 }

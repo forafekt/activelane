@@ -1,6 +1,6 @@
 export interface ExtensionAssetSource {
   baseUrl?: string
-  resolve?: (extensionId: string, path: string) => string | Promise<string>
+  resolve?: (extensionId: string, path: string) => Promise<{ url: string }> | { url: string }
 }
 
 export function normalizeExtensionAssetPath(path: string) {
@@ -17,7 +17,7 @@ export async function resolveExtensionAsset(
   path: string,
 ) {
   const safePath = normalizeExtensionAssetPath(path)
-  if (source.resolve) return source.resolve(extensionId, safePath)
+  if (source.resolve) return (await source.resolve(extensionId, safePath)).url
   if (!source.baseUrl) throw new Error('The host does not provide extension asset resolution.')
   const identity = extensionId.replace(/^@/, '').split('/').map(encodeURIComponent).join('/')
   return `${source.baseUrl.replace(/\/$/, '')}/${identity}/${safePath

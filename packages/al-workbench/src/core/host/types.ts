@@ -60,7 +60,7 @@ export interface WorkbenchFileSystemEntry {
 
 export interface WorkbenchHostCapabilities {
   extensionAssets?: {
-    resolve: (extensionId: string, path: string) => string | Promise<string>
+    resolve: (extensionId: string, path: string) => Promise<{ url: string }> | { url: string }
   }
   lifecycle?: {
     closeWindow?: () => Promise<void>

@@ -61,4 +61,12 @@ test('resolves scoped package assets and rejects traversal', async () => {
   )
   assert.throws(() => normalizeExtensionAssetPath('../secret'))
   assert.throws(() => normalizeExtensionAssetPath('/absolute'))
+  assert.equal(
+    await resolveExtensionAsset(
+      { resolve: async (extensionId, resource) => ({ url: `/host/${extensionId}/${resource}` }) },
+      '@sample/tools',
+      './views/app.html',
+    ),
+    '/host/@sample/tools/views/app.html',
+  )
 })

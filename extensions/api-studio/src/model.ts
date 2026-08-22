@@ -16,8 +16,16 @@ export interface ApiRequest {
   body: { type: 'none' | 'json' | 'text'; value: string }
 }
 
-export interface ApiCollection { id: string; name: string; requests: ApiRequest[] }
-export interface ApiEnvironment { id: string; name: string; variables: Record<string, string> }
+export interface ApiCollection {
+  id: string
+  name: string
+  requests: ApiRequest[]
+}
+export interface ApiEnvironment {
+  id: string
+  name: string
+  variables: Record<string, string>
+}
 export interface RequestHistoryEntry {
   id: string
   requestId: string

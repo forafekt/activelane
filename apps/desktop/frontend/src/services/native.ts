@@ -15,9 +15,9 @@ import { Clipboard, Dialogs, System, Window as WailsWindow } from '@wailsio/runt
 import {
   Disable as DisableExtension,
   Enable as EnableExtension,
+  Module as ExtensionModule,
   Install as InstallExtension,
   Installed as InstalledExtensions,
-  Module as ExtensionModule,
   Registries as RegistryStatuses,
   Search as SearchRegistries,
   Uninstall as UninstallExtension,
@@ -35,8 +35,8 @@ import {
   WriteFile,
 } from '../../bindings/github.com/activelane/activelane/apps/desktop/workspaceservice'
 import {
-  type NativeExtensionModulePayload,
   loadNativeExtensionModule,
+  type NativeExtensionModulePayload,
 } from './extensionModuleLoader'
 
 export class NativeExtensionError extends Error {
@@ -195,6 +195,21 @@ function createRegistrySubscriptionProvider(): WorkbenchSubscriptionProvider {
 
 export function createNativeCapabilities(): WorkbenchHostCapabilities {
   return {
+    extensionAssets: {
+      resolve: async (extensionId, resourcePath) => {
+        const { namespace, name } = parseExtensionIdentity(extensionId)
+        const response = await InstalledExtensions()
+        throwNativeError(response.error)
+        const installed = response.items.find(
+          (item) => item.extensionId === extensionId && item.enabled,
+        )
+        if (!installed) throw new Error(`Enabled extension ${extensionId} is not installed.`)
+        const segments = resourcePath.replace(/^\.\//, '').split('/').map(encodeURIComponent)
+        return {
+          url: `/__activelane/extensions/${encodeURIComponent(namespace)}/${encodeURIComponent(name)}/${encodeURIComponent(installed.version)}/${segments.join('/')}`,
+        }
+      },
+    },
     lifecycle: { closeWindow: () => workbenchWindow.Close() },
     storage: undefined,
     notify: async ({ title, message, tone }: WorkbenchNotificationOptions) => {

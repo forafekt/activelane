@@ -257,6 +257,8 @@ export async function createExtensionRuntime(
   const discovered = reactivity.reactive<WorkbenchExtensionCatalogEntry[]>([])
   const records = reactivity.reactive<WorkbenchRuntimeExtensionRecord[]>([])
   const persistence: RuntimePersistenceController = { timeoutId: null }
+  const contributionGenerations = new Map<string, number>()
+  let contributionGeneration = 0
   const installedRecords = reactivity.reactive<InstalledExtensionRecord[]>([
     ...(options.installedExtensions ?? []),
     ...((await host.capabilities.extensions?.listInstalled?.()) ?? []),
@@ -297,12 +299,27 @@ export async function createExtensionRuntime(
         reactivity.markRaw,
       ),
     ) as WorkbenchRegisteredContributions[T]
-    setRegistryList(key, [...registry[key], ...ownedValues] as WorkbenchRegisteredContributions[T])
+    const registeredIds = new Set(ownedValues.map((item) => item.id))
+    const generation = ++contributionGeneration
+    const generationKey = (id: string) => `${key}\u001f${ownerExtensionId}\u001f${id}`
+    for (const id of registeredIds) contributionGenerations.set(generationKey(id), generation)
+    const retained = registry[key].filter(
+      (item) => item.ownerExtensionId !== ownerExtensionId || !registeredIds.has(item.id),
+    )
+    setRegistryList(key, [...retained, ...ownedValues] as WorkbenchRegisteredContributions[T])
     return {
       dispose() {
         const nextValues = registry[key].filter(
-          (item) => item.ownerExtensionId !== ownerExtensionId,
+          (item) =>
+            item.ownerExtensionId !== ownerExtensionId ||
+            !registeredIds.has(item.id) ||
+            contributionGenerations.get(generationKey(item.id)) !== generation,
         ) as WorkbenchRegisteredContributions[T]
+        for (const id of registeredIds) {
+          if (contributionGenerations.get(generationKey(id)) === generation) {
+            contributionGenerations.delete(generationKey(id))
+          }
+        }
         setRegistryList(key, nextValues)
       },
     }
@@ -520,6 +537,23 @@ export async function createExtensionRuntime(
       ? record.surfaceErrors.filter((item) => item.contributionId !== contributionId)
       : []
     refreshRecordStatus(record)
+  }
+
+  function closeExtensionTabs(extensionId: string) {
+    const tabIds: string[] = []
+    const queue = [shell.state.layout]
+    while (queue.length) {
+      const node = queue.shift()
+      if (!node) continue
+      if (node.kind === 'split') {
+        queue.push(...node.children)
+        continue
+      }
+      for (const tab of node.tabs) {
+        if (tab.ownerExtensionId === extensionId) tabIds.push(tab.id)
+      }
+    }
+    shell.closeTabs(tabIds)
   }
 
   function findTabForAction(tabId: string, groupId?: string) {
@@ -1268,6 +1302,7 @@ export async function createExtensionRuntime(
             error,
           )
         } finally {
+          closeExtensionTabs(extensionId)
           active?.dynamicDisposables.forEach((item) => {
             item.dispose()
           })
@@ -1426,12 +1461,21 @@ export async function createExtensionRuntime(
   async function loadInstalledDefinition(installed: InstalledExtensionRecord, replace = false) {
     if (!replace && definitions.has(installed.extensionId))
       return definitions.get(installed.extensionId)
-    const definition = await host.capabilities.extensions?.load?.(installed)
-    if (!definition) return undefined
-    if (definition.manifest.id !== installed.extensionId) {
+    const loadedDefinition = await host.capabilities.extensions?.load?.(installed)
+    if (!loadedDefinition) return undefined
+    if (loadedDefinition.manifest.id !== installed.extensionId) {
       throw new Error(
-        `Loaded extension identity ${definition.manifest.id} does not match ${installed.extensionId}.`,
+        `Loaded extension identity ${loadedDefinition.manifest.id} does not match ${installed.extensionId}.`,
       )
+    }
+    if (loadedDefinition.manifest.version !== installed.version) {
+      throw new Error(
+        `Loaded extension version ${loadedDefinition.manifest.version} does not match ${installed.version}.`,
+      )
+    }
+    const definition: WorkbenchExtensionDefinition = {
+      ...loadedDefinition,
+      manifest: installed.manifest,
     }
     if (replace) {
       definitions.set(installed.extensionId, definition)

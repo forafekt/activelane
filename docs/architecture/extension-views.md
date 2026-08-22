@@ -46,3 +46,51 @@ dist/views/inspector/index.html
 Every entry is package-relative and validated against traversal. The host resolves it from extension
 identity plus the packaged path through its `extensionAssets` capability; definitions never contain an
 installation path or development URL.
+
+## Desktop asset delivery
+
+The Wails desktop adapter implements `ExtensionAssetHost` through the native extension service. The
+Workbench asks for an extension ID and package-relative entry path and receives only a browser-loadable
+URL. The renderer never receives an extraction directory or operating-system path.
+
+Wails serves the complete installed package tree below:
+
+```text
+/__activelane/extensions/<namespace>/<name>/<version>/<resource>
+```
+
+The version in that URL is selected from the authoritative installed-extension record, so runtime code
+and view resources come from the same installation. Requests are accepted only for the matching,
+enabled installation. The Go resource handler decodes and normalizes the path once, rejects absolute or
+traversing paths (including encoded traversal), resolves symlinks, verifies that the final file remains
+inside the package root, and lets `http.ServeContent` provide MIME types and nested relative asset
+loading. Unknown, disabled, and uninstalled packages return no resource. Responses include an explicit
+CORS header because a sandboxed iframe without `allow-same-origin` has an opaque origin and must still
+be able to import its packaged ES modules.
+
+## Isolation and bridge lifecycle
+
+The browser implementation uses `sandbox="allow-scripts"`. It intentionally does not grant same-origin,
+forms, popups, navigation, or direct Workbench access. The Workbench creates one `MessageChannel` per
+view instance and transfers its port only to the iframe window associated with the registered extension,
+view definition, and instance. Re-registration closes the previous channel; closing a view, disabling
+an extension, or uninstalling it disposes the contribution and its channel.
+
+Bridge values cross a structured-clone boundary. View context is therefore returned as detached JSON
+data rather than a Vue reactive proxy. Each isolated application receives its initial normalized theme
+and subsequent theme changes through the bridge, and applies only `--al-*` variables to its own document
+root. Events are scoped to the owning extension and allow sibling view instances to coordinate without
+access to Workbench internals.
+
+## Instance identity and cleanup
+
+Single-instance surfaces use their definition identity. Multi-instance editors add a stable instance ID
+and independent JSON context, so two editors created from the same definition cannot overwrite one
+another. Workbench-owned tabs, titles, dirty state, focus, close affordances, sidebars, inspectors, and
+panels remain outside the isolated document.
+
+Contribution registration is generation-based. A newly activated contribution replaces an older entry
+with the same owner and ID, while disposal removes only the generation that registered it. This avoids
+both duplicate declarative/runtime contributions and stale reactive-proxy entries during disable,
+reload, or uninstall. Persisted surface references are reconciled against the current registry during
+startup, leaving no extension chrome after an uninstalled package is restarted.

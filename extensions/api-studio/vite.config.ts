@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   root: resolve(import.meta.dirname, 'src'),
+  base: './',
   build: {
     target: ['safari15'],
     outDir: resolve(import.meta.dirname, 'dist'),

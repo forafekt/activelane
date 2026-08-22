@@ -15,28 +15,38 @@ export default defineExtension({
     activationEvents: ['onStartup', 'onCommand', 'onView'],
   },
   activate(context) {
+    const openRequest = (requestId: string) => {
+      const request = requests.find((candidate) => candidate.id === requestId)
+      if (!request) return
+      context.workbench.openTab({
+        id: `api-studio.request:${crypto.randomUUID()}`,
+        kind: 'api-studio.request-editor',
+        surfaceId: 'api-studio.request-editor',
+        title: `${request.method} ${new URL(request.url).pathname}`,
+        ownerExtensionId: extensionId,
+        input: { requestId: request.id },
+        preview: false,
+      })
+      context.workbench.setInspectorCollapsed(false)
+      context.workbench.setBottomPanelOpen(true)
+    }
     const resources = [
       context.capabilities.register(
         { id: 'apiStudio.requests.list', title: 'List API Studio requests', kind: 'service' },
         async () => requests,
       ),
-      context.contribute.commands({
-        id: 'api-studio.open-request',
-        title: 'API Studio: Open Request',
-        run: () => {
-          const request = requests[0]
-          if (!request) return
-          context.workbench.openTab({
-            id: `api-studio.request:${crypto.randomUUID()}`,
-            kind: 'api-studio.request-editor',
-            surfaceId: 'api-studio.request-editor',
-            title: `${request.method} /users`,
-            ownerExtensionId: extensionId,
-            input: { requestId: request.id },
-            preview: false,
-          })
+      context.contribute.commands(
+        {
+          id: 'api-studio.open-users',
+          title: 'API Studio: Open Users Request',
+          run: () => openRequest('users'),
         },
-      }),
+        {
+          id: 'api-studio.open-orders',
+          title: 'API Studio: Open Orders Request',
+          run: () => openRequest('orders'),
+        },
+      ),
     ]
     return {
       dispose: () =>

@@ -125,7 +125,7 @@ function sameResolvedSurface(
   right: WorkbenchSurfaceDescriptor,
 ) {
   if (!left) return false
-  return (
+  const sameBase =
     left.id === right.id &&
     left.mode === right.mode &&
     left.ownerExtensionId === right.ownerExtensionId &&
@@ -136,7 +136,11 @@ function sameResolvedSurface(
     left.html === right.html &&
     left.fallback?.title === right.fallback?.title &&
     left.fallback?.message === right.fallback?.message
-  )
+  if (!sameBase) return false
+  if (left.mode === 'isolated' && right.mode === 'isolated') {
+    return left.instanceId === right.instanceId && left.context === right.context
+  }
+  return true
 }
 </script>
 
