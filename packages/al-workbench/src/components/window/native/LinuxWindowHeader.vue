@@ -6,6 +6,7 @@ import WorkbenchMenuBar from '../shared/WorkbenchMenuBar.vue'
 import WorkbenchNavigationControls from '../shared/WorkbenchNavigationControls.vue'
 import WorkbenchWindowControls from '../shared/WorkbenchWindowControls.vue'
 import WorkbenchLayoutControls from '../WorkbenchLayoutControls.vue'
+import WorkbenchTitleBarBrand from '../shared/WorkbenchTitleBarBrand.vue'
 
 defineOptions({ name: 'LinuxWindowHeader' })
 
@@ -33,6 +34,7 @@ function handleDoubleClick() {
     data-wails-drag
     @dblclick="handleDoubleClick"
   >
+    <WorkbenchTitleBarBrand />
     <WorkbenchMenuBar />
     <div class="workbench-window-header-linux__center">
       <WorkbenchNavigationControls />

@@ -36,10 +36,10 @@ directory publishing, search, info, and installation require no HTTP process.
 
 ```bash
 go run ./go/cmd/alx init /tmp/my-extension
-go run ./go/cmd/alx validate ./examples/extensions/hello/activelane.manifest.json
-go run ./go/cmd/alx pack ./examples/extensions/hello --output /tmp/hello.alx
-go run ./go/cmd/alx inspect /tmp/hello.alx --json
-go run ./go/cmd/alx verify /tmp/hello.alx
+go run ./go/cmd/alx validate /tmp/my-extension/activelane.manifest.json
+go run ./go/cmd/alx pack /tmp/my-extension --output /tmp/my-extension.alx
+go run ./go/cmd/alx inspect /tmp/my-extension.alx --json
+go run ./go/cmd/alx verify /tmp/my-extension.alx
 ```
 
 Packing unchanged input produces the same SHA-256 digest. The manifest `entry` identifies

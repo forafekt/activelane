@@ -39,6 +39,7 @@ export default defineConfig({
     },
   ],
   build: {
+    target: ['safari15'],
     lib: {
       entry: 'src/extension.ts',
       formats: ['es'],

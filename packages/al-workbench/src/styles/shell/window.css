@@ -86,7 +86,7 @@
 .workbench-window-header-macos {
   flex: 0 0 2.125rem;
   height: 2.125rem;
-  border-bottom: 1px solid var(--border);
+  /* border-bottom: 1px solid var(--border); */
   background: var(--shell-chrome-surface, var(--titlebar));
 }
 .workbench-window-header-windows {

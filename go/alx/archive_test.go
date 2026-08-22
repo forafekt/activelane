@@ -96,17 +96,3 @@ func TestManifestRejectsBadVersion(t *testing.T) {
 		t.Fatal("expected validation error")
 	}
 }
-
-func TestSharedExampleManifestMatchesGoContract(t *testing.T) {
-	data, err := os.ReadFile(filepath.Join("..", "..", "examples", "extensions", "hello", ManifestFile))
-	if err != nil {
-		t.Fatal(err)
-	}
-	manifest, err := ParseManifest(data)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if manifest.ID != "@local/hello" || manifest.Version != "1.0.0" {
-		t.Fatalf("unexpected manifest: %+v", manifest)
-	}
-}

@@ -6,6 +6,7 @@ import { getWorkbenchIcon } from '../../workbenchIcons'
 import { WorkbenchCommandBar } from '../navigation/command/WorkbenchCommandPalette'
 import { WorkbenchGlobalMenuLauncher } from '../navigation/menus'
 import WorkbenchLayoutControls from './WorkbenchLayoutControls.vue'
+import WorkbenchTitleBarBrand from './shared/WorkbenchTitleBarBrand.vue'
 
 defineOptions({ name: 'WebWindowHeader' })
 
@@ -18,6 +19,7 @@ const canGoForward = computed(() => runtime.workbench.state.navigation.forward.l
 <template>
   <header class="wb-window-header" data-workbench-part="windowHeader">
     <div class="wb-window-header__left">
+      <WorkbenchTitleBarBrand />
       <WorkbenchGlobalMenuLauncher placement="topBar" labels />
       <div class="wb-window-header__center">
         <IconButton

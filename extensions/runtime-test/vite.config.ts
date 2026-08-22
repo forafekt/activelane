@@ -4,6 +4,7 @@ import { defineConfig } from '../../apps/desktop/frontend/node_modules/vite/dist
 export default defineConfig({
   plugins: [vue()],
   build: {
+    target: ['safari15'],
     lib: { entry: 'src/extension.ts', formats: ['es'], fileName: () => 'extension.js' },
     outDir: 'dist',
     emptyOutDir: true,

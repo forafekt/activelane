@@ -1,18 +1,49 @@
+import  '@activelane/workbench/styles.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { createDesktopPreviewPlatform, previewWorkbenchHost } from './host/previewPlatform'
 
+function diagnostics() {
+  return (globalThis as typeof globalThis & {
+    __ACTIVELANE_DIAGNOSTICS__?: {
+      mark?: (phase: string, detail?: unknown) => void
+      moduleImport?: (specifier: string, phase: string) => void
+    }
+  }).__ACTIVELANE_DIAGNOSTICS__
+}
+
+async function diagnosticImport<T>(specifier: string, load: () => Promise<T>): Promise<T> {
+  diagnostics()?.moduleImport?.(specifier, 'before')
+  try {
+    const module = await load()
+    diagnostics()?.moduleImport?.(specifier, 'after')
+    return module
+  } catch (error) {
+    diagnostics()?.moduleImport?.(specifier, 'failed')
+    throw error
+  }
+}
+
 async function start() {
+  diagnostics()?.mark?.('start() entered', { href: location.href, protocol: location.protocol })
   const browserPreview =
     location.protocol.startsWith('http') &&
     !Object.keys(window).some((key) => key.toLowerCase().includes('wails'))
+  diagnostics()?.mark?.('host mode resolved', { browserPreview })
   const runtime = browserPreview
     ? await createDesktopPreviewPlatform()
-    : await (await import('./host/platform')).createDesktopPlatform()
+    : await (
+        await diagnosticImport('./host/platform', () => import('./host/platform'))
+      ).createDesktopPlatform()
+  diagnostics()?.mark?.('runtime created')
   const host = browserPreview
     ? previewWorkbenchHost
-    : (await import('./host/desktopHost')).useDesktopHost()
+    : (
+        await diagnosticImport('./host/desktopHost', () => import('./host/desktopHost'))
+      ).useDesktopHost()
+  diagnostics()?.mark?.('host adapter created')
   createApp(App, { runtime, host }).mount('#activelane-workbench')
+  diagnostics()?.mark?.('vue mounted')
 }
 
 void start().catch((error) => {

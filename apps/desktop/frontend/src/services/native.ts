@@ -10,10 +10,7 @@ import type {
   WorkbenchRegistryStatusResponse,
   WorkbenchSubscriptionProvider,
 } from '@activelane/workbench'
-import {
-  resolveWorkbenchExtensionModule,
-  type WorkbenchExtensionDefinition,
-} from '@activelane/workbench/extensions'
+import type { WorkbenchExtensionDefinition } from '@activelane/workbench/extensions'
 import { Clipboard, Dialogs, System, Window as WailsWindow } from '@wailsio/runtime'
 import {
   Disable as DisableExtension,
@@ -37,6 +34,10 @@ import {
   SetRoot,
   WriteFile,
 } from '../../bindings/github.com/activelane/activelane/apps/desktop/workspaceservice'
+import {
+  type NativeExtensionModulePayload,
+  loadNativeExtensionModule,
+} from './extensionModuleLoader'
 
 export class NativeExtensionError extends Error {
   readonly code: string
@@ -93,21 +94,7 @@ async function loadInstalledExtension(
     )
   const response = await ExtensionModule(record.extensionId, record.version)
   throwNativeError(response.error)
-  if (!response.source) {
-    throw new Error(`Installed extension ${record.extensionId}@${record.version} has no module source.`)
-  }
-  const url = URL.createObjectURL(new Blob([response.source], { type: 'text/javascript' }))
-  try {
-    const module = (await import(/* @vite-ignore */ url)) as unknown
-    return resolveWorkbenchExtensionModule(module, {
-      extensionId: record.extensionId,
-      version: record.version,
-      source: record.source?.registryId ?? record.installSource,
-      entrypoint: `${record.resolvedPath ?? '<installed>'}/${entry}`,
-    })
-  } finally {
-    URL.revokeObjectURL(url)
-  }
+  return loadNativeExtensionModule({ record, payload: response as NativeExtensionModulePayload })
 }
 
 export async function getPlatform() {

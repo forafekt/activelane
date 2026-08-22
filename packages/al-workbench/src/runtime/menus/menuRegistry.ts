@@ -151,6 +151,7 @@ function sanitizeNativeMenuItems(items: WorkbenchResolvedMenuItem[]): WorkbenchR
       }
     }
 
+    const shortcut = optionalShortcut(item.shortcut)
     return {
       kind: 'command',
       id: String(item.id),
@@ -160,11 +161,16 @@ function sanitizeNativeMenuItems(items: WorkbenchResolvedMenuItem[]): WorkbenchR
       visible: Boolean(item.visible),
       group: item.group,
       order: item.order,
-      shortcut: item.shortcut,
+      ...(shortcut ? { shortcut } : {}),
       nativeRole: item.nativeRole,
       checked: item.checked,
     }
   })
+}
+
+function optionalShortcut(shortcut: string | null | undefined): string | undefined {
+  const normalized = shortcut?.trim()
+  return normalized ? normalized : undefined
 }
 
 function resolveMenuItems(
@@ -223,7 +229,7 @@ function resolveMenuItems(
       group: item.group,
       order: item.order ?? 0,
       icon: item.icon ?? command?.icon,
-      shortcut: item.shortcut ?? command?.shortcut,
+      shortcut: optionalShortcut(item.shortcut) ?? optionalShortcut(command?.shortcut),
       nativeRole: item.nativeRole,
       checked,
     })

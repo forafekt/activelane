@@ -33,6 +33,10 @@ export class DesktopError {
 
 export class ExtensionModuleResponse {
     "source"?: string;
+    "entrypoint"?: string;
+    "contentType"?: string;
+    "sizeBytes"?: number;
+    "sha256"?: string;
     "error"?: DesktopError | null;
 
     /** Creates a new ExtensionModuleResponse instance. */
@@ -45,10 +49,10 @@ export class ExtensionModuleResponse {
      * Creates a new ExtensionModuleResponse instance from a string or object.
      */
     static createFrom($$source: any = {}): ExtensionModuleResponse {
-        const $$createField1_0 = $$createType1;
+        const $$createField5_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("error" in $$parsedSource) {
-            $$parsedSource["error"] = $$createField1_0($$parsedSource["error"]);
+            $$parsedSource["error"] = $$createField5_0($$parsedSource["error"]);
         }
         return new ExtensionModuleResponse($$parsedSource as Partial<ExtensionModuleResponse>);
     }

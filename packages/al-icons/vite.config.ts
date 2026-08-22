@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   build: {
+    target: ['safari15'],
     emptyOutDir: true,
     lib: {
       entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
