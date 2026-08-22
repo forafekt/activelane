@@ -44,7 +44,7 @@ const definitions: Array<{
     icon: icons[1],
   },
   {
-    key: 'tabSurfaces',
+    key: 'tabRenderers',
     title: 'Main Workspace',
     description: 'Opens rich application views and editors',
     icon: icons[2],

@@ -24,6 +24,15 @@ func ValidateFile(filename string) (Manifest, error) {
 	if err := ValidateRuntimeEntry(manifest.Entry, entryData); err != nil {
 		return Manifest{}, err
 	}
+	for _, viewEntry := range manifest.ViewEntries() {
+		info, statErr := os.Stat(filepath.Join(filepath.Dir(filename), filepath.FromSlash(viewEntry)))
+		if statErr != nil {
+			return Manifest{}, fmt.Errorf("view entry %q: %w", viewEntry, statErr)
+		}
+		if !info.Mode().IsRegular() {
+			return Manifest{}, fmt.Errorf("view entry %q is not a regular file", viewEntry)
+		}
+	}
 	return manifest, nil
 }
 

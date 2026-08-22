@@ -11,9 +11,13 @@ export type {
 export type {
   ActiveLaneExtensionManifest,
   InstalledExtensionRecord,
+  WorkbenchExtensionCatalogEntry,
+  WorkbenchExtensionDefinition,
   WorkbenchRegistrySearchResponse,
   WorkbenchRegistryStatusResponse,
 } from './core/extensions/types'
+export { resolveWorkbenchExtensionModule } from './core/extensions/module'
+export type { WorkbenchExtensionModuleDescriptor } from './core/extensions/module'
 export type {
   WorkbenchDialogOptions,
   WorkbenchFileHandle,
@@ -45,4 +49,3 @@ export {
   resolveApplicationMenus,
 } from './runtime/menus/menuRegistry'
 export { WorkbenchShell }
-export * from './views'

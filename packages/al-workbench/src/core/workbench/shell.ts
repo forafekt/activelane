@@ -26,7 +26,6 @@ import type {
 } from './contributions'
 import type { FileOpenerContribution } from './fileOpeners'
 import type { WorkbenchSettingsContribution } from './settings'
-import type { WorkbenchTabSurfaceContribution } from './surfaces'
 import type {
   WorkbenchRegisteredTabAction,
   WorkbenchRegisteredTabGroupAction,
@@ -190,7 +189,6 @@ export interface WorkbenchRegisteredContributions {
   commands: WorkbenchCommandContribution[]
   commandPalette: WorkbenchCommandPaletteContribution[]
   tabRenderers: WorkbenchTabRendererContribution[]
-  tabSurfaces: WorkbenchTabSurfaceContribution[]
   tabToolbarActions: WorkbenchActionContribution[]
   tabContextMenu: WorkbenchMenuItemContribution[]
   bottomPaneViews: WorkbenchBottomPaneContribution[]
@@ -212,7 +210,6 @@ export interface WorkbenchContributionRegistrar {
   commands: (...items: WorkbenchCommandContribution[]) => Disposable
   commandPalette: (...items: WorkbenchCommandPaletteContribution[]) => Disposable
   tabRenderers: (...items: WorkbenchTabRendererContribution[]) => Disposable
-  tabSurfaces: (...items: WorkbenchTabSurfaceContribution[]) => Disposable
   tabToolbarActions: (...items: WorkbenchActionContribution[]) => Disposable
   tabContextMenu: (...items: WorkbenchMenuItemContribution[]) => Disposable
   bottomPaneViews: (...items: WorkbenchBottomPaneContribution[]) => Disposable

@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   root: resolve(import.meta.dirname, 'src'),
   base: './',
+  server: { cors: true },
   build: {
     target: ['safari15'],
     outDir: resolve(import.meta.dirname, 'dist'),

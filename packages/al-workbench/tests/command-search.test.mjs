@@ -13,7 +13,6 @@ function createRegistry() {
     commands: [],
     commandPalette: [],
     tabRenderers: [],
-    tabSurfaces: [],
     tabToolbarActions: [],
     tabContextMenu: [],
     bottomPaneViews: [],

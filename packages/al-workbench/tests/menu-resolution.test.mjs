@@ -24,7 +24,6 @@ function createRegistry() {
     ],
     commandPalette: [],
     tabRenderers: [],
-    tabSurfaces: [],
     tabToolbarActions: [],
     tabContextMenu: [],
     bottomPaneViews: [],

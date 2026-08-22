@@ -159,12 +159,6 @@ function contributionSummary(record: WorkbenchRuntimeExtensionRecord | Installed
       title: item.title,
       kind: item.tabKind,
     })),
-    tabSurfaces: contributes?.tabSurfaces?.map((item) => ({
-      id: item.id,
-      title: item.title,
-      kind: item.tabKind ?? item.mode,
-      description: item.mode,
-    })),
     inspectorPanels: contributes?.inspectorPanels?.map((item) => ({
       id: item.id,
       title: item.title,

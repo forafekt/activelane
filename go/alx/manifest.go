@@ -112,6 +112,23 @@ func (m Manifest) Validate() error {
 	if m.SchemaVersion != ManifestSchemaVersion {
 		issues = append(issues, "schemaVersion: must be "+ManifestSchemaVersion)
 	}
+	if rawPermissions, ok := m.Raw["permissions"]; ok {
+		permissions, valid := rawPermissions.([]any)
+		if !valid {
+			issues = append(issues, "permissions: must be an array")
+		} else {
+			seen := map[string]bool{}
+			for index, rawPermission := range permissions {
+				permission, stringValue := rawPermission.(string)
+				if !stringValue || permission != "extension-storage" {
+					issues = append(issues, fmt.Sprintf("permissions.%d: unsupported permission", index))
+				} else if seen[permission] {
+					issues = append(issues, fmt.Sprintf("permissions.%d: duplicate permission", index))
+				}
+				seen[permission] = true
+			}
+		}
+	}
 	if !strings.HasPrefix(m.ID, "@") {
 		issues = append(issues, "id: must use @namespace/name")
 	}
@@ -207,6 +224,17 @@ func validateViewContributions(raw map[string]any) []string {
 			if err := validateArchivePath(entry); err != nil || path.Ext(entry) != ".html" {
 				issues = append(issues, fmt.Sprintf("contributes.views.%d.renderer.entry: must be a safe package-relative HTML file", index))
 			}
+		}
+	}
+	if values, ok := contributes["commands"].([]any); ok {
+		seen := map[string]bool{}
+		for index, value := range values {
+			command, _ := value.(map[string]any)
+			id, _ := command["id"].(string)
+			if id == "" || seen[id] {
+				issues = append(issues, fmt.Sprintf("contributes.commands.%d.id: must be unique and non-empty", index))
+			}
+			seen[id] = true
 		}
 	}
 	return issues

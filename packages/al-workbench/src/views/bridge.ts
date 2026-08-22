@@ -4,7 +4,7 @@ import {
   type ViewPortMessage,
   type ViewRequest,
   type ViewResponse,
-} from '@activelane/extension-view'
+} from '@activelane/extension/view'
 import type { WorkbenchRuntimeApi } from '../core/runtime/types'
 import type { Disposable } from '../core/shared/types'
 import type { ViewDefinition, ViewInstance } from './model'
@@ -100,7 +100,7 @@ export class ViewBridge implements Disposable {
         this.runtime.workbench.markTabDirty(instance.id, instance.dirty)
         return undefined
       case 'view.close':
-        this.runtime.workbench.closeTab(instance.id)
+        this.runtime.views.close(instance.id)
         return undefined
       case 'commands.execute': {
         const command = requiredString(parameters, 'command')

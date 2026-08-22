@@ -1,4 +1,4 @@
-import type { WorkbenchExtensionContext } from '@activelane/workbench/extensions'
+import type { ExtensionContext } from '@activelane/extension'
 import { reactive } from 'vue'
 import {
   API_STUDIO_ENTITLEMENTS,
@@ -77,7 +77,7 @@ export class ApiStudioStore {
   readonly responses = reactive<Record<string, ApiResponseSnapshot | undefined>>({})
   selectedRequestId: string | null = null
 
-  constructor(readonly context: WorkbenchExtensionContext) {}
+  constructor(readonly context: ExtensionContext) {}
 
   async load() {
     const saved = await this.context.storage.get<ApiStudioState>(STATE_KEY)

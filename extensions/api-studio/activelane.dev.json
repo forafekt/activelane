@@ -1,0 +1,9 @@
+{
+  "runtime": "src/extension.ts",
+  "views": {
+    "dist/views/sidebar/index.html": "src/views/sidebar/index.html",
+    "dist/views/editor/index.html": "src/views/editor/index.html",
+    "dist/views/inspector/index.html": "src/views/inspector/index.html",
+    "dist/views/log/index.html": "src/views/log/index.html"
+  }
+}

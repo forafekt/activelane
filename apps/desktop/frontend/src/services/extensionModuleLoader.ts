@@ -1,7 +1,7 @@
 import {
   resolveWorkbenchExtensionModule,
   type WorkbenchExtensionDefinition,
-} from '@activelane/workbench/extensions'
+} from '@activelane/workbench'
 import type { InstalledExtensionRecord } from '@activelane/workbench'
 
 export interface NativeExtensionModulePayload {
@@ -61,7 +61,12 @@ function assertJavaScriptModulePayload(descriptor: NativeExtensionModuleLoadDesc
       new Error('Native service returned no module source.'),
     )
   }
-  if (record.manifest.entry && payload.entrypoint && !payload.entrypoint.endsWith(record.manifest.entry)) {
+  if (
+    record.installSource !== 'development' &&
+    record.manifest.entry &&
+    payload.entrypoint &&
+    !payload.entrypoint.endsWith(record.manifest.entry)
+  ) {
     throw wrapExtensionModuleError(
       descriptor,
       'native response validation',

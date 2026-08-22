@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   root: import.meta.dirname,
   build: {
-    lib: { entry: 'src/index.ts', formats: ['es'], fileName: () => 'index.js' },
+    lib: { entry: { index: 'src/index.ts', view: 'src/view.ts' }, formats: ['es'] },
     target: ['safari15'],
   },
 })

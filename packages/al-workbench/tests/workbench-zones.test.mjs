@@ -57,7 +57,6 @@ function createRegistry() {
     commands: [{ id: 'demo.first', title: 'First Command' }],
     commandPalette: [],
     tabRenderers: [],
-    tabSurfaces: [],
     tabToolbarActions: [],
     tabContextMenu: [],
     bottomPaneViews: [],

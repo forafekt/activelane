@@ -60,13 +60,16 @@ func PackDir(root, output string) (Inspection, error) {
 			return err
 		}
 		rel = filepath.ToSlash(rel)
-		if d.IsDir() && (rel == "node_modules" || rel == ".git" || strings.HasPrefix(rel, "node_modules/") || strings.HasPrefix(rel, ".git/")) {
+		if d.IsDir() && excludedPackageDirectory(rel) {
 			return filepath.SkipDir
 		}
 		if d.Type()&os.ModeSymlink != 0 {
 			return fmt.Errorf("symlink not allowed: %s", rel)
 		}
 		if d.IsDir() {
+			return nil
+		}
+		if excludedPackageFile(rel) {
 			return nil
 		}
 		if rel == filepath.ToSlash(output) || p == output {
@@ -149,6 +152,23 @@ func PackDir(root, output string) (Inspection, error) {
 		return Inspection{}, err
 	}
 	return Inspection{Manifest: m, Digest: "sha256:" + hex.EncodeToString(h.Sum(nil)), Size: stat.Size(), Files: names}, nil
+}
+
+func excludedPackageDirectory(name string) bool {
+	for _, directory := range []string{"node_modules", ".git", ".activelane", "src"} {
+		if name == directory || strings.HasPrefix(name, directory+"/") {
+			return true
+		}
+	}
+	return false
+}
+
+func excludedPackageFile(name string) bool {
+	base := filepath.Base(name)
+	if name == "activelane.dev.json" || name == "package.json" || name == "tsconfig.json" || name == "vite.config.ts" || name == "vite.config.js" {
+		return true
+	}
+	return base == "pnpm-lock.yaml" || base == "pnpm-workspace.yaml" || base == "package-lock.json" || base == "yarn.lock"
 }
 
 func InspectFile(filename string) (Inspection, error) {

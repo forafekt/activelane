@@ -28,7 +28,7 @@ with a sandboxed iframe and transfer a dedicated `MessagePort` after validating 
 instance, and frame identities. A native host can later use a WebView or process without changing the
 manifest or client API.
 
-Isolated applications use `@activelane/extension-view`, which has no Vue dependency. The API exposes
+Isolated applications use `@activelane/extension/view`, which has no Vue dependency. The API exposes
 view lifecycle, extension-owned commands, declared runtime services, extension storage, scoped events,
 and normalized theme tokens. It does not expose Workbench stores, Vue components, or native host APIs.
 
@@ -84,10 +84,11 @@ access to Workbench internals.
 
 ## Instance identity and cleanup
 
-Single-instance surfaces use their definition identity. Multi-instance editors add a stable instance ID
-and independent JSON context, so two editors created from the same definition cannot overwrite one
-another. Workbench-owned tabs, titles, dirty state, focus, close affordances, sidebars, inspectors, and
-panels remain outside the isolated document.
+Logical resources provide stable reveal identity for both single- and multi-instance views. Independent
+resources retain their JSON context and cannot overwrite one another. Persisted tabs keep resource,
+placement, title, and context across restoration, but receive a fresh runtime instance ID, renderer, and
+bridge channel after every host start. Workbench-owned tabs, dirty state, focus, close affordances,
+sidebars, inspectors, and panels remain outside the isolated document.
 
 Contribution registration is generation-based. A newly activated contribution replaces an older entry
 with the same owner and ID, while disposal removes only the generation that registered it. This avoids

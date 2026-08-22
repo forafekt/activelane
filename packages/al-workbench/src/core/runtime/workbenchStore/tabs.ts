@@ -73,6 +73,8 @@ export function createTab(
     locked: input.locked ?? false,
     protection: input.protection ?? null,
     input: input.input,
+    resource: input.resource,
+    viewInstanceId: input.viewInstanceId,
     capabilities: input.capabilities ?? [],
     indicators: input.indicators ?? [],
     hibernation: input.hibernation,

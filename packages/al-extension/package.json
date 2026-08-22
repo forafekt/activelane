@@ -1,0 +1,17 @@
+{
+  "name": "@activelane/extension",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Framework-neutral SDK for ActiveLane extension lifecycle modules.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./view": { "types": "./dist/view.d.ts", "import": "./dist/view.js" }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": { "build": "vite build && tsc -p tsconfig.json", "build:types": "tsc -p tsconfig.json", "test": "tsx --test tests/*.test.ts", "typecheck": "tsc -p tsconfig.json --noEmit" },
+  "devDependencies": { "tsx": "^4.21.0", "typescript": "~6.0.0", "vite": "^8.0.8" },
+  "keywords": ["activelane", "extension", "sdk"],
+  "license": "ISC"
+}

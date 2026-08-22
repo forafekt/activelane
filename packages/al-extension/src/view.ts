@@ -3,9 +3,9 @@ import {
   type ViewConnectMessage,
   type ViewPortMessage,
   type ViewRequest,
-} from './protocol'
+} from './view-protocol'
 
-export * from './protocol'
+export * from './view-protocol'
 
 export interface Disposable {
   dispose(): void
@@ -13,6 +13,26 @@ export interface Disposable {
 export interface ActiveLaneTheme {
   kind: string
   tokens: Record<string, string>
+}
+
+export class ActiveLaneViewError extends Error {
+  constructor(
+    readonly code: string,
+    message: string,
+    readonly cause?: unknown,
+  ) {
+    super(message)
+    this.name = 'ActiveLaneViewError'
+  }
+}
+
+type ServiceResult<T> = T extends (...args: never[]) => infer TResult ? Awaited<TResult> : unknown
+
+export type ActiveLaneServiceClient<TService extends object> = {
+  call<TKey extends keyof TService & string>(
+    method: TKey,
+    ...args: TService[TKey] extends (...args: infer TArguments) => unknown ? TArguments : never
+  ): Promise<ServiceResult<TService[TKey]>>
 }
 
 export interface ActiveLaneViewClient {
@@ -23,7 +43,10 @@ export interface ActiveLaneViewClient {
     close(): Promise<void>
   }
   commands: { execute<T = unknown>(command: string, args?: unknown): Promise<T> }
-  services: { call<T = unknown>(service: string, method: string, ...args: unknown[]): Promise<T> }
+  services: {
+    call<T = unknown>(service: string, method: string, ...args: unknown[]): Promise<T>
+    get<TService extends object>(service: string): ActiveLaneServiceClient<TService>
+  }
   events: {
     on<T = unknown>(event: string, listener: (value: T) => void): Disposable
     emit<T = unknown>(event: string, value: T): Promise<void>
@@ -36,6 +59,7 @@ export interface ActiveLaneViewClient {
     getCurrent(): Promise<ActiveLaneTheme>
     onDidChange(listener: (theme: ActiveLaneTheme) => void): Disposable
   }
+  onDispose(listener: () => void): Disposable
   dispose(): void
 }
 
@@ -52,6 +76,7 @@ export async function connectActiveLaneView(
   const channel = new MessageChannel()
   const pending = new Map<string, { resolve(value: unknown): void; reject(error: Error): void }>()
   const listeners = new Map<string, Set<(value: unknown) => void>>()
+  const disposeListeners = new Set<() => void>()
   let disposed = false
 
   channel.port1.onmessage = (event: MessageEvent<ViewPortMessage>) => {
@@ -62,7 +87,7 @@ export async function connectActiveLaneView(
       if (!request) return
       pending.delete(message.id)
       if (message.error)
-        request.reject(new Error(`${message.error.code}: ${message.error.message}`))
+        request.reject(new ActiveLaneViewError(message.error.code, message.error.message))
       else request.resolve(message.result)
     } else if (message.type === 'event') {
       for (const listener of listeners.get(message.event) ?? []) listener(message.value)
@@ -80,7 +105,10 @@ export async function connectActiveLaneView(
   let sequence = 0
   const call = <T>(method: string, params?: unknown) =>
     new Promise<T>((resolve, reject) => {
-      if (disposed) return reject(new Error('ActiveLane view connection is disposed.'))
+      if (disposed)
+        return reject(
+          new ActiveLaneViewError('CONNECTION_DISPOSED', 'ActiveLane view connection is disposed.'),
+        )
       const id = `${identity.instanceId}:${++sequence}`
       pending.set(id, { resolve: resolve as (value: unknown) => void, reject })
       channel.port1.postMessage({
@@ -99,6 +127,17 @@ export async function connectActiveLaneView(
   }
 
   await withTimeout(call('view.ready'), options.timeoutMs ?? 10_000)
+  const service = <TService extends object>(
+    serviceId: string,
+  ): ActiveLaneServiceClient<TService> => {
+    const invoke = (method: string, args: unknown[]) =>
+      call('services.call', { service: serviceId, method, args })
+    return {
+      call: ((method: string, ...args: unknown[]) =>
+        invoke(method, args)) as ActiveLaneServiceClient<TService>['call'],
+    }
+  }
+
   return {
     view: {
       getContext: () => call('view.getContext'),
@@ -109,6 +148,7 @@ export async function connectActiveLaneView(
     commands: { execute: (command, args) => call('commands.execute', { command, args }) },
     services: {
       call: (service, method, ...args) => call('services.call', { service, method, args }),
+      get: service,
     },
     events: { on, emit: (event, value) => call('events.emit', { event, value }) },
     storage: {
@@ -119,10 +159,19 @@ export async function connectActiveLaneView(
       getCurrent: () => call('theme.getCurrent'),
       onDidChange: (listener) => on('theme.changed', listener),
     },
+    onDispose(listener) {
+      disposeListeners.add(listener)
+      return { dispose: () => disposeListeners.delete(listener) }
+    },
     dispose() {
+      if (disposed) return
       disposed = true
+      for (const listener of disposeListeners) listener()
+      disposeListeners.clear()
       for (const request of pending.values())
-        request.reject(new Error('ActiveLane view connection disposed.'))
+        request.reject(
+          new ActiveLaneViewError('CONNECTION_DISPOSED', 'ActiveLane view connection disposed.'),
+        )
       pending.clear()
       listeners.clear()
       channel.port1.close()
@@ -136,7 +185,7 @@ function readIdentity(hash: string) {
   const definitionId = parameters.get('alView')
   const instanceId = parameters.get('alInstance')
   if (!extensionId || !definitionId || !instanceId)
-    throw new Error('Missing ActiveLane view identity.')
+    throw new ActiveLaneViewError('IDENTITY_MISSING', 'Missing ActiveLane view identity.')
   return { extensionId, definitionId, instanceId }
 }
 
@@ -147,7 +196,10 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
       promise,
       new Promise<never>((_, reject) => {
         timeout = setTimeout(
-          () => reject(new Error('ActiveLane view connection timed out.')),
+          () =>
+            reject(
+              new ActiveLaneViewError('BRIDGE_TIMEOUT', 'ActiveLane view connection timed out.'),
+            ),
           timeoutMs,
         )
       }),

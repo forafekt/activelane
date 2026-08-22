@@ -4,9 +4,7 @@ import { useWorkbenchRuntime } from '../../composables/useWorkbenchRuntime'
 import type { WorkbenchTab } from '../../core/workbench/contributions'
 import type { WorkbenchSurfaceDescriptor } from '../../core/workbench/surfaces'
 import IsolatedViewHost from '../../views/IsolatedViewHost.vue'
-import WorkbenchIframeSurface from './WorkbenchIframeSurface.vue'
 import WorkbenchNativeVueSurface from './WorkbenchNativeVueSurface.vue'
-import WorkbenchShadowDomSurface from './WorkbenchShadowDomSurface.vue'
 import WorkbenchUnsupportedSurface from './WorkbenchUnsupportedSurface.vue'
 
 defineOptions({ name: 'WorkbenchSurfaceHost' })
@@ -24,11 +22,6 @@ const surfaceComponent = computed(() => {
   switch (props.surface.mode) {
     case 'native-vue':
       return WorkbenchNativeVueSurface
-    case 'shadow-dom':
-      return WorkbenchShadowDomSurface
-    case 'iframe':
-    case 'external-url':
-      return WorkbenchIframeSurface
     case 'isolated':
       return IsolatedViewHost
     default:
@@ -50,6 +43,7 @@ watchEffect(() => {
 <template>
   <IsolatedViewHost
     v-if="surface.mode === 'isolated'"
+    :key="surface.instanceId"
     :definition="surface.view"
     :instance-id="surface.instanceId"
     :context="surface.context"

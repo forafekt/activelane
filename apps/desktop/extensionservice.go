@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -15,6 +16,7 @@ import (
 
 	semver "github.com/Masterminds/semver/v3"
 	"github.com/activelane/activelane/go/alx"
+	"github.com/activelane/activelane/go/devextensions"
 	"github.com/activelane/activelane/go/install"
 	registry "github.com/activelane/activelane/go/registry"
 	"github.com/activelane/activelane/go/registryconfig"
@@ -26,21 +28,28 @@ type ExtensionService struct {
 	installRoot string
 	sources     registry.SourceClient
 	installer   install.Installer
+	development *developmentExtensionRegistry
 }
 
 func NewExtensionService() *ExtensionService {
 	root := install.DefaultRoot()
-	return &ExtensionService{configPath: registryconfig.DefaultPath(), installRoot: root, installer: install.Installer{Root: root}}
+	return &ExtensionService{configPath: registryconfig.DefaultPath(), installRoot: root, installer: install.Installer{Root: root}, development: newDevelopmentExtensionRegistry()}
 }
 func NewExtensionServiceAt(configPath, installRoot string) *ExtensionService {
-	return &ExtensionService{configPath: configPath, installRoot: installRoot, installer: install.Installer{Root: installRoot}}
+	return &ExtensionService{configPath: configPath, installRoot: installRoot, installer: install.Installer{Root: installRoot}, development: newDevelopmentExtensionRegistry()}
 }
-func (service *ExtensionService) Close() {}
+func (service *ExtensionService) startDevelopmentServer(emitChanged func()) error {
+	return service.development.start(emitChanged)
+}
+func (service *ExtensionService) Close() { service.development.close() }
 
 // Module returns the self-contained ES module entrypoint for an installed package.
 // Keeping this at the native service boundary gives development and packaged builds
 // one loading path and prevents the webview from reading arbitrary local files.
 func (service *ExtensionService) Module(extensionID, version string) ExtensionModuleResponse {
+	if registration, found := service.development.get(extensionID, version); found {
+		return fetchDevelopmentModule(registration)
+	}
 	service.mu.Lock()
 	defer service.mu.Unlock()
 	packageInfo, err := service.resolveInstalledPackage(extensionID, version, false)
@@ -57,6 +66,41 @@ func (service *ExtensionService) Module(extensionID, version string) ExtensionMo
 	}
 	digest := sha256.Sum256(source)
 	return ExtensionModuleResponse{Source: string(source), Entrypoint: packageInfo.manifest.Entry, ContentType: runtimeEntrypointContentType(file), SizeBytes: len(source), SHA256: hex.EncodeToString(digest[:])}
+}
+
+func fetchDevelopmentModule(registration devextensions.Registration) ExtensionModuleResponse {
+	const maximumRuntimeSize = 16 << 20
+	source, err := os.ReadFile(registration.RuntimePath)
+	if err != nil || len(source) > maximumRuntimeSize {
+		return ExtensionModuleResponse{Error: desktopError("EXT_RUNTIME_LOAD_FAILED", "Development runtime bundle could not be read.", err)}
+	}
+	digest := sha256.Sum256(source)
+	entrypoint := fmt.Sprintf("development://%s/generation/%d/%s", url.PathEscape(registration.Manifest.ID), registration.Generation, registration.Manifest.Entry)
+	return ExtensionModuleResponse{Source: string(source), Entrypoint: entrypoint, ContentType: "text/javascript", SizeBytes: len(source), SHA256: hex.EncodeToString(digest[:])}
+}
+
+func (service *ExtensionService) ResolveAsset(extensionID, version, resource string) ExtensionAssetResponse {
+	if registration, found := service.development.get(extensionID, version); found {
+		value, exists := registration.AssetURLs[strings.TrimPrefix(resource, "./")]
+		if !exists {
+			return ExtensionAssetResponse{Error: desktopError("VIEW_ASSET_NOT_FOUND", "Development view entry is not registered.", fmt.Errorf("resource %q", resource))}
+		}
+		return ExtensionAssetResponse{URL: value}
+	}
+	service.mu.Lock()
+	defer service.mu.Unlock()
+	if _, err := service.resolvePackageResource(extensionID, version, resource, true); err != nil {
+		return ExtensionAssetResponse{Error: desktopError("VIEW_ASSET_NOT_FOUND", "Extension view asset is unavailable.", err)}
+	}
+	namespace, name, err := parseExtensionID(extensionID)
+	if err != nil {
+		return ExtensionAssetResponse{Error: desktopError("EXTENSION_NOT_FOUND", "Extension identity is invalid.", nil)}
+	}
+	segments := strings.Split(strings.TrimPrefix(resource, "./"), "/")
+	for index := range segments {
+		segments[index] = url.PathEscape(segments[index])
+	}
+	return ExtensionAssetResponse{URL: fmt.Sprintf("/__activelane/extensions/%s/%s/%s/%s", url.PathEscape(namespace), url.PathEscape(name), url.PathEscape(version), strings.Join(segments, "/"))}
 }
 
 func runtimeEntrypointContentType(path string) string {
@@ -174,9 +218,23 @@ func (service *ExtensionService) Installed() InstalledResponse {
 	if err != nil {
 		return InstalledResponse{Items: []InstalledExtension{}, Error: mapInstallError(err)}
 	}
-	items := make([]InstalledExtension, 0, len(records))
+	development := service.development.list()
+	developmentIDs := map[string]bool{}
+	for _, registration := range development {
+		developmentIDs[registration.Manifest.ID] = true
+	}
+	items := make([]InstalledExtension, 0, len(records)+len(development))
 	for _, record := range records {
+		if developmentIDs["@"+record.Namespace+"/"+record.Name] {
+			continue
+		}
 		items = append(items, service.mapInstalled(record, true))
+	}
+	for _, registration := range development {
+		manifest := registration.Manifest.Raw
+		canonical, _ := json.Marshal(manifest)
+		digest := sha256.Sum256(canonical)
+		items = append(items, InstalledExtension{ID: strings.TrimPrefix(registration.Manifest.ID, "@"), ExtensionID: registration.Manifest.ID, DisplayName: registration.Manifest.DisplayName, Version: registration.Manifest.Version, Enabled: true, State: "enabled", InstallSource: "development", UpdatedAt: fmt.Sprintf("generation:%d", registration.Generation), Manifest: manifest, ManifestDigest: "sha256:" + hex.EncodeToString(digest[:]), PackageDigest: fmt.Sprintf("development:%s:%d", registration.SessionID, registration.Generation), IntegrityState: "development", RestartRequired: false})
 	}
 	return InstalledResponse{Items: items}
 }

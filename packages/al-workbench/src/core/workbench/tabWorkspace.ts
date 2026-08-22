@@ -49,6 +49,7 @@ export interface WorkbenchSerializableTab {
   color?: WorkbenchTab['color']
   locked?: boolean
   input?: WorkbenchTabInput
+  resource?: string
   capabilities?: string[]
   ownerExtensionId?: string
   indicators?: WorkbenchTabIndicator[]
@@ -260,6 +261,7 @@ export function serializeWorkbenchTab(tab: WorkbenchTab): WorkbenchSerializableT
     color: tab.color,
     locked: tab.locked,
     input,
+    resource: tab.resource,
     capabilities: [...(tab.capabilities ?? [])],
     ownerExtensionId: tab.ownerExtensionId,
     indicators: indicators.length ? indicators : undefined,

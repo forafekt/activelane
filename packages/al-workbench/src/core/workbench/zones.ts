@@ -19,7 +19,6 @@ export type WorkbenchZoneContribution =
   | WorkbenchRegisteredContributions['bottomPaneViews'][number]
   | WorkbenchRegisteredContributions['inspectorPanels'][number]
   | WorkbenchRegisteredContributions['tabRenderers'][number]
-  | WorkbenchRegisteredContributions['tabSurfaces'][number]
   | WorkbenchRegisteredContributions['tabToolbarActions'][number]
   | WorkbenchRegisteredContributions['globalMenus'][number]
   | WorkbenchRegisteredContributions['menus'][number]
@@ -36,7 +35,7 @@ const zoneKeys = {
   'workbench.panel.left': ['sidebarViews'],
   'workbench.panel.right': ['inspectorPanels'],
   'workbench.panel.bottom': ['bottomPaneViews'],
-  'workbench.tabs': ['tabRenderers', 'tabSurfaces'],
+  'workbench.tabs': ['tabRenderers'],
   'workbench.tabRail': ['tabToolbarActions', 'tabContextMenu'],
   'workbench.menu.global': ['globalMenus', 'menus'],
   'workbench.menu.application': ['globalMenus', 'menus'],

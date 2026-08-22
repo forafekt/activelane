@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -31,10 +32,14 @@ func run(args []string, out io.Writer) error {
 		return nil
 	}
 	switch args[0] {
-	case "init":
-		return initExtension(args[1:], out)
+	case "create":
+		return createExtension(args[1:], out)
 	case "validate":
 		return validate(args[1:], out)
+	case "build":
+		return buildExtension(args[1:], out)
+	case "dev":
+		return devExtension(args[1:], out)
 	case "pack":
 		return pack(args[1:], out)
 	case "inspect", "verify":
@@ -60,8 +65,13 @@ func usage(w io.Writer) {
 	fmt.Fprint(w, `alx - ActiveLane extension package and registry tool
 
 Usage:
-  alx init [directory]
+  alx create NAME [--publisher PUBLISHER] [--display-name NAME]
+                  [--view primary-sidebar|secondary-sidebar|editor|panel]
+                  [--framework vanilla]
+                  [--no-runtime]
   alx validate [manifest]
+  alx build [directory] [--runner pnpm|npm|yarn]
+  alx dev [directory] [--runner pnpm|npm|yarn] [--port PORT]
   alx pack [directory] --output extension.alx
   alx inspect extension.alx [--json]
   alx verify extension.alx
@@ -81,30 +91,42 @@ repository root, pnpm registry:dev and pnpm marketplace:seed use it together.
 `)
 }
 
-func initExtension(args []string, out io.Writer) error {
-	dir := "."
-	if len(args) > 0 {
-		dir = args[0]
-	}
-	if err := os.MkdirAll(filepath.Join(dir, "extension"), 0755); err != nil {
+type stringValues []string
+
+func (values *stringValues) String() string { return strings.Join(*values, ",") }
+func (values *stringValues) Set(value string) error {
+	*values = append(*values, value)
+	return nil
+}
+
+func createExtension(args []string, out io.Writer) error {
+	fs := flag.NewFlagSet("create", flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+	publisher := fs.String("publisher", "local", "extension publisher")
+	displayName := fs.String("display-name", "", "human-readable extension name")
+	noRuntime := fs.Bool("no-runtime", false, "omit the lifecycle runtime")
+	framework := fs.String("framework", "vanilla", "isolated view framework")
+	var views stringValues
+	fs.Var(&views, "view", "Workbench view location (repeatable)")
+	known := map[string]bool{"--publisher": true, "--display-name": true, "--view": true, "--framework": true, "--no-runtime": false}
+	if err := fs.Parse(flagsFirst(args, known)); err != nil {
 		return err
 	}
-	manifest := map[string]any{"schemaVersion": "1.0.0", "id": "@local/example", "publisher": "local", "name": "example", "displayName": "Example", "version": "0.1.0", "description": "An ActiveLane extension.", "entry": "extension/main.js", "engines": map[string]string{"activelane": "*"}, "hostSupport": []string{"desktop"}, "extensionKind": []string{"workbench"}, "visibility": "private"}
-	data, _ := json.MarshalIndent(manifest, "", "  ")
-	data = append(data, '\n')
-	mf := filepath.Join(dir, alx.ManifestFile)
-	if _, e := os.Stat(mf); e == nil {
-		return fmt.Errorf("%s already exists", mf)
+	if fs.NArg() > 1 {
+		return fmt.Errorf("create accepts one extension name")
 	}
-	if e := os.WriteFile(mf, data, 0644); e != nil {
-		return e
+	name := "example"
+	if fs.NArg() == 1 {
+		name = filepath.Base(filepath.Clean(fs.Arg(0)))
 	}
-	entry := filepath.Join(dir, "extension/main.js")
-	module := "export default {\n  manifest: { id: '@local/example', name: 'example', displayName: 'Example', version: '0.1.0' },\n  async activate(context) {},\n}\n"
-	if e := os.WriteFile(entry, []byte(module), 0644); e != nil {
-		return e
+	directory := name
+	if fs.NArg() == 1 && (strings.Contains(fs.Arg(0), string(os.PathSeparator)) || fs.Arg(0) == ".") {
+		directory = fs.Arg(0)
 	}
-	fmt.Fprintf(out, "Created %s\n", mf)
+	if err := alx.CreateScaffold(alx.ScaffoldOptions{Directory: directory, Name: name, Publisher: *publisher, DisplayName: *displayName, Views: views, Runtime: !*noRuntime, Framework: *framework}); err != nil {
+		return err
+	}
+	fmt.Fprintf(out, "Created @%s/%s in %s\n\nNext steps:\n  cd %s\n  pnpm install\n  alx build\n  alx validate\n  alx pack --output %s.alx\n", *publisher, name, directory, directory, name)
 	return nil
 }
 
@@ -112,12 +134,61 @@ func validate(args []string, out io.Writer) error {
 	file := alx.ManifestFile
 	if len(args) > 0 {
 		file = args[0]
+	} else {
+		root, err := discoverProjectRoot(".")
+		if err != nil {
+			return err
+		}
+		file = filepath.Join(root, alx.ManifestFile)
 	}
 	m, e := alx.ValidateFile(file)
 	if e != nil {
 		return e
 	}
 	fmt.Fprintf(out, "Valid %s %s\n", m.ID, m.Version)
+	return nil
+}
+
+func buildExtension(args []string, out io.Writer) error {
+	fs := flag.NewFlagSet("build", flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+	runner := fs.String("runner", "pnpm", "package manager used to run the build script")
+	if err := fs.Parse(flagsFirst(args, map[string]bool{"--runner": true})); err != nil {
+		return err
+	}
+	directory := "."
+	if fs.NArg() > 1 {
+		return fmt.Errorf("build accepts one extension directory")
+	}
+	if fs.NArg() == 1 {
+		directory = fs.Arg(0)
+	} else {
+		var err error
+		directory, err = discoverProjectRoot(directory)
+		if err != nil {
+			return err
+		}
+	}
+	var command *exec.Cmd
+	switch *runner {
+	case "pnpm", "yarn":
+		command = exec.Command(*runner, "run", "build")
+	case "npm":
+		command = exec.Command("npm", "run", "build")
+	default:
+		return fmt.Errorf("unsupported build runner %q", *runner)
+	}
+	command.Dir = directory
+	command.Stdout = out
+	command.Stderr = out
+	if err := command.Run(); err != nil {
+		return fmt.Errorf("extension build failed: %w", err)
+	}
+	manifest, err := alx.ValidateFile(filepath.Join(directory, alx.ManifestFile))
+	if err != nil {
+		return fmt.Errorf("build output is invalid: %w", err)
+	}
+	fmt.Fprintf(out, "Built and validated %s %s\n", manifest.ID, manifest.Version)
 	return nil
 }
 
@@ -131,6 +202,12 @@ func pack(args []string, out io.Writer) error {
 	dir := "."
 	if fs.NArg() > 0 {
 		dir = fs.Arg(0)
+	} else {
+		var err error
+		dir, err = discoverProjectRoot(dir)
+		if err != nil {
+			return err
+		}
 	}
 	if *output == "" {
 		*output = filepath.Base(filepath.Clean(dir)) + ".alx"
@@ -141,6 +218,27 @@ func pack(args []string, out io.Writer) error {
 	}
 	fmt.Fprintf(out, "Packed %s (%d bytes, %s)\n", *output, i.Size, i.Digest)
 	return nil
+}
+
+func discoverProjectRoot(start string) (string, error) {
+	current, err := filepath.Abs(start)
+	if err != nil {
+		return "", fmt.Errorf("resolve extension project directory: %w", err)
+	}
+	if info, statErr := os.Stat(current); statErr == nil && !info.IsDir() {
+		current = filepath.Dir(current)
+	}
+	for {
+		manifest := filepath.Join(current, alx.ManifestFile)
+		if info, statErr := os.Stat(manifest); statErr == nil && info.Mode().IsRegular() {
+			return current, nil
+		}
+		parent := filepath.Dir(current)
+		if parent == current {
+			return "", fmt.Errorf("no %s found from %s or its parents", alx.ManifestFile, start)
+		}
+		current = parent
+	}
 }
 
 func inspect(args []string, out io.Writer, verify bool) error {

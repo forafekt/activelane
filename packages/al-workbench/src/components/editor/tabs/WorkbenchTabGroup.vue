@@ -34,8 +34,8 @@ const showActiveGroupIndicator = computed(() =>
   ),
 )
 
-function markActiveTabEngaged() {
-  if (activeTab.value?.preview) tabs.markEngaged(activeTab.value.id)
+function markTabEngaged(tabId: string, preview: boolean) {
+  if (preview) tabs.markEngaged(tabId)
 }
 
 function unlockActiveTab() {
@@ -70,18 +70,24 @@ function wakeActiveTab() {
     <div :data-surface-id="activeTab?.surfaceId" class="wb-tab-group__content">
       <!-- biome-ignore lint/a11y/noStaticElementInteractions: capture handlers observe engagement within arbitrary extension content. -->
       <div
-        v-if="activeTab && !activeTab.hibernation?.hibernated && !tabInteractions.isProtectionLocked(activeTab)"
+        v-for="tab in group.tabs.filter(
+          (candidate) =>
+            !candidate.hibernation?.hibernated && !tabInteractions.isProtectionLocked(candidate),
+        )"
+        :key="tab.id"
+        v-show="tab.id === activeTab?.id"
         data-workbench-surface-render
+        :data-workbench-tab-instance="tab.id"
         class="wb-tab-group__surface"
-        @pointerdown.capture="markActiveTabEngaged"
-        @keydown.capture="markActiveTabEngaged"
-        @submit.capture="markActiveTabEngaged"
+        @pointerdown.capture="markTabEngaged(tab.id, tab.preview)"
+        @keydown.capture="markTabEngaged(tab.id, tab.preview)"
+        @submit.capture="markTabEngaged(tab.id, tab.preview)"
       >
-        <WorkbenchSurfaceRenderer :tab="activeTab" />
+        <WorkbenchSurfaceRenderer :tab="tab" />
       </div>
 
       <EmptyState
-        v-else-if="activeTab?.hibernation?.hibernated"
+        v-if="activeTab?.hibernation?.hibernated"
         class="p-3"
         title="Hibernated tab"
         description="Wake this tab to restore its work surface."

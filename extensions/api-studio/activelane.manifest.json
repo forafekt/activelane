@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0", "id": "@activelane/api-studio", "publisher": "activelane", "name": "api-studio", "displayName": "ActiveLane API Studio", "version": "0.1.0",
   "description": "Framework-neutral isolated applications backed by one API Studio runtime.", "entry": "dist/extension.js", "engines": { "activelane": ">=0.1.0" },
-  "hostSupport": ["desktop", "webapp"], "extensionKind": ["workbench"], "visibility": "public", "permissions": ["extension-storage", "workspace-ui"],
+  "hostSupport": ["desktop", "webapp"], "extensionKind": ["workbench"], "visibility": "public", "permissions": ["extension-storage"],
   "contributes": {
     "activityRail": [{ "id": "api-studio.navigation", "title": "API Studio", "defaultSidebarViewId": "api-studio.navigation" }],
     "containers": [
@@ -18,7 +18,8 @@
     ],
     "commands": [
       { "id": "api-studio.open-users", "title": "API Studio: Open Users Request" },
-      { "id": "api-studio.open-orders", "title": "API Studio: Open Orders Request" }
+      { "id": "api-studio.open-orders", "title": "API Studio: Open Orders Request" },
+      { "id": "api-studio.open-settings", "title": "API Studio: Open Settings Request" }
     ]
   }
 }

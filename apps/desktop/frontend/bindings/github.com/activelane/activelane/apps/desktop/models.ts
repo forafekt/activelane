@@ -31,6 +31,29 @@ export class DesktopError {
     }
 }
 
+export class ExtensionAssetResponse {
+    "url"?: string;
+    "error"?: DesktopError | null;
+
+    /** Creates a new ExtensionAssetResponse instance. */
+    constructor($$source: Partial<ExtensionAssetResponse> = {}) {
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ExtensionAssetResponse instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ExtensionAssetResponse {
+        const $$createField1_0 = $$createType1;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("error" in $$parsedSource) {
+            $$parsedSource["error"] = $$createField1_0($$parsedSource["error"]);
+        }
+        return new ExtensionAssetResponse($$parsedSource as Partial<ExtensionAssetResponse>);
+    }
+}
+
 export class ExtensionModuleResponse {
     "source"?: string;
     "entrypoint"?: string;

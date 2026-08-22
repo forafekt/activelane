@@ -35,15 +35,19 @@ export interface ViewDefinition {
   renderer: ViewRenderer
   capabilities?: string[]
   multiple?: boolean
+  opening?: ViewOpenPolicy
   order?: number
   ownerExtensionId?: string
 }
+
+export type ViewOpenPolicy = 'reveal-or-create' | 'always-new' | 'singleton'
 
 export interface ViewInstance<TContext = unknown> {
   id: string
   definitionId: string
   extensionId: string
   title: string
+  resource?: string
   context?: TContext
   dirty: boolean
   createdAt: number
@@ -55,4 +59,15 @@ export interface CreateViewInstanceInput<TContext = unknown> {
   title?: string
   context?: TContext
   instanceId?: string
+  resource?: string
+  policy?: ViewOpenPolicy
+}
+
+export interface OpenViewOptions<TContext = unknown> {
+  title?: string
+  context?: TContext
+  resource?: string
+  policy?: ViewOpenPolicy
+  preview?: boolean
+  groupId?: string
 }

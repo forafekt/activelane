@@ -60,6 +60,12 @@ export function Registries(): $CancellablePromise<$models.RegistryStatusResponse
     });
 }
 
+export function ResolveAsset(extensionID: string, version: string, resource: string): $CancellablePromise<$models.ExtensionAssetResponse> {
+    return $Call.ByID(3414518140, extensionID, version, resource).then(($result: any) => {
+        return $$createType5($result);
+    });
+}
+
 export function Search(query: string): $CancellablePromise<$models.SearchResponse> {
     return $Call.ByID(1082037956, query).then(($result: any) => {
         return $$createType0($result);
@@ -78,3 +84,4 @@ const $$createType1 = $models.ExtensionOperationResponse.createFrom;
 const $$createType2 = $models.InstalledResponse.createFrom;
 const $$createType3 = $models.ExtensionModuleResponse.createFrom;
 const $$createType4 = $models.RegistryStatusResponse.createFrom;
+const $$createType5 = $models.ExtensionAssetResponse.createFrom;

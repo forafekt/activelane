@@ -1,0 +1,4 @@
+{
+  "runtime": "src/extension.ts",
+  "views": { "dist/views/editor/index.html": "src/views/editor/index.html" }
+}

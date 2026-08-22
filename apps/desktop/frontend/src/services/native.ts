@@ -10,7 +10,7 @@ import type {
   WorkbenchRegistryStatusResponse,
   WorkbenchSubscriptionProvider,
 } from '@activelane/workbench'
-import type { WorkbenchExtensionDefinition } from '@activelane/workbench/extensions'
+import type { WorkbenchExtensionDefinition } from '@activelane/workbench'
 import { Clipboard, Dialogs, System, Window as WailsWindow } from '@wailsio/runtime'
 import {
   Disable as DisableExtension,
@@ -19,6 +19,7 @@ import {
   Install as InstallExtension,
   Installed as InstalledExtensions,
   Registries as RegistryStatuses,
+  ResolveAsset as ResolveExtensionAsset,
   Search as SearchRegistries,
   Uninstall as UninstallExtension,
 } from '../../bindings/github.com/activelane/activelane/apps/desktop/extensionservice'
@@ -56,6 +57,7 @@ function throwNativeError(error?: DesktopError | null): void {
 }
 
 function mapInstalled(record: InstalledExtension): InstalledExtensionRecord {
+	const development = record.installSource === 'development'
   return {
     id: record.id,
     extensionId: record.extensionId,
@@ -63,15 +65,14 @@ function mapInstalled(record: InstalledExtension): InstalledExtensionRecord {
     version: record.version,
     enabled: record.enabled,
     state: record.enabled ? 'enabled' : 'disabled',
-    installSource: 'marketplace',
+	installSource: development ? 'development' : 'marketplace',
     installedAt: record.installedAt,
     updatedAt: record.updatedAt,
     manifest: record.manifest as unknown as ActiveLaneExtensionManifest,
     resolvedPath: record.installPath,
-    source: {
-      type: 'registry',
-      registryId: record.registryId,
-    },
+	source: development
+	  ? { type: 'development' }
+	  : { type: 'registry', registryId: record.registryId },
     digest: record.packageDigest,
     manifestDigest: record.manifestDigest,
     integrityState: record.integrityState as InstalledExtensionRecord['integrityState'],
@@ -197,17 +198,16 @@ export function createNativeCapabilities(): WorkbenchHostCapabilities {
   return {
     extensionAssets: {
       resolve: async (extensionId, resourcePath) => {
-        const { namespace, name } = parseExtensionIdentity(extensionId)
         const response = await InstalledExtensions()
         throwNativeError(response.error)
         const installed = response.items.find(
           (item) => item.extensionId === extensionId && item.enabled,
         )
         if (!installed) throw new Error(`Enabled extension ${extensionId} is not installed.`)
-        const segments = resourcePath.replace(/^\.\//, '').split('/').map(encodeURIComponent)
-        return {
-          url: `/__activelane/extensions/${encodeURIComponent(namespace)}/${encodeURIComponent(name)}/${encodeURIComponent(installed.version)}/${segments.join('/')}`,
-        }
+		const resolved = await ResolveExtensionAsset(extensionId, installed.version, resourcePath)
+		throwNativeError(resolved.error)
+		if (!resolved.url) throw new Error(`No asset URL was returned for ${extensionId}.`)
+		return { url: resolved.url }
       },
     },
     lifecycle: { closeWindow: () => workbenchWindow.Close() },

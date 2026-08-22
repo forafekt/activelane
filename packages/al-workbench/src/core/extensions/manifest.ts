@@ -184,8 +184,9 @@ export function normalizeActiveLaneManifest(input: unknown): ManifestValidationR
     capabilities: Array.isArray(input.capabilities)
       ? (input.capabilities as ActiveLaneExtensionManifest['capabilities'])
       : [],
-    permissions:
-      Array.isArray(input.permissions) || isObject(input.permissions) ? input.permissions : {},
+    permissions: Array.isArray(input.permissions)
+      ? (input.permissions as ActiveLaneExtensionManifest['permissions'])
+      : [],
     dependencies: isObject(input.dependencies)
       ? (input.dependencies as Record<string, string>)
       : {},

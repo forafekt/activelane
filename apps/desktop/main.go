@@ -3,7 +3,10 @@ package main
 import (
 	"embed"
 	"log"
+	"os"
+	"os/signal"
 	"runtime"
+	"syscall"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/events"
@@ -15,6 +18,7 @@ var assets embed.FS
 func main() {
 	workspaceService := NewWorkspaceService()
 	extensionService := NewExtensionService()
+	defer extensionService.Close()
 	networkService := NewNetworkService()
 
 	// Determine frameless needs by OS
@@ -36,6 +40,18 @@ func main() {
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
 	})
+	if err := extensionService.startDevelopmentServer(func() {
+		app.Event.Emit("activelane:development-extensions-changed")
+	}); err != nil {
+		log.Printf("ActiveLane extension development is unavailable: %v", err)
+	}
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+	defer signal.Stop(shutdown)
+	go func() {
+		<-shutdown
+		extensionService.Close()
+	}()
 
 	window := app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Name:      "workbench",

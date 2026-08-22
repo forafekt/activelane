@@ -61,12 +61,28 @@ func TestPackIgnoresDevelopmentDependencyDirectories(t *testing.T) {
 	if err := os.Symlink("../../extension", filepath.Join(d, "node_modules", "example", "linked")); err != nil {
 		t.Fatal(err)
 	}
+	for name, contents := range map[string]string{
+		"activelane.dev.json": "{}",
+		"package.json":        "{}",
+		"pnpm-lock.yaml":      "lockfileVersion: 9",
+		"pnpm-workspace.yaml": "allowBuilds:\n  esbuild: true\n",
+		"vite.config.ts":      "export default {}",
+		"src/extension.ts":    "export default {}",
+	} {
+		filename := filepath.Join(d, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(filename), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filename, []byte(contents), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
 	inspection, err := PackDir(d, filepath.Join(t.TempDir(), "example.alx"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	for _, name := range inspection.Files {
-		if strings.HasPrefix(name, "node_modules/") {
+		if strings.HasPrefix(name, "node_modules/") || strings.HasPrefix(name, "src/") || name == "activelane.dev.json" || name == "package.json" || name == "pnpm-workspace.yaml" {
 			t.Fatalf("development dependency was packed: %s", name)
 		}
 	}
@@ -94,5 +110,23 @@ func TestManifestRejectsBadVersion(t *testing.T) {
 	data = bytes.Replace(data, []byte("1.2.3"), []byte("latest"), 1)
 	if _, e := ParseManifest(data); e == nil {
 		t.Fatal("expected validation error")
+	}
+}
+
+func TestValidateFileRejectsMissingDeclaredViewEntry(t *testing.T) {
+	d := fixture(t)
+	manifest := `{"schemaVersion":"1.0.0","id":"@acme/example","publisher":"acme","name":"example","displayName":"Example","version":"1.2.3","description":"Example extension","entry":"extension/main.js","engines":{"activelane":"*"},"hostSupport":["desktop"],"extensionKind":["workbench"],"contributes":{"containers":[{"id":"example.editors","location":"editor"}],"views":[{"id":"example.editor","container":"example.editors","renderer":{"type":"isolated","entry":"views/editor/index.html"}}]}}`
+	if err := os.WriteFile(filepath.Join(d, ManifestFile), []byte(manifest), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := ValidateFile(filepath.Join(d, ManifestFile)); err == nil || !strings.Contains(err.Error(), "view entry") {
+		t.Fatalf("expected missing view entry diagnostic, got %v", err)
+	}
+}
+
+func TestManifestRejectsDuplicateCommandIDs(t *testing.T) {
+	manifest := `{"schemaVersion":"1.0.0","id":"@acme/example","publisher":"acme","name":"example","displayName":"Example","version":"1.2.3","description":"Example extension","entry":"extension/main.js","engines":{"activelane":"*"},"hostSupport":["desktop"],"extensionKind":["workbench"],"contributes":{"commands":[{"id":"example.open"},{"id":"example.open"}]}}`
+	if _, err := ParseManifest([]byte(manifest)); err == nil || !strings.Contains(err.Error(), "must be unique") {
+		t.Fatalf("expected duplicate command diagnostic, got %v", err)
 	}
 }

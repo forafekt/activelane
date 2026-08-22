@@ -35,7 +35,6 @@ export interface MarketplaceContributions {
   activityRail?: MarketplaceContributionPoint[]
   sidebarViews?: MarketplaceContributionPoint[]
   tabRenderers?: MarketplaceContributionPoint[]
-  tabSurfaces?: MarketplaceContributionPoint[]
   inspectorPanels?: MarketplaceContributionPoint[]
   bottomPanels?: MarketplaceContributionPoint[]
   settingsPages?: MarketplaceContributionPoint[]
@@ -143,7 +142,7 @@ export interface MarketplaceExtension {
   compatibility: 'compatible' | 'incompatible'
   compatibilityReason?: string
   versionStatus?: 'draft' | 'published' | 'yanked' | 'blocked'
-  integrityState?: 'verified' | 'missing' | 'invalid' | 'mismatch'
+  integrityState?: 'verified' | 'missing' | 'invalid' | 'mismatch' | 'development'
   restartRequired?: boolean
 }
 

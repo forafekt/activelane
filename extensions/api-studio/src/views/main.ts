@@ -1,4 +1,4 @@
-import { connectActiveLaneView } from '@activelane/extension-view'
+import { connectActiveLaneView } from '@activelane/extension/view'
 import './view.css'
 
 const root = document.querySelector<HTMLElement>('#app')

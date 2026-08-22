@@ -33,7 +33,7 @@ export type {
   WorkbenchExtensionContext,
   WorkbenchExtensionDefinition,
   WorkbenchExtensionManifest,
-  WorkbenchExtensionPermissions,
+  ActiveLaneExtensionPermission,
   WorkbenchExtensionType,
 } from '../core/extensions/types'
 export type {

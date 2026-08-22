@@ -4,10 +4,7 @@ import type {
   WorkbenchTab,
   WorkbenchTabRendererContribution,
 } from '../../core/workbench/contributions'
-import type {
-  WorkbenchSurfaceDescriptor,
-  WorkbenchTabSurfaceContribution,
-} from '../../core/workbench/surfaces'
+import type { WorkbenchSurfaceDescriptor } from '../../core/workbench/surfaces'
 
 function buildContext(tab: WorkbenchTab, runtime: WorkbenchRuntimeApi) {
   return {
@@ -22,25 +19,6 @@ function buildContext(tab: WorkbenchTab, runtime: WorkbenchRuntimeApi) {
     closable: tab.closable,
     capabilities: tab.capabilities ?? [],
     runtime,
-  }
-}
-
-export function surfaceFromTabSurface(
-  contribution: WorkbenchTabSurfaceContribution,
-  tab: WorkbenchTab,
-  runtime: WorkbenchRuntimeApi,
-): WorkbenchSurfaceDescriptor {
-  return {
-    ...contribution,
-    id: contribution.id,
-    title: contribution.title ?? tab.title,
-    ownerExtensionId: contribution.ownerExtensionId ?? tab.ownerExtensionId,
-    props: {
-      tab,
-      runtime,
-      ...(contribution.props ?? {}),
-      ...(contribution.passThrough ?? {}),
-    },
   }
 }
 
@@ -130,7 +108,7 @@ export function resolveWorkbenchTabSurface(
       ownerExtensionId: view.ownerExtensionId ?? tab.ownerExtensionId,
       mode: 'isolated',
       view,
-      instanceId: tab.id,
+      instanceId: tab.viewInstanceId ?? tab.id,
       context: tab.input,
     }
   }
@@ -139,15 +117,6 @@ export function resolveWorkbenchTabSurface(
     (item) => item.tabKind === tab.kind || item.id === tab.kind,
   )
   if (renderer && rendererHasSurface(renderer)) return surfaceFromRenderer(renderer, tab, runtime)
-
-  const tabSurface = runtime.registry.tabSurfaces.find(
-    (item) =>
-      item.id === tab.surfaceId ||
-      item.tabKind === tab.kind ||
-      item.id === tab.kind ||
-      item.id === tab.id,
-  )
-  if (tabSurface) return surfaceFromTabSurface(tabSurface, tab, runtime)
 
   if (renderer) return surfaceFromRenderer(renderer, tab, runtime)
 

@@ -44,6 +44,68 @@ test('runtime disposal deactivates extensions exactly once', async () => {
   assert.equal(runtime.extensions.getRecord('test.lifecycle')?.active, false)
 })
 
+test('restored resource views receive a fresh runtime identity and reveal without duplication', async () => {
+  const persistedTabId = 'persisted-users-tab'
+  const runtime = await createExtensionRuntime({
+    host: { id: 'test', label: 'Test host', kind: 'web', mode: 'browser', capabilities: {} },
+    initialState: {
+      activeGroupId: 'workbench.group.main',
+      layout: {
+        kind: 'group',
+        id: 'workbench.group.main',
+        activeTabId: persistedTabId,
+        tabGroups: [],
+        tabs: [{
+          id: persistedTabId,
+          kind: 'requests.editor',
+          title: 'GET /users',
+          surfaceId: 'requests.editor',
+          ownerExtensionId: '@sample/requests',
+          closable: true,
+          pinned: false,
+          preview: false,
+          lifecycle: 'persistent',
+          dirty: false,
+          groupId: 'workbench.group.main',
+          resource: 'request:users',
+          input: { requestId: 'users' },
+        }],
+      },
+    },
+    extensions: [{
+      source: 'builtin',
+      definition: {
+        manifest: {
+          id: '@sample/requests',
+          name: 'requests',
+          displayName: 'Requests',
+          version: '1.0.0',
+          builtin: true,
+          activationEvents: ['onStartup'],
+          contributes: {
+            containers: [{ id: 'requests.editors', title: 'Requests', location: 'editor' }],
+            views: [{ id: 'requests.editor', title: 'Request', container: 'requests.editors', multiple: true, renderer: { type: 'isolated', entry: 'dist/editor.html' } }],
+          },
+        },
+      },
+    }],
+  })
+
+  const revealed = runtime.views.open('@sample/requests', 'requests.editor', {
+    resource: 'request:users',
+    context: { requestId: 'wrong-new-context' },
+  })
+  const group = runtime.workbench.state.layout
+  assert.equal(group.kind, 'group')
+  assert.equal(group.tabs.length, 1)
+  assert.equal(group.tabs[0].id, persistedTabId)
+  assert.notEqual(revealed.id, persistedTabId)
+  assert.equal(group.tabs[0].viewInstanceId, revealed.id)
+  assert.equal(revealed.resource, 'request:users')
+  assert.deepEqual(revealed.context, { requestId: 'users' })
+  await runtime.dispose()
+})
+
 test('install dynamically loads, enables, and activates an undiscovered extension', async () => {
   let activations = 0
   const installed = {
@@ -386,6 +448,94 @@ test('failed activation rolls back every contribution registered before the erro
   })
 
   assert.equal(runtime.extensions.getRecord(installed.extensionId)?.status, 'error')
+  assert.equal(runtime.registry.activityRail.length, 0)
+  await runtime.dispose()
+})
+
+test('development synchronization replaces one owned generation without duplication', async () => {
+  let generation = 1
+  let disposals = 0
+  const installed = () => ({
+    id: 'fixture/development',
+    extensionId: '@fixture/development',
+    displayName: 'Development',
+    version: '1.0.0',
+    enabled: true,
+    installSource: 'development',
+    installedAt: '',
+    updatedAt: `generation:${generation}`,
+    digest: `development:session:${generation}`,
+    manifest: {
+      id: '@fixture/development',
+      name: 'development',
+      displayName: 'Development',
+      version: '1.0.0',
+    },
+  })
+  const runtime = await createExtensionRuntime({
+    host: {
+      id: 'test',
+      label: 'Test',
+      kind: 'desktop',
+      mode: 'native',
+      capabilities: {
+        extensions: {
+          listInstalled: async () => [installed()],
+          load: async () => ({
+            manifest: installed().manifest,
+            activate(context) {
+              context.contribute.activityRail({ id: 'development.activity', title: `Generation ${generation}` })
+              return { dispose: () => disposals++ }
+            },
+          }),
+        },
+      },
+    },
+  })
+
+  assert.deepEqual(runtime.registry.activityRail.map((item) => item.title), ['Generation 1'])
+  generation = 2
+  await runtime.extensions.syncInstalled()
+  assert.equal(disposals, 1)
+  assert.deepEqual(runtime.registry.activityRail.map((item) => item.title), ['Generation 2'])
+  await runtime.dispose()
+})
+
+test('development synchronization removes contributions when the owning session exits', async () => {
+  let connected = true
+  const installed = {
+    id: 'fixture/development',
+    extensionId: '@fixture/development',
+    displayName: 'Development',
+    version: '1.0.0',
+    enabled: true,
+    installSource: 'development',
+    installedAt: '',
+    updatedAt: 'generation:1',
+    manifest: { id: '@fixture/development', displayName: 'Development', version: '1.0.0' },
+  }
+  const runtime = await createExtensionRuntime({
+    host: {
+      id: 'test',
+      label: 'Test',
+      kind: 'desktop',
+      mode: 'native',
+      capabilities: {
+        extensions: {
+          listInstalled: async () => (connected ? [installed] : []),
+          load: async () => ({
+            manifest: installed.manifest,
+            activate(context) {
+              context.contribute.activityRail({ id: 'development.activity', title: 'Development' })
+            },
+          }),
+        },
+      },
+    },
+  })
+  connected = false
+  await runtime.extensions.syncInstalled()
+  assert.equal(runtime.extensions.getRecord(installed.extensionId), undefined)
   assert.equal(runtime.registry.activityRail.length, 0)
   await runtime.dispose()
 })

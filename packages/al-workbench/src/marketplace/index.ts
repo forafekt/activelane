@@ -268,19 +268,17 @@ export function createExtensionsMarketplaceExtension(): WorkbenchExtensionDefini
             description: 'Disable an installed extension.',
           },
         ],
-        tabSurfaces: [
+        tabRenderers: [
           {
             id: MARKETPLACE_SURFACE_ID,
             title: 'Extensions Marketplace',
             tabKind: MARKETPLACE_TAB_KIND,
-            mode: 'native-vue',
             component: MarketplaceTabView,
           },
           {
             id: MARKETPLACE_DETAILS_SURFACE_ID,
             title: 'Extension Details',
             tabKind: MARKETPLACE_DETAILS_TAB_KIND,
-            mode: 'native-vue',
             component: MarketplaceExtensionDetailsView,
           },
         ],

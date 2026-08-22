@@ -1,7 +1,7 @@
 import type {
-  WorkbenchExtensionContext,
-  WorkbenchExtensionDefinition,
-} from '@activelane/workbench/extensions'
+  ExtensionContext,
+  ExtensionDefinition,
+} from '@activelane/extension'
 import { defineComponent, h } from 'vue'
 
 const RuntimeTestView = defineComponent({
@@ -21,7 +21,7 @@ export default {
     displayName: 'Runtime Test',
     version: '1.1.1',
   },
-  activate(context: WorkbenchExtensionContext) {
+  activate(context: ExtensionContext) {
     context.contribute.activityRail({
       id: 'runtime-test.activity',
       title: 'Runtime Test',
@@ -44,4 +44,4 @@ export default {
         }),
     })
   },
-} satisfies WorkbenchExtensionDefinition
+} satisfies ExtensionDefinition

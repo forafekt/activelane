@@ -1,10 +1,13 @@
 import type { ViewContainer, ViewDefinition } from '../../views/model'
+import { ViewInstanceRegistry } from '../../views/instances'
 import type {
   ActiveLaneCapability,
   ActiveLaneCapabilityHandler,
   ActiveLaneCapabilityRecord,
   ActiveLaneCapabilityService,
 } from '../capabilities/types'
+import { createExtensionDiagnosticsService } from '../diagnostics/service'
+import type { ExtensionDiagnostic } from '../diagnostics/types'
 import { createEntitlementService } from '../entitlements/createEntitlementService'
 import type {
   InstalledExtensionRecord,
@@ -47,7 +50,6 @@ import type {
   WorkbenchShellApi,
 } from '../workbench/shell'
 import { WORKBENCH_SHELL_STORAGE_KEY } from '../workbench/shell'
-import type { WorkbenchTabSurfaceContribution } from '../workbench/surfaces'
 import type {
   WorkbenchRegisteredTabAction,
   WorkbenchRegisteredTabGroupAction,
@@ -241,7 +243,6 @@ export async function createExtensionRuntime(
     commands: [],
     commandPalette: [],
     tabRenderers: [],
-    tabSurfaces: [],
     tabToolbarActions: [],
     tabContextMenu: [],
     bottomPaneViews: [],
@@ -250,6 +251,20 @@ export async function createExtensionRuntime(
     menus: [],
     fileOpeners: [],
   })
+  const diagnostics = createExtensionDiagnosticsService(
+    reactivity.reactive<ExtensionDiagnostic[]>([]),
+  )
+  const viewInstances = new ViewInstanceRegistry(() => registry.views)
+  const restoredTabIds = new Set<string>()
+  {
+    const queue = [shell.state.layout]
+    while (queue.length) {
+      const node = queue.shift()
+      if (!node) continue
+      if (node.kind === 'split') queue.push(...node.children)
+      else for (const tab of node.tabs) restoredTabIds.add(tab.id)
+    }
+  }
 
   const definitions = new Map<string, WorkbenchExtensionDefinition>()
   const definitionSources = new Map<string, WorkbenchExtensionCatalogEntry['source']>()
@@ -348,8 +363,6 @@ export async function createExtensionRuntime(
         registerList('commandPalette', ownerExtensionId, items),
       tabRenderers: (...items: WorkbenchTabRendererContribution[]) =>
         registerList('tabRenderers', ownerExtensionId, items),
-      tabSurfaces: (...items: WorkbenchTabSurfaceContribution[]) =>
-        registerList('tabSurfaces', ownerExtensionId, items),
       tabToolbarActions: (...items: WorkbenchActionContribution[]) =>
         registerList('tabToolbarActions', ownerExtensionId, items),
       tabContextMenu: (...items: WorkbenchMenuItemContribution[]) =>
@@ -528,6 +541,15 @@ export async function createExtensionRuntime(
       })
     }
     refreshRecordStatus(record)
+    diagnostics.report({
+      extensionId,
+      severity: 'error',
+      source: error.surface === 'command' ? 'command' : 'view',
+      code: error.surface === 'command' ? 'EXT_COMMAND_FAILED' : 'VIEW_DOCUMENT_LOAD_FAILED',
+      message: error.message,
+      viewDefinitionId: error.surface === 'command' ? undefined : error.contributionId,
+      metadata: error.contributionId ? { contributionId: error.contributionId } : undefined,
+    })
   }
 
   function clearSurfaceErrors(extensionId: string, contributionId?: string) {
@@ -554,6 +576,21 @@ export async function createExtensionRuntime(
       }
     }
     shell.closeTabs(tabIds)
+    viewInstances.disposeExtension(extensionId)
+  }
+
+  function extensionWorkbench(
+    extensionId: string,
+  ): import('../extensions/types').ExtensionWorkbenchApi {
+    return {
+      ...workbench,
+      openView<TContext>(
+        definitionId: string,
+        options?: import('../../views/model').OpenViewOptions<TContext>,
+      ) {
+        return runtime.views.open(extensionId, definitionId, options)
+      },
+    }
   }
 
   function findTabForAction(tabId: string, groupId?: string) {
@@ -566,10 +603,41 @@ export async function createExtensionRuntime(
         continue
       }
       if (groupId && node.id !== groupId) continue
-      const tab = node.tabs.find((item) => item.id === tabId)
+      const tab = node.tabs.find((item) => item.id === tabId || item.viewInstanceId === tabId)
       if (tab) return { group: node, tab }
     }
     return null
+  }
+
+  function restoreOwnedViewInstances(extensionId: string) {
+    const definitions = new Set(
+      registry.views
+        .filter((definition) => definition.ownerExtensionId === extensionId)
+        .map((definition) => definition.id),
+    )
+    const queue = [shell.state.layout]
+    while (queue.length) {
+      const node = queue.shift()
+      if (!node) continue
+      if (node.kind === 'split') {
+        queue.push(...node.children)
+        continue
+      }
+      for (const tab of node.tabs) {
+        if (tab.ownerExtensionId !== extensionId || !definitions.has(tab.kind)) continue
+        if (restoredTabIds.delete(tab.id)) tab.viewInstanceId = crypto.randomUUID()
+        viewInstances.restore({
+          id: tab.viewInstanceId ?? tab.id,
+          definitionId: tab.kind,
+          extensionId,
+          title: tab.title,
+          resource: tab.resource,
+          context: tab.input,
+          dirty: tab.dirty,
+          createdAt: Date.now(),
+        })
+      }
+    }
   }
 
   function findTabGroupForAction(tabGroupId: string, groupId?: string) {
@@ -947,6 +1015,61 @@ export async function createExtensionRuntime(
     explorer,
     entitlements,
     registry,
+    diagnostics,
+    views: {
+      instances: viewInstances.instances,
+      open<TContext>(
+        extensionId: string,
+        definitionId: string,
+        options: import('../../views/model').OpenViewOptions<TContext> = {},
+      ) {
+        restoreOwnedViewInstances(extensionId)
+        viewInstances.prune((instance) => Boolean(findTabForAction(instance.id)))
+        const instance = viewInstances.create({
+          definitionId,
+          extensionId,
+          title: options.title,
+          context: options.context,
+          resource: options.resource,
+          policy: options.policy,
+        })
+        const existingTab = findTabForAction(instance.id)
+        if (existingTab) {
+          workbench.activateTab(existingTab.tab.id, existingTab.group.id)
+          return instance
+        }
+        workbench.openTab(
+          {
+            id: instance.id,
+            kind: definitionId,
+            surfaceId: definitionId,
+            title: instance.title,
+            ownerExtensionId: extensionId,
+            input: instance.context as Record<string, unknown> | undefined,
+            resource: instance.resource,
+            viewInstanceId: instance.id,
+            preview: options.preview,
+            groupId: options.groupId,
+          },
+          { mode: options.preview ? 'preview' : 'persistent' },
+        )
+        return instance
+      },
+      dispose(instanceId: string) {
+        diagnostics.clearView(instanceId)
+        return viewInstances.dispose(instanceId)
+      },
+      close(instanceId: string) {
+        const match = findTabForAction(instanceId)
+        if (!match) return false
+        workbench.closeTab(match.tab.id, match.group.id)
+        diagnostics.clearView(instanceId)
+        return viewInstances.dispose(instanceId)
+      },
+      disposeExtension(extensionId: string) {
+        viewInstances.disposeExtension(extensionId)
+      },
+    },
     extensions: {
       records,
       discovered,
@@ -1098,6 +1221,86 @@ export async function createExtensionRuntime(
         installedRecords.splice(0, installedRecords.length, ...latest)
         return latest
       },
+      async syncInstalled() {
+        const latest = (await host.capabilities.extensions?.listInstalled?.()) ?? installedRecords
+        const latestByID = new Map(latest.map((item) => [item.extensionId, item]))
+
+        for (const previous of [...installedRecords]) {
+          if (latestByID.has(previous.extensionId)) continue
+          const record = records.find((item) => item.extensionId === previous.extensionId)
+          if (record?.active) await runtime.extensions.deactivate(previous.extensionId)
+          removeInstalledRecord(previous.extensionId)
+          if (definitionSources.get(previous.extensionId) === 'remote') {
+            definitions.delete(previous.extensionId)
+            definitionSources.delete(previous.extensionId)
+            const discoveredIndex = discovered.findIndex(
+              (item) => item.definition.manifest.id === previous.extensionId,
+            )
+            if (discoveredIndex >= 0) discovered.splice(discoveredIndex, 1)
+            const recordIndex = records.findIndex(
+              (item) => item.extensionId === previous.extensionId,
+            )
+            if (recordIndex >= 0) records.splice(recordIndex, 1)
+          } else if (record) {
+            record.installed = false
+            record.enabled = false
+            record.active = false
+            refreshRecordStatus(record)
+          }
+        }
+
+        for (const next of latest) {
+          const previous = installedRecords.find(
+            (item) => item.extensionId === next.extensionId,
+          )
+          const changed =
+            !previous ||
+            previous.version !== next.version ||
+            previous.digest !== next.digest ||
+            previous.manifestDigest !== next.manifestDigest ||
+            previous.updatedAt !== next.updatedAt
+          upsertInstalledRecord(next)
+          let record = records.find((item) => item.extensionId === next.extensionId)
+          if (changed) {
+            if (record?.active) await runtime.extensions.deactivate(next.extensionId)
+            try {
+              await loadInstalledDefinition(next, definitions.has(next.extensionId))
+              record = records.find((item) => item.extensionId === next.extensionId)
+              if (record) {
+                record.manifest = next.manifest
+                record.error = undefined
+              }
+            } catch (error) {
+              definitions.delete(next.extensionId)
+              definitionSources.delete(next.extensionId)
+              if (!record) {
+                record = {
+                  extensionId: next.extensionId,
+                  manifest: next.manifest,
+                  installed: true,
+                  enabled: next.enabled,
+                  active: false,
+                  status: 'error',
+                  surfaceErrors: [],
+                }
+                records.push(record)
+              }
+              record.active = false
+              record.error = error instanceof Error ? error.message : String(error)
+              refreshRecordStatus(record)
+              continue
+            }
+          }
+          if (!record) continue
+          record.installed = true
+          record.enabled = next.enabled
+          refreshRecordStatus(record)
+          if (next.enabled && !record.active) await runtime.extensions.activate(next.extensionId)
+          if (!next.enabled && record.active) await runtime.extensions.deactivate(next.extensionId)
+        }
+        installedRecords.splice(0, installedRecords.length, ...latest)
+        return latest
+      },
       async activate(extensionId: string) {
         const record = records.find((item) => item.extensionId === extensionId)
         const definition = definitions.get(extensionId)
@@ -1112,7 +1315,7 @@ export async function createExtensionRuntime(
           storage:
             host.capabilities.storage?.scope(`extension:${extensionId}`) ??
             createMemoryStorageScope(),
-          workbench,
+          workbench: extensionWorkbench(extensionId),
           commands: runtime.commands,
           capabilities: createCapabilityService(extensionId),
           explorer,
@@ -1141,8 +1344,6 @@ export async function createExtensionRuntime(
               trackDynamic(dynamicDisposables, registrar.commandPalette(...items)),
             tabRenderers: (...items: WorkbenchTabRendererContribution[]) =>
               trackDynamic(dynamicDisposables, registrar.tabRenderers(...items)),
-            tabSurfaces: (...items: WorkbenchTabSurfaceContribution[]) =>
-              trackDynamic(dynamicDisposables, registrar.tabSurfaces(...items)),
             tabToolbarActions: (...items: WorkbenchActionContribution[]) =>
               trackDynamic(dynamicDisposables, registrar.tabToolbarActions(...items)),
             tabContextMenu: (...items: WorkbenchMenuItemContribution[]) =>
@@ -1204,9 +1405,6 @@ export async function createExtensionRuntime(
         if (manifestContributions?.tabRenderers?.length) {
           dynamicDisposables.push(registrar.tabRenderers(...manifestContributions.tabRenderers))
         }
-        if (manifestContributions?.tabSurfaces?.length) {
-          dynamicDisposables.push(registrar.tabSurfaces(...manifestContributions.tabSurfaces))
-        }
         if (manifestContributions?.tabToolbarActions?.length) {
           dynamicDisposables.push(
             registrar.tabToolbarActions(...manifestContributions.tabToolbarActions),
@@ -1253,6 +1451,7 @@ export async function createExtensionRuntime(
         try {
           record.error = undefined
           clearSurfaceErrors(extensionId)
+          restoreOwnedViewInstances(extensionId)
           const disposable = (await definition.activate?.(context)) ?? undefined
           extensionState.set(extensionId, { disposable, dynamicDisposables })
           record.active = true
@@ -1267,6 +1466,14 @@ export async function createExtensionRuntime(
           extensionState.delete(extensionId)
           record.active = false
           record.error = error instanceof Error ? error.message : String(error)
+          diagnostics.report({
+            extensionId,
+            severity: 'error',
+            source: 'runtime',
+            code: 'EXT_RUNTIME_ACTIVATION_FAILED',
+            message: `Extension ${definition.manifest.displayName} failed to activate.`,
+            detail: record.error,
+          })
           refreshRecordStatus(record)
         }
       },
@@ -1288,7 +1495,7 @@ export async function createExtensionRuntime(
             storage:
               host.capabilities.storage?.scope(`extension:${extensionId}`) ??
               createMemoryStorageScope(),
-            workbench,
+            workbench: extensionWorkbench(extensionId),
             commands: runtime.commands,
             capabilities: createCapabilityService(extensionId),
             explorer,
@@ -1297,6 +1504,14 @@ export async function createExtensionRuntime(
             contribute: createRegistrar(extensionId),
           })
         } catch (error) {
+          diagnostics.report({
+            extensionId,
+            severity: 'error',
+            source: 'lifecycle',
+            code: 'EXT_RUNTIME_DEACTIVATION_FAILED',
+            message: `Extension ${definition.manifest.displayName} failed to deactivate cleanly.`,
+            detail: error instanceof Error ? error.stack ?? error.message : String(error),
+          })
           console.error(
             `[extensions] ${extensionId}@${definition.manifest.version} failed during deactivate:`,
             error,

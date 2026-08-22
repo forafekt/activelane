@@ -26,7 +26,6 @@ import type {
   WorkbenchSettingDefinition,
 } from '../workbench/settings'
 import type { WorkbenchContributionRegistrar, WorkbenchShellApi } from '../workbench/shell'
-import type { WorkbenchTabSurfaceContribution } from '../workbench/surfaces'
 import type { WorkbenchThemeContribution } from '../workbench/themes'
 
 export interface WorkbenchMarketplaceEntry {
@@ -111,7 +110,6 @@ export interface WorkbenchContributions {
   commands?: WorkbenchCommandContribution[]
   commandPalette?: WorkbenchCommandPaletteContribution[]
   tabRenderers?: WorkbenchTabRendererContribution[]
-  tabSurfaces?: WorkbenchTabSurfaceContribution[]
   tabToolbarActions?: WorkbenchActionContribution[]
   tabContextMenu?: WorkbenchMenuItemContribution[]
   bottomPaneViews?: WorkbenchBottomPaneContribution[]
@@ -129,7 +127,7 @@ export interface WorkbenchContributions {
 export type WorkbenchActivationEvent = 'onStartup' | 'onCommand' | 'onView' | 'onTab' | 'onDemand'
 export type WorkbenchExtensionType = 'ui' | 'server' | 'hybrid'
 
-export interface WorkbenchExtensionPermissions {
+export interface ServerExtensionPermissions {
   filesystem?: 'none' | 'workspace' | 'host'
   network?: 'none' | 'loopback' | 'remote'
   processes?: boolean
@@ -150,7 +148,7 @@ export interface WorkbenchExtensionManifest {
   dependencies?: string[] | Record<string, string>
   capabilities?: ActiveLaneCapability[]
   server?: WorkbenchServerContribution
-  permissions?: WorkbenchExtensionPermissions
+  permissions?: ActiveLaneExtensionPermission[]
   activationEvents?: WorkbenchActivationEvent[]
   contributes?: WorkbenchContributions
 }
@@ -159,9 +157,9 @@ export type ActiveLaneExtensionVisibility = 'public' | 'private' | 'unlisted' | 
 export type ActiveLaneHostSupport = 'webapp' | 'desktop' | 'browser-extension' | 'server'
 export type ActiveLaneExtensionKind = 'workbench' | 'server'
 export type ExtensionVersionStatus = 'draft' | 'published' | 'yanked' | 'blocked'
+export type ActiveLaneExtensionPermission = 'extension-storage'
 
-export interface ActiveLaneExtensionManifest
-  extends Omit<WorkbenchExtensionManifest, 'dependencies' | 'permissions'> {
+export interface ActiveLaneExtensionManifest extends Omit<WorkbenchExtensionManifest, 'dependencies'> {
   schemaVersion?: '1.0.0'
   publisher?: string
   entry?: string
@@ -170,7 +168,6 @@ export interface ActiveLaneExtensionManifest
   }
   hostSupport?: ActiveLaneHostSupport[]
   dependencies?: Record<string, string> | string[]
-  permissions?: string[] | WorkbenchExtensionPermissions | Record<string, unknown>
   extensionKind?: ActiveLaneExtensionKind[]
   visibility?: ActiveLaneExtensionVisibility
   os?: Array<'linux' | 'darwin' | 'windows'>
@@ -228,7 +225,7 @@ export interface InstalledExtensionRecord {
   version: string
   enabled: boolean
   state?: ExtensionInstallState
-  installSource: 'marketplace' | 'local' | 'builtin' | 'mock'
+  installSource: 'marketplace' | 'local' | 'builtin' | 'mock' | 'development'
   installedAt: string
   updatedAt: string
   manifest: ActiveLaneExtensionManifest
@@ -236,7 +233,7 @@ export interface InstalledExtensionRecord {
   resolvedPath?: string
   settings?: Record<string, unknown>
   source?: {
-    type: 'registry' | 'local' | 'builtin'
+    type: 'registry' | 'local' | 'builtin' | 'development'
     registryId?: string
     artifactUrl?: string
     packagePath?: string
@@ -244,7 +241,7 @@ export interface InstalledExtensionRecord {
   digest?: string
   packagePath?: string
   manifestDigest?: string
-  integrityState?: 'verified' | 'missing' | 'invalid' | 'mismatch'
+  integrityState?: 'verified' | 'missing' | 'invalid' | 'mismatch' | 'development'
   restartRequired?: boolean
 }
 
@@ -497,13 +494,20 @@ export interface WorkbenchExtensionContext {
   manifest: ActiveLaneExtensionManifest
   host: WorkbenchHostAdapter
   storage: WorkbenchStorageScope
-  workbench: WorkbenchShellApi
+  workbench: ExtensionWorkbenchApi
   commands: import('../runtime/types').WorkbenchCommandService
   capabilities: ActiveLaneCapabilityService
   explorer: import('../explorer/types').ExplorerRuntime
   entitlements: WorkbenchExtensionEntitlements
   runtime: import('../runtime/types').WorkbenchRuntimeApi
   contribute: WorkbenchContributionRegistrar
+}
+
+export interface ExtensionWorkbenchApi extends WorkbenchShellApi {
+  openView<TContext = unknown>(
+    definitionId: string,
+    options?: import('../../views/model').OpenViewOptions<TContext>,
+  ): import('../../views/model').ViewInstance<TContext>
 }
 
 export interface WorkbenchExtensionDefinition {
@@ -548,7 +552,7 @@ export interface ServerExtensionContext {
   settings: import('../workbench/settings').WorkbenchSettingsService
   storage: WorkbenchStorageScope
   secrets: ServerRuntimeSecretsApi
-  permissions: WorkbenchExtensionPermissions
+  permissions: ServerExtensionPermissions
   log: ServerRuntimeLogger
 }
 

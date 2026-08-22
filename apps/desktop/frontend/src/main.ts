@@ -1,5 +1,6 @@
 import  '@activelane/workbench/styles.css'
 import { createApp } from 'vue'
+import { Events } from '@wailsio/runtime'
 import App from './App.vue'
 import { createDesktopPreviewPlatform, previewWorkbenchHost } from './host/previewPlatform'
 
@@ -36,6 +37,16 @@ async function start() {
         await diagnosticImport('./host/platform', () => import('./host/platform'))
       ).createDesktopPlatform()
   diagnostics()?.mark?.('runtime created')
+	if (!browserPreview) {
+		let synchronization = Promise.resolve()
+		Events.On('activelane:development-extensions-changed', () => {
+			synchronization = synchronization
+				.then(async () => {
+					await runtime.extensions.syncInstalled()
+				})
+				.catch((error) => console.error('Failed to synchronize development extensions:', error))
+		})
+	}
   const host = browserPreview
     ? previewWorkbenchHost
     : (

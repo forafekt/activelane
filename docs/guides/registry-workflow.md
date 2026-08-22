@@ -35,7 +35,7 @@ directory publishing, search, info, and installation require no HTTP process.
 ## Create, validate, pack, inspect, and verify
 
 ```bash
-go run ./go/cmd/alx init /tmp/my-extension
+go run ./go/cmd/alx create /tmp/my-extension --publisher local
 go run ./go/cmd/alx validate /tmp/my-extension/activelane.manifest.json
 go run ./go/cmd/alx pack /tmp/my-extension --output /tmp/my-extension.alx
 go run ./go/cmd/alx inspect /tmp/my-extension.alx --json
@@ -44,8 +44,8 @@ go run ./go/cmd/alx verify /tmp/my-extension.alx
 
 Packing unchanged input produces the same SHA-256 digest. The manifest `entry` identifies
 a browser-native ES module in the ALX. Its default export must be a
-`WorkbenchExtensionDefinition` (normally created with `defineExtension` from
-`@activelane/workbench/extensions`). The desktop loads that file and its relative package
+extension definition (normally created with `defineExtension` from
+`@activelane/extension`). The desktop loads that file and its relative package
 imports directly from the installed ALX directory, independently of npm and Vite resolution.
 
 ## Publish, discover, and install

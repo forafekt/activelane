@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "@activelane/scratchpad",
+  "publisher": "activelane",
+  "name": "scratchpad",
+  "displayName": "Scratchpad",
+  "version": "0.1.0",
+  "description": "Framework-free ActiveLane extension example.",
+  "entry": "dist/extension.js",
+  "engines": { "activelane": ">=0.1.0" },
+  "hostSupport": ["desktop", "webapp"],
+  "extensionKind": ["workbench"],
+  "visibility": "private",
+  "permissions": ["extension-storage"],
+  "activationEvents": ["onStartup", "onCommand", "onView"],
+  "contributes": {
+    "containers": [{ "id": "scratchpad.editors", "title": "Scratchpad", "location": "editor" }],
+    "views": [{ "id": "scratchpad.editor", "container": "scratchpad.editors", "title": "Scratchpad", "multiple": true, "renderer": { "type": "isolated", "entry": "dist/views/editor/index.html" } }],
+    "commands": [{ "id": "scratchpad.new", "title": "Scratchpad: New Note" }]
+  }
+}

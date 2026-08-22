@@ -17,7 +17,6 @@ import type {
   WorkbenchTabRendererContribution,
 } from './contributions'
 import type { WorkbenchRegisteredContributions } from './shell'
-import type { WorkbenchTabSurfaceContribution } from './surfaces'
 
 type MarkRaw = <T>(value: T) => T
 type ContributionKey = keyof WorkbenchRegisteredContributions
@@ -110,11 +109,6 @@ export function normalizeWorkbenchContribution<T extends ContributionKey>(
             : rawSurface(renderer.surface, markRaw),
       }
     }
-    case 'tabSurfaces':
-      return rawSurface(
-        item as WorkbenchTabSurfaceContribution,
-        markRaw,
-      ) as WorkbenchRegisteredContributions[T][number]
     case 'tabToolbarActions':
       return rawAction(item as WorkbenchActionContribution, markRaw)
     case 'tabContextMenu':

@@ -245,6 +245,8 @@ export interface WorkbenchTab extends WorkbenchContributionBase {
   locked?: boolean
   protection?: WorkbenchTabProtectionMetadata | null
   input?: WorkbenchTabInput
+  resource?: string
+  viewInstanceId?: string
   capabilities?: string[]
   indicators?: import('./tabWorkspace').WorkbenchTabIndicator[]
   hibernation?: import('./tabWorkspace').WorkbenchTabHibernationMetadata
@@ -268,6 +270,8 @@ export interface OpenWorkbenchTabOptions {
   locked?: boolean
   protection?: WorkbenchTabProtectionMetadata | null
   input?: WorkbenchTabInput
+  resource?: string
+  viewInstanceId?: string
   ownerExtensionId?: string
   capabilities?: string[]
   indicators?: import('./tabWorkspace').WorkbenchTabIndicator[]

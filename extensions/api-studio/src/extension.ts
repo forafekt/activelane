@@ -1,9 +1,12 @@
-import { defineExtension } from '@activelane/workbench/extensions'
+import { defineExtension } from '@activelane/extension'
+
+// `alx dev` bundles and reloads this lifecycle module independently from isolated-view HMR.
 
 const extensionId = '@activelane/api-studio'
 const requests = [
   { id: 'users', method: 'GET', url: 'https://api.example.com/users' },
   { id: 'orders', method: 'POST', url: 'https://api.example.com/orders' },
+  { id: 'settings', method: 'PUT', url: 'https://api.example.com/settings' },
 ]
 
 export default defineExtension({
@@ -18,13 +21,10 @@ export default defineExtension({
     const openRequest = (requestId: string) => {
       const request = requests.find((candidate) => candidate.id === requestId)
       if (!request) return
-      context.workbench.openTab({
-        id: `api-studio.request:${crypto.randomUUID()}`,
-        kind: 'api-studio.request-editor',
-        surfaceId: 'api-studio.request-editor',
+      context.workbench.openView('api-studio.request-editor', {
+        resource: `request:${request.id}`,
         title: `${request.method} ${new URL(request.url).pathname}`,
-        ownerExtensionId: extensionId,
-        input: { requestId: request.id },
+        context: { requestId: request.id },
         preview: false,
       })
       context.workbench.setInspectorCollapsed(false)
@@ -45,6 +45,11 @@ export default defineExtension({
           id: 'api-studio.open-orders',
           title: 'API Studio: Open Orders Request',
           run: () => openRequest('orders'),
+        },
+        {
+          id: 'api-studio.open-settings',
+          title: 'API Studio: Open Settings Request',
+          run: () => openRequest('settings'),
         },
       ),
     ]

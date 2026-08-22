@@ -31,7 +31,6 @@ const surfaceResolutionKey = computed(() => {
     tab.ownerExtensionId ?? '',
     inlineSurfaceKey(tab.surface),
     matchingRendererKey(tab),
-    matchingTabSurfaceKey(tab),
   ].join('\u001f')
 })
 
@@ -79,10 +78,6 @@ function inlineSurfaceKey(surface: WorkbenchTab['surface']) {
     surface.mode,
     surface.ownerExtensionId ?? '',
     surface.component ? 'component' : '',
-    surface.url ?? '',
-    surface.entry ?? '',
-    surface.srcdoc ? 'srcdoc' : '',
-    surface.html ? 'html' : '',
   ].join('\u001e')
 }
 
@@ -100,26 +95,6 @@ function matchingRendererKey(tab: WorkbenchTab) {
   ].join('\u001e')
 }
 
-function matchingTabSurfaceKey(tab: WorkbenchTab) {
-  const surface = runtime.registry.tabSurfaces.find(
-    (item) =>
-      item.id === tab.surfaceId ||
-      item.tabKind === tab.kind ||
-      item.id === tab.kind ||
-      item.id === tab.id,
-  )
-  if (!surface) return ''
-  return [
-    surface.id,
-    surface.tabKind ?? '',
-    surface.mode,
-    surface.ownerExtensionId ?? '',
-    surface.component ? 'component' : '',
-    surface.url ?? '',
-    surface.entry ?? '',
-  ].join('\u001e')
-}
-
 function sameResolvedSurface(
   left: WorkbenchSurfaceDescriptor | undefined,
   right: WorkbenchSurfaceDescriptor,
@@ -130,10 +105,6 @@ function sameResolvedSurface(
     left.mode === right.mode &&
     left.ownerExtensionId === right.ownerExtensionId &&
     left.component === right.component &&
-    left.url === right.url &&
-    left.entry === right.entry &&
-    left.srcdoc === right.srcdoc &&
-    left.html === right.html &&
     left.fallback?.title === right.fallback?.title &&
     left.fallback?.message === right.fallback?.message
   if (!sameBase) return false

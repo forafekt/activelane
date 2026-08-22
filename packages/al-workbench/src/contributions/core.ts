@@ -4,6 +4,7 @@ import type { MaybePromise } from '../core/shared/types'
 import type { WorkbenchCommandExecutionContext } from '../core/workbench/contributions'
 
 import { builtinWorkbenchSettings } from '../settings/defaults'
+import ExtensionDiagnosticsView from '../components/developer/ExtensionDiagnosticsView.vue'
 
 function workbenchCommand(
   id: string,
@@ -38,6 +39,14 @@ export function createWorkbenchCoreContribution(): WorkbenchExtensionDefinition 
       activationEvents: ['onStartup'],
       contributes: {
         settings: builtinWorkbenchSettings,
+        bottomPaneViews: [
+          {
+            id: 'workbench.extensionDiagnostics',
+            title: 'Extension Diagnostics',
+            icon: 'lucide:stethoscope',
+            component: ExtensionDiagnosticsView,
+          },
+        ],
         statusBar: [
           {
             id: 'workbench.status.launchpad',
@@ -85,6 +94,14 @@ export function createWorkbenchCoreContribution(): WorkbenchExtensionDefinition 
           { id: 'workbench.menu.help', menuId: 'help', title: 'Help', order: 90 },
         ],
         commands: [
+          workbenchCommand(
+            'workbench.extensions.openDiagnostics',
+            'Developer: Open Extension Diagnostics',
+            ({ workbench }) => {
+              workbench.setActiveBottomPanelView('workbench.extensionDiagnostics')
+              workbench.setBottomPanelOpen(true)
+            },
+          ),
           workbenchCommand(
             'workbench.commandPalette.open',
             'Workbench: Open Command Palette',

@@ -41,7 +41,7 @@ installs exact versions with persisted source and digest records.
 ```bash
 source ./scripts/activelane-dev-env.sh
 go run ./go/cmd/registry --allow-publish --data ./.activelane/registry
-go run ./go/cmd/alx init /tmp/activelane-hello
+go run ./go/cmd/alx create /tmp/activelane-hello --publisher local
 go run ./go/cmd/alx pack /tmp/activelane-hello --output ./.activelane/packages/hello.alx
 go run ./go/cmd/alx publish ./.activelane/packages/hello.alx --registry local
 ```

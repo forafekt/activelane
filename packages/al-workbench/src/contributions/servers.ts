@@ -1,9 +1,9 @@
 import { getIcon } from '@activelane/icons'
 import { defineWorkbenchExtension } from '../core/extensions/helpers'
 import type {
-  WorkbenchExtensionContext,
   WorkbenchExtensionDefinition,
 } from '../core/extensions/types'
+import type { WorkbenchShellApi } from '../core/workbench/shell'
 
 import WorkbenchServerLogsView from '../servers/WorkbenchServerLogsView.vue'
 import WorkbenchServersView from '../servers/WorkbenchServersView.vue'
@@ -16,7 +16,7 @@ const SERVER_LOGS_TAB_KIND = 'workbench.server.logs'
 const SERVERS_SURFACE_ID = 'workbench.servers.surface'
 const SERVER_LOGS_SURFACE_ID = 'workbench.server.logs.surface'
 
-function activeServerId(context: Pick<WorkbenchExtensionContext, 'workbench'>) {
+function activeServerId(context: { workbench: WorkbenchShellApi }) {
   return context.workbench.getActiveTab()?.input?.serverId as string | undefined
 }
 
@@ -127,19 +127,17 @@ export function createWorkbenchServersContribution(): WorkbenchExtensionDefiniti
             keywords: ['runtime', 'logs', 'output'],
           },
         ],
-        tabSurfaces: [
+        tabRenderers: [
           {
             id: SERVERS_SURFACE_ID,
             title: 'Servers',
             tabKind: SERVERS_TAB_KIND,
-            mode: 'native-vue',
             component: WorkbenchServersView,
           },
           {
             id: SERVER_LOGS_SURFACE_ID,
             title: 'Server Logs',
             tabKind: SERVER_LOGS_TAB_KIND,
-            mode: 'native-vue',
             component: WorkbenchServerLogsView,
           },
         ],

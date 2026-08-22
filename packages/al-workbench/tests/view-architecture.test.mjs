@@ -34,22 +34,54 @@ test('validates container references and safe HTML entries', () => {
   )
 })
 
-test('creates independent editor instances with isolated context', () => {
+test('uses resource identity to reveal or create independent editor instances', () => {
   const registry = new ViewInstanceRegistry(() => views)
   const first = registry.create({
     definitionId: 'sample.editor',
     extensionId: '@sample/tools',
-    instanceId: 'one',
+    resource: 'request:one',
     context: { requestId: 'one' },
+  })
+  const firstAgain = registry.create({
+    definitionId: 'sample.editor',
+    extensionId: '@sample/tools',
+    resource: 'request:one',
+    context: { requestId: 'corrupt' },
   })
   const second = registry.create({
     definitionId: 'sample.editor',
     extensionId: '@sample/tools',
-    instanceId: 'two',
+    resource: 'request:two',
     context: { requestId: 'two' },
   })
+  assert.equal(firstAgain, first)
   assert.notEqual(first.id, second.id)
+  assert.deepEqual(first.context, { requestId: 'one' })
   assert.deepEqual(second.context, { requestId: 'two' })
+  assert.notEqual(first.context, second.context)
+  assert.ok(Object.isFrozen(first.context))
+  assert.throws(() => {
+    first.context.requestId = 'mutated'
+  }, TypeError)
+
+  registry.dispose(first.id)
+  assert.equal(registry.get(second.id), second)
+  const reopened = registry.create({
+    definitionId: 'sample.editor',
+    extensionId: '@sample/tools',
+    resource: 'request:one',
+    context: { requestId: 'one-reopened' },
+  })
+  assert.notEqual(reopened.id, first.id)
+
+  const duplicate = registry.create({
+    definitionId: 'sample.editor',
+    extensionId: '@sample/tools',
+    resource: 'request:two',
+    policy: 'always-new',
+    context: { requestId: 'two' },
+  })
+  assert.notEqual(duplicate.id, second.id)
   registry.disposeExtension('@sample/tools')
   assert.equal(registry.instances.size, 0)
 })

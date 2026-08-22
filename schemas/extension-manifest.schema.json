@@ -53,6 +53,11 @@
       "uniqueItems": true,
       "items": { "enum": ["amd64", "arm64", "386"] }
     },
+    "permissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "enum": ["extension-storage"] }
+    },
     "contributes": {
       "type": "object",
       "properties": {

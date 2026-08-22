@@ -92,6 +92,11 @@ type ExtensionModuleResponse struct {
 	Error       *DesktopError `json:"error,omitempty"`
 }
 
+type ExtensionAssetResponse struct {
+	URL   string        `json:"url,omitempty"`
+	Error *DesktopError `json:"error,omitempty"`
+}
+
 type ExtensionOperationResponse struct {
 	Record          *InstalledExtension `json:"record,omitempty"`
 	RestartRequired bool                `json:"restartRequired"`

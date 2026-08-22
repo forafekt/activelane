@@ -252,6 +252,11 @@ function back() {
               @click="marketplace.disableExtension(extension.id)"
               >Disable</Button
             ><Button
+              v-else-if="extension.status === 'disabled'"
+              size="sm"
+              @click="marketplace.enableExtension(extension.id)"
+              >Enable</Button
+            ><Button
               size="sm"
               variant="ghost"
               :leading-icon="Trash2"

@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "dev": "vite"
   },
   "dependencies": {
-    "@activelane/extension-view": "workspace:*",
-    "@activelane/workbench": "workspace:*",
+    "@activelane/extension": "workspace:*",
     "vue": "^3.5.32"
   },
   "devDependencies": {
