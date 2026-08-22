@@ -43,7 +43,7 @@ importers:
         version: link:../../../packages/al-workbench
       '@wailsio/runtime':
         specifier: latest
-        version: 3.0.0-beta.11
+        version: 3.0.0-beta.12
       vue:
         specifier: ^3.5.32
         version: 3.5.41(typescript@5.9.3)
@@ -72,6 +72,9 @@ importers:
 
   extensions/api-studio:
     dependencies:
+      '@activelane/extension-view':
+        specifier: workspace:*
+        version: link:../../packages/al-extension-view
       '@activelane/workbench':
         specifier: workspace:*
         version: link:../../packages/al-workbench
@@ -96,13 +99,25 @@ importers:
         version: link:../../packages/al-workbench
       vue:
         specifier: ^3.5.32
-        version: 3.5.41(typescript@6.0.3)
+        version: 3.5.41(typescript@5.9.3)
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.0
-        version: 6.0.8(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(stylus@0.57.0)(tsx@4.23.12))(vue@3.5.41(typescript@6.0.3))
+        version: 6.0.8(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(stylus@0.57.0)(tsx@4.23.12))(vue@3.5.41(typescript@5.9.3))
       vite:
         specifier: ^8.0.0
+        version: 8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(stylus@0.57.0)(tsx@4.23.12)
+
+  packages/al-extension-view:
+    devDependencies:
+      tsx:
+        specifier: ^4.21.0
+        version: 4.23.12
+      typescript:
+        specifier: ~6.0.0
+        version: 6.0.3
+      vite:
+        specifier: ^8.0.8
         version: 8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(stylus@0.57.0)(tsx@4.23.12)
 
   packages/al-icons:
@@ -272,6 +287,9 @@ importers:
 
   packages/al-workbench:
     dependencies:
+      '@activelane/extension-view':
+        specifier: workspace:*
+        version: link:../al-extension-view
       '@activelane/icons':
         specifier: workspace:*
         version: link:../al-icons
@@ -1509,6 +1527,11 @@ packages:
 
   '@volar/typescript@2.4.28':
     resolution: {integrity: sha512-Ja6yvWrbis2QtN4ClAKreeUZPVYMARDYZl9LMEv1iQ1QdepB6wn0jTRxA9MftYmYa4DQ4k/DaSZpFPUfxl8giw==}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   '@vue/compiler-core@3.5.41':
     resolution: {integrity: sha512-q0Xtv/F9w2YO/7htQhtiL+Ev2WCJbe5N2hc+XfgyKkEKqWpSxknmT8QOuGdEKNdjPq0c3F7rNpFkTo3Kfrm7pg==}
@@ -1604,8 +1627,8 @@ packages:
     peerDependencies:
       vue: ^3.5.0
 
-  '@wailsio/runtime@3.0.0-beta.11':
-    resolution: {integrity: sha512-pMHts/Qunm4jPh67f+FCGb4YngMag7VSxol0Gw+8Ka5E/qn4StGX0w72haONH8bjgJZYnwgZvydIKIcoMsnAgA==}
+  '@wailsio/runtime@3.0.0-beta.12':
+    resolution: {integrity: sha512-2B456rspX5rDXYhNjRqXNDOPkRXjletGJ4R3beF2FGs7K67MTovLy9acXHYb8nolzL96kygyJ622RIjB45oumg==}
 
   abbrev@2.0.0:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
@@ -5079,11 +5102,21 @@ snapshots:
 
   '@volar/source-map@2.4.28': {}
 
-  '@volar/typescript@2.4.28':
+  '@volar/typescript@2.4.28(typescript@5.9.3)':
     dependencies:
       '@volar/language-core': 2.4.28
       path-browserify: 1.0.1
       vscode-uri: 3.1.0
+    optionalDependencies:
+      typescript: 5.9.3
+
+  '@volar/typescript@2.4.28(typescript@6.0.3)':
+    dependencies:
+      '@volar/language-core': 2.4.28
+      path-browserify: 1.0.1
+      vscode-uri: 3.1.0
+    optionalDependencies:
+      typescript: 6.0.3
 
   '@vue/compiler-core@3.5.41':
     dependencies:
@@ -5234,7 +5267,7 @@ snapshots:
     dependencies:
       vue: 3.5.41(typescript@6.0.3)
 
-  '@wailsio/runtime@3.0.0-beta.11': {}
+  '@wailsio/runtime@3.0.0-beta.12': {}
 
   abbrev@2.0.0: {}
 
@@ -7490,13 +7523,13 @@ snapshots:
 
   vue-tsc@3.3.11(typescript@5.9.3):
     dependencies:
-      '@volar/typescript': 2.4.28
+      '@volar/typescript': 2.4.28(typescript@5.9.3)
       '@vue/language-core': 3.3.11
       typescript: 5.9.3
 
   vue-tsc@3.3.11(typescript@6.0.3):
     dependencies:
-      '@volar/typescript': 2.4.28
+      '@volar/typescript': 2.4.28(typescript@6.0.3)
       '@vue/language-core': 3.3.11
       typescript: 6.0.3
 

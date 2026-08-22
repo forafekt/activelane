@@ -1,4 +1,6 @@
+import type { ViewContainer, ViewDefinition } from '../../views/model'
 import type { ActiveLaneCapability, ActiveLaneCapabilityService } from '../capabilities/types'
+import type { WorkbenchExtensionEntitlements } from '../entitlements/types'
 import type { WorkbenchHostAdapter, WorkbenchStorageScope } from '../host/types'
 import type { ServerExtensionDeclaration } from '../serverRuntime'
 import type { Disposable, MaybePromise } from '../shared/types'
@@ -26,7 +28,6 @@ import type {
 import type { WorkbenchContributionRegistrar, WorkbenchShellApi } from '../workbench/shell'
 import type { WorkbenchTabSurfaceContribution } from '../workbench/surfaces'
 import type { WorkbenchThemeContribution } from '../workbench/themes'
-import type { WorkbenchExtensionEntitlements } from '../entitlements/types'
 
 export interface WorkbenchMarketplaceEntry {
   categories?: string[]
@@ -98,6 +99,8 @@ export interface WorkbenchEventBus {
 export type WorkbenchServerContribution = Partial<ServerExtensionDeclaration>
 
 export interface WorkbenchContributions {
+  containers?: ViewContainer[]
+  views?: ViewDefinition[]
   parts?: WorkbenchPartContribution[]
   statusBar?: WorkbenchStatusBarItemContribution[]
   applicationMenus?: WorkbenchGlobalMenuContribution[]

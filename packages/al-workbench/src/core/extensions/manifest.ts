@@ -1,3 +1,4 @@
+import { validateViewContributions } from '../../views/manifest'
 import { normalizeServerExtensionDeclaration } from '../serverRuntime'
 import type {
   ActiveLaneExtensionKind,
@@ -205,6 +206,7 @@ export function normalizeActiveLaneManifest(input: unknown): ManifestValidationR
     }
   }
   if (!manifest.entry) issues.push({ path: 'entry', message: 'entry must be a non-empty string.' })
+  issues.push(...validateViewContributions(manifest.contributes ?? {}))
 
   return {
     ok: issues.length === 0,

@@ -1,3 +1,4 @@
+import type { WorkbenchSubscriptionProvider } from '../entitlements/types'
 import type {
   InstalledExtensionRecord,
   WorkbenchExtensionDefinition,
@@ -6,7 +7,6 @@ import type {
 } from '../extensions/types'
 import type { ActiveLaneHostKind } from '../runtime/context'
 import type { ActiveLaneServerRuntime } from '../serverRuntime'
-import type { WorkbenchSubscriptionProvider } from '../entitlements/types'
 
 export interface WorkbenchStorageScope {
   get: <T>(key: string) => Promise<T | undefined>
@@ -59,6 +59,9 @@ export interface WorkbenchFileSystemEntry {
 }
 
 export interface WorkbenchHostCapabilities {
+  extensionAssets?: {
+    resolve: (extensionId: string, path: string) => string | Promise<string>
+  }
   lifecycle?: {
     closeWindow?: () => Promise<void>
   }

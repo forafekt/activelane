@@ -156,10 +156,75 @@ func (m Manifest) Validate() error {
 	if err := validateArchivePath(m.Entry); err != nil {
 		issues = append(issues, "entry: "+err.Error())
 	}
+	issues = append(issues, validateViewContributions(m.Raw)...)
 	if len(issues) > 0 {
 		return fmt.Errorf("invalid manifest: %s", strings.Join(issues, "; "))
 	}
 	return nil
+}
+
+func validateViewContributions(raw map[string]any) []string {
+	contributes, _ := raw["contributes"].(map[string]any)
+	if contributes == nil {
+		return nil
+	}
+	containers := map[string]bool{}
+	validLocations := map[string]bool{"primary-sidebar": true, "secondary-sidebar": true, "editor": true, "panel": true, "auxiliary": true}
+	var issues []string
+	if values, ok := contributes["containers"].([]any); ok {
+		for index, value := range values {
+			container, _ := value.(map[string]any)
+			id, _ := container["id"].(string)
+			location, _ := container["location"].(string)
+			if id == "" || containers[id] {
+				issues = append(issues, fmt.Sprintf("contributes.containers.%d.id: must be unique and non-empty", index))
+			}
+			containers[id] = true
+			if !validLocations[location] {
+				issues = append(issues, fmt.Sprintf("contributes.containers.%d.location: unsupported Workbench location", index))
+			}
+		}
+	}
+	if values, ok := contributes["views"].([]any); ok {
+		seen := map[string]bool{}
+		for index, value := range values {
+			view, _ := value.(map[string]any)
+			id, _ := view["id"].(string)
+			container, _ := view["container"].(string)
+			if id == "" || seen[id] {
+				issues = append(issues, fmt.Sprintf("contributes.views.%d.id: must be unique and non-empty", index))
+			}
+			seen[id] = true
+			if !containers[container] {
+				issues = append(issues, fmt.Sprintf("contributes.views.%d.container: unknown container %q", index, container))
+			}
+			renderer, _ := view["renderer"].(map[string]any)
+			typeName, _ := renderer["type"].(string)
+			entry, _ := renderer["entry"].(string)
+			if typeName != "isolated" {
+				issues = append(issues, fmt.Sprintf("contributes.views.%d.renderer.type: must be isolated", index))
+			}
+			if err := validateArchivePath(entry); err != nil || path.Ext(entry) != ".html" {
+				issues = append(issues, fmt.Sprintf("contributes.views.%d.renderer.entry: must be a safe package-relative HTML file", index))
+			}
+		}
+	}
+	return issues
+}
+
+func (m Manifest) ViewEntries() []string {
+	contributes, _ := m.Raw["contributes"].(map[string]any)
+	values, _ := contributes["views"].([]any)
+	entries := make([]string, 0, len(values))
+	for _, value := range values {
+		view, _ := value.(map[string]any)
+		renderer, _ := view["renderer"].(map[string]any)
+		entry, _ := renderer["entry"].(string)
+		if entry != "" {
+			entries = append(entries, entry)
+		}
+	}
+	return entries
 }
 
 func validateArchivePath(name string) error {

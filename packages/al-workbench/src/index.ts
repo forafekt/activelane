@@ -45,3 +45,4 @@ export {
   resolveApplicationMenus,
 } from './runtime/menus/menuRegistry'
 export { WorkbenchShell }
+export * from './views'

@@ -8,6 +8,7 @@ import type { WorkbenchHost } from '../../core/host/types'
 import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 import { createApplicationRegistryService, LauncherOverlay, provideLauncher } from '../../launcher'
 import { provideSurfaceBridge } from '../../surfaces/composables/useSurfaceBridge'
+import { provideViewBridge } from '../../views/vueBridge'
 import WorkbenchTabWorkspaceDialog from '../editor/tabs/WorkbenchTabWorkspaceDialog.vue'
 import WorkbenchLayout from '../layout/WorkbenchLayout.vue'
 import WorkbenchWindowHeader from '../window/WorkbenchWindowHeader.vue'
@@ -30,6 +31,7 @@ provideWorkbenchRuntime(props.runtime)
 const launcher = createApplicationRegistryService(props.runtime)
 provideLauncher(launcher)
 const surfaceBridge = provideSurfaceBridge(props.runtime)
+const viewBridge = provideViewBridge(props.runtime)
 const hostRef = ref<HTMLElement | null>(null)
 const shellRuntime = props.runtime
 
@@ -61,6 +63,7 @@ onMounted(() => {
 onUnmounted(() => {
   launcher.dispose()
   surfaceBridge.dispose()
+  viewBridge.dispose()
 })
 </script>
 

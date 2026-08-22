@@ -1,3 +1,4 @@
+import type { ViewContainer, ViewDefinition } from '../../views/model'
 import type { Disposable } from '../shared/types'
 import type {
   OpenWorkbenchTabOptions,
@@ -178,6 +179,8 @@ export interface WorkbenchShellApi {
 }
 
 export interface WorkbenchRegisteredContributions {
+  containers: ViewContainer[]
+  views: ViewDefinition[]
   parts: WorkbenchPartContribution[]
   statusBar: WorkbenchStatusBarItemContribution[]
   globalMenus: WorkbenchGlobalMenuContribution[]
@@ -198,6 +201,8 @@ export interface WorkbenchRegisteredContributions {
 }
 
 export interface WorkbenchContributionRegistrar {
+  containers: (...items: ViewContainer[]) => Disposable
+  views: (...items: ViewDefinition[]) => Disposable
   parts: (...items: WorkbenchPartContribution[]) => Disposable
   statusBar: (...items: WorkbenchStatusBarItemContribution[]) => Disposable
   globalMenus: (...items: WorkbenchGlobalMenuContribution[]) => Disposable

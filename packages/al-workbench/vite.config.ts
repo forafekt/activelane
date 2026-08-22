@@ -14,6 +14,7 @@ export default defineConfig({
         'marketplace/index': fileURLToPath(new URL('./src/marketplace/index.ts', import.meta.url)),
         'themes/index': fileURLToPath(new URL('./src/themes/index.ts', import.meta.url)),
         'extensions/index': fileURLToPath(new URL('./src/extensions/index.ts', import.meta.url)),
+        'views/index': fileURLToPath(new URL('./src/views/index.ts', import.meta.url)),
       },
       name: 'ActiveLaneWorkbench',
       formats: ['es'],

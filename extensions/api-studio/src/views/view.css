@@ -1,0 +1,4 @@
+:root { color-scheme: light dark; font-family: Inter, system-ui, sans-serif; background: var(--al-background, #111); color: var(--al-foreground, #eee); }
+* { box-sizing: border-box; } body { margin: 0; } header { display: flex; align-items: center; justify-content: space-between; padding: .65rem .75rem; border-bottom: 1px solid var(--al-border, #333); }
+button { font: inherit; color: inherit; } .request { display: grid; width: 100%; grid-template-columns: 3rem 1fr; gap: .5rem; padding: .65rem .75rem; border: 0; border-bottom: 1px solid var(--al-border, #333); background: transparent; text-align: left; }
+.request:hover { background: var(--al-accent, #222); } main { padding: .75rem; } code { white-space: pre-wrap; }

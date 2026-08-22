@@ -2,6 +2,7 @@
 import { SidebarContent, SidebarHeader } from '@activelane/shadcn'
 import { computed, watchEffect } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
+import IsolatedViewHost from '../../../views/IsolatedViewHost.vue'
 import WorkbenchExtensionBoundary from '../WorkbenchExtensionBoundary.vue'
 
 defineOptions({ name: 'WorkbenchSidebar' })
@@ -79,6 +80,18 @@ const activeView = computed(() => {
   )
   return fallback ?? null
 })
+const activeIsolatedView = computed(() => {
+  const containerId =
+    runtime.workbench.state.activeSidebarViewId ?? runtime.workbench.state.activeActivityId
+  const container = runtime.registry.containers.find(
+    (item) => item.id === containerId && item.location === 'primary-sidebar',
+  )
+  return container
+    ? (runtime.registry.views.find(
+        (item) => item.container === container.id && item.renderer.type === 'isolated',
+      ) ?? null)
+    : null
+})
 
 const activityViews = computed(() =>
   runtime.registry.sidebarViews.filter(
@@ -117,7 +130,20 @@ watchEffect(() => {
 </script>
 
 <template>
-  <Sidebar v-if="activeView" collapsible="none" class="wb-sidebar-pane static flex h-full">
+  <Sidebar v-if="activeIsolatedView" collapsible="none" class="wb-sidebar-pane static flex h-full">
+    <SidebarHeader class="wb-sidebar-pane__header p-0">
+      <PanelHeader :title="activeIsolatedView.title" class="border-0" />
+    </SidebarHeader>
+    <SidebarContent class="wb-sidebar-pane__content min-h-0">
+      <IsolatedViewHost
+        :definition="activeIsolatedView"
+        :instance-id="activeIsolatedView.id"
+        class="h-full min-h-0"
+      />
+    </SidebarContent>
+  </Sidebar>
+
+  <Sidebar v-else-if="activeView" collapsible="none" class="wb-sidebar-pane static flex h-full">
     <SidebarHeader class="wb-sidebar-pane__header p-0">
       <PanelHeader :title="activeView.title" class="border-0">
         <template #actions>

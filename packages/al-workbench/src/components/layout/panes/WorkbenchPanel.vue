@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
+import IsolatedViewHost from '../../../views/IsolatedViewHost.vue'
 
 defineOptions({ name: 'WorkbenchPanel' })
 
@@ -13,6 +14,13 @@ const runtime = useWorkbenchRuntime()
 const [EmptyState, IconButton] = runtime.workbench.ui.getComponents(['EmptyState', 'IconButton'])
 
 const views = computed(() => [...runtime.registry.bottomPaneViews])
+const isolatedViews = computed(() =>
+  runtime.registry.views.filter((view) =>
+    runtime.registry.containers.some(
+      (container) => container.id === view.container && container.location === 'panel',
+    ),
+  ),
+)
 const activeView = computed(() => {
   const activeViewId = runtime.workbench.state.bottomPanel.activeViewId
   return views.value.find((view) => view.id === activeViewId) ?? views.value[0] ?? null
@@ -75,8 +83,15 @@ watch(
         />
       </div>
     </div>
-    <div v-if="activeView" class="wb-shell__bottom-panel-content">
+    <div v-if="activeView || isolatedViews[0]" class="wb-shell__bottom-panel-content">
+      <IsolatedViewHost
+        v-if="isolatedViews[0]"
+        :definition="isolatedViews[0]"
+        :instance-id="isolatedViews[0].id"
+        class="h-full min-h-0"
+      />
       <component
+        v-else-if="activeView"
         :is="activeView.component"
         :key="activeView.id"
         :runtime="runtime"

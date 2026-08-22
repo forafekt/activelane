@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 import type { WorkbenchTab } from '../../../core/workbench/contributions'
 import type { WorkbenchLayoutNode } from '../../../core/workbench/shell'
+import IsolatedViewHost from '../../../views/IsolatedViewHost.vue'
 import WorkbenchExtensionBoundary from '../WorkbenchExtensionBoundary.vue'
 
 import InspectorPanel from './InspectorPanel.vue'
@@ -38,6 +39,13 @@ const panels = computed(() =>
       : false,
   ),
 )
+const isolatedPanels = computed(() =>
+  runtime.registry.views.filter((view) =>
+    runtime.registry.containers.some(
+      (container) => container.id === view.container && container.location === 'secondary-sidebar',
+    ),
+  ),
+)
 </script>
 
 <template>
@@ -57,6 +65,14 @@ const panels = computed(() =>
     </template>
 
     <div class="wb-inspector-pane__content grid min-h-0 gap-1.5">
+      <IsolatedViewHost
+        v-for="view in isolatedPanels"
+        :key="view.id"
+        :definition="view"
+        :instance-id="`${view.id}:${activeTab?.id ?? 'empty'}`"
+        :context="activeTab?.input"
+        class="h-full min-h-0"
+      />
       <WorkbenchExtensionBoundary
         v-for="panel in panels"
         :key="panel.id"
@@ -68,7 +84,7 @@ const panels = computed(() =>
         :pass-through="{ tab: activeTab, runtime }"
       />
       <EmptyState
-        v-if="!panels.length"
+        v-if="!panels.length && !isolatedPanels.length"
         title="No inspector panels"
         description="Extensions can contribute contextual inspector surfaces for the active tab kind."
       />

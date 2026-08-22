@@ -82,6 +82,15 @@ func PackDir(root, output string) (Inspection, error) {
 		return Inspection{}, err
 	}
 	sort.Strings(names)
+	packaged := make(map[string]bool, len(names))
+	for _, name := range names {
+		packaged[name] = true
+	}
+	for _, entry := range m.ViewEntries() {
+		if !packaged[entry] {
+			return Inspection{}, fmt.Errorf("view entry %q is missing from package", entry)
+		}
+	}
 	f, err := os.Create(output)
 	if err != nil {
 		return Inspection{}, err
@@ -210,6 +219,11 @@ func InspectReader(r io.ReaderAt, size int64) (Inspection, error) {
 	}
 	if !seen[m.Entry] {
 		return Inspection{}, fmt.Errorf("manifest entry %q is missing from package", m.Entry)
+	}
+	for _, entry := range m.ViewEntries() {
+		if !seen[entry] {
+			return Inspection{}, fmt.Errorf("view entry %q is missing from package", entry)
+		}
 	}
 	for _, zf := range zr.File {
 		if zf.Name != m.Entry {

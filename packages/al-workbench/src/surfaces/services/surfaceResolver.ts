@@ -120,6 +120,21 @@ export function resolveWorkbenchTabSurface(
     }
   }
 
+  const view = runtime.registry.views.find(
+    (candidate) => candidate.id === tab.surfaceId || candidate.id === tab.kind,
+  )
+  if (view?.renderer.type === 'isolated') {
+    return {
+      id: view.id,
+      title: tab.title,
+      ownerExtensionId: view.ownerExtensionId ?? tab.ownerExtensionId,
+      mode: 'isolated',
+      view,
+      instanceId: tab.id,
+      context: tab.input,
+    }
+  }
+
   const renderer = runtime.registry.tabRenderers.find(
     (item) => item.tabKind === tab.kind || item.id === tab.kind,
   )

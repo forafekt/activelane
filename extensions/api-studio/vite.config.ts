@@ -1,53 +1,27 @@
-import vue from '@vitejs/plugin-vue'
+import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  define: {
-    'process.env.NODE_ENV': JSON.stringify('production'),
-  },
-  plugins: [
-    vue(),
-    {
-      name: 'activelane-self-contained-css',
-      enforce: 'post',
-      generateBundle(_options, bundle) {
-        const css = Object.values(bundle)
-          .filter((item) => item.type === 'asset' && item.fileName.endsWith('.css'))
-          .map((item) => String(item.source))
-          .join('\n')
-        if (!css) return
-        for (const [fileName, item] of Object.entries(bundle)) {
-          if (item.type === 'chunk' && item.isEntry) {
-            item.code = `const style=document.createElement('style');style.dataset.activelaneExtension='@activelane/api-studio';style.textContent=${JSON.stringify(css)};document.head.appendChild(style);\n${item.code}`
-          }
-          if (item.type === 'asset' && fileName.endsWith('.css')) delete bundle[fileName]
-        }
-      },
-    },
-    {
-      name: 'activelane-browser-runtime-contract',
-      enforce: 'post',
-      generateBundle(_options, bundle) {
-        for (const item of Object.values(bundle)) {
-          if (item.type !== 'chunk') continue
-          const nodeGlobal = item.code.match(/\b(?:process|require|__dirname|__filename)\b|module\.exports/)
-          if (nodeGlobal) {
-            this.error(`Installed extension bundle contains Node global ${nodeGlobal[0]}.`)
-          }
-        }
-      },
-    },
-  ],
+  root: resolve(import.meta.dirname, 'src'),
   build: {
     target: ['safari15'],
-    lib: {
-      entry: 'src/extension.ts',
-      formats: ['es'],
-      fileName: () => 'extension.js',
-    },
-    outDir: 'dist',
+    outDir: resolve(import.meta.dirname, 'dist'),
     emptyOutDir: true,
-    // Installed extensions execute as browser-native ES modules. Runtime dependencies
-    // are bundled so the package is self-contained and has no Vite-time import map.
+    rollupOptions: {
+      preserveEntrySignatures: 'strict',
+      input: {
+        extension: resolve(import.meta.dirname, 'src/extension.ts'),
+        'views/sidebar/index': resolve(import.meta.dirname, 'src/views/sidebar/index.html'),
+        'views/editor/index': resolve(import.meta.dirname, 'src/views/editor/index.html'),
+        'views/inspector/index': resolve(import.meta.dirname, 'src/views/inspector/index.html'),
+        'views/log/index': resolve(import.meta.dirname, 'src/views/log/index.html'),
+      },
+      output: {
+        entryFileNames: (chunk) =>
+          chunk.name === 'extension' ? 'extension.js' : 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
+      },
+    },
   },
 })

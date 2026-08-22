@@ -1,3 +1,4 @@
+import type { ViewDefinition } from '../../views/model'
 import type { WorkbenchRuntimeApi } from '../runtime/types'
 import type { MaybePromise } from '../shared/types'
 import type { WorkbenchTab, WorkbenchTabContext } from './contributions'
@@ -9,6 +10,7 @@ export type WorkbenchSurfaceMode =
   | 'iframe'
   | 'external-url'
   | 'webview'
+  | 'isolated'
 
 export type WorkbenchSurfacePermission = string
 
@@ -97,12 +99,20 @@ export interface WorkbenchWebviewSurfaceDescriptor extends WorkbenchSurfaceDescr
   mode: 'webview'
 }
 
+export interface WorkbenchIsolatedSurfaceDescriptor extends WorkbenchSurfaceDescriptorBase {
+  mode: 'isolated'
+  view: ViewDefinition
+  instanceId: string
+  context?: unknown
+}
+
 export type WorkbenchSurfaceDescriptor =
   | WorkbenchNativeVueSurfaceDescriptor
   | WorkbenchShadowDomSurfaceDescriptor
   | WorkbenchIframeSurfaceDescriptor
   | WorkbenchExternalUrlSurfaceDescriptor
   | WorkbenchWebviewSurfaceDescriptor
+  | WorkbenchIsolatedSurfaceDescriptor
 
 export interface WorkbenchSurfaceRendererContext extends WorkbenchTabContext {
   tab: WorkbenchTab

@@ -1,3 +1,4 @@
+import type { ViewContainer, ViewDefinition } from '../../views/model'
 import type {
   ActiveLaneCapability,
   ActiveLaneCapabilityHandler,
@@ -229,6 +230,8 @@ export async function createExtensionRuntime(
   }
 
   const registry = reactivity.reactive<WorkbenchRegisteredContributions>({
+    containers: [],
+    views: [],
     parts: [],
     statusBar: [],
     globalMenus: [],
@@ -307,6 +310,9 @@ export async function createExtensionRuntime(
 
   function createRegistrar(ownerExtensionId: string): WorkbenchContributionRegistrar {
     return {
+      containers: (...items: ViewContainer[]) =>
+        registerList('containers', ownerExtensionId, items),
+      views: (...items: ViewDefinition[]) => registerList('views', ownerExtensionId, items),
       activityRail: (...items: WorkbenchActivityContribution[]) =>
         registerList('activityRail', ownerExtensionId, items),
       apps: (...items: WorkbenchApplicationContribution[]) =>
@@ -1079,6 +1085,10 @@ export async function createExtensionRuntime(
           entitlements: entitlements.forExtension(extensionId),
           runtime: runtime as WorkbenchRuntimeApi,
           contribute: {
+            containers: (...items: ViewContainer[]) =>
+              trackDynamic(dynamicDisposables, registrar.containers(...items)),
+            views: (...items: ViewDefinition[]) =>
+              trackDynamic(dynamicDisposables, registrar.views(...items)),
             activityRail: (...items: WorkbenchActivityContribution[]) =>
               trackDynamic(dynamicDisposables, registrar.activityRail(...items)),
             apps: (...items: WorkbenchApplicationContribution[]) =>
@@ -1123,6 +1133,12 @@ export async function createExtensionRuntime(
         }
 
         const manifestContributions = definition.manifest.contributes
+        if (manifestContributions?.containers?.length) {
+          dynamicDisposables.push(registrar.containers(...manifestContributions.containers))
+        }
+        if (manifestContributions?.views?.length) {
+          dynamicDisposables.push(registrar.views(...manifestContributions.views))
+        }
         if (manifestContributions?.activityRail?.length) {
           dynamicDisposables.push(registrar.activityRail(...manifestContributions.activityRail))
         }
