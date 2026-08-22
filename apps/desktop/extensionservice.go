@@ -71,9 +71,25 @@ func (service *ExtensionService) Module(extensionID, version string) ExtensionMo
 		if readErr != nil {
 			return ExtensionModuleResponse{Error: desktopError("EXTENSION_INVALID", "Extension runtime entrypoint is unavailable.", readErr)}
 		}
-		return ExtensionModuleResponse{Source: string(source)}
+		digest := sha256.Sum256(source)
+		return ExtensionModuleResponse{
+			Source:      string(source),
+			Entrypoint:  filepath.ToSlash(file),
+			ContentType: runtimeEntrypointContentType(file),
+			SizeBytes:   len(source),
+			SHA256:      hex.EncodeToString(digest[:]),
+		}
 	}
 	return ExtensionModuleResponse{Error: desktopError("EXTENSION_NOT_FOUND", "Installed extension version was not found.", nil)}
+}
+
+func runtimeEntrypointContentType(path string) string {
+	switch strings.ToLower(filepath.Ext(path)) {
+	case ".js", ".mjs":
+		return "text/javascript"
+	default:
+		return "application/octet-stream"
+	}
 }
 
 func validateRuntimeEntry(root, entry string) error {

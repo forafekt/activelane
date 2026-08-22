@@ -1,5 +1,3 @@
-// import './styles/index.css'
-
 export * from './blocks'
 export * from './catalog'
 export * from './components'

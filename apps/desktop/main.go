@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"log"
+	"runtime"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/events"
@@ -15,6 +16,9 @@ func main() {
 	workspaceService := NewWorkspaceService()
 	extensionService := NewExtensionService()
 	networkService := NewNetworkService()
+
+	// Determine frameless needs by OS
+	isMac := runtime.GOOS == "darwin"
 
 	app := application.New(application.Options{
 		Name:        "ActiveLane",
@@ -33,18 +37,20 @@ func main() {
 	})
 
 	window := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Name:             "workbench",
-		Title:            "ActiveLane Workbench",
-		Width:            1440,
-		Height:           900,
-		MinWidth:         900,
-		MinHeight:        600,
-		Frameless:        true,
-		BackgroundColour: application.NewRGB(10, 10, 12),
-		URL:              "/",
+		Name:      "workbench",
+		Title:     "ActiveLane Workbench",
+		Width:     1440,
+		Height:    900,
+		MinWidth:  900,
+		MinHeight: 600,
+		Frameless: !isMac, // Native-default frameless windows retain the AppKit frame
+		URL:       "/",
 		Mac: application.MacWindow{
-			InvisibleTitleBarHeight: 48,
-			TitleBar:                application.MacTitleBarHiddenInset,
+			TitleBar: application.MacTitleBar{
+				AppearsTransparent: true, // Merges the titlebar into the window body
+				HideTitle:          true, // Removes the text title
+				FullSizeContent:    true, // Content flows behind the traffic lights
+			},
 		},
 	})
 	window.RegisterHook(events.Common.WindowClosing, func(event *application.WindowEvent) {

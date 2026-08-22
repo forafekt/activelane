@@ -84,8 +84,12 @@ type InstalledResponse struct {
 }
 
 type ExtensionModuleResponse struct {
-	Source string        `json:"source,omitempty"`
-	Error  *DesktopError `json:"error,omitempty"`
+	Source      string        `json:"source,omitempty"`
+	Entrypoint  string        `json:"entrypoint,omitempty"`
+	ContentType string        `json:"contentType,omitempty"`
+	SizeBytes   int           `json:"sizeBytes,omitempty"`
+	SHA256      string        `json:"sha256,omitempty"`
+	Error       *DesktopError `json:"error,omitempty"`
 }
 
 type ExtensionOperationResponse struct {

@@ -1,4 +1,3 @@
-import './styles/index.css'
 import WorkbenchShell from './components/shell/WorkbenchShell.vue'
 
 export { createWorkbenchBuiltinExtensions } from './contributions'
@@ -26,6 +25,7 @@ export type {
   WorkbenchPlatform,
   WorkbenchWindowHost,
 } from './core/host/types'
+export type { WorkbenchNativeApplicationMenuSnapshot } from './core/menus/menuContracts'
 export { createNativeWorkbenchHost } from './core/runtime/hosts/native'
 export { createWorkbenchRuntimeHttpClient } from './core/runtime/httpClient'
 export type { WorkbenchRuntimeApi } from './core/runtime/types'

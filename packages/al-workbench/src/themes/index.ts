@@ -59,7 +59,7 @@ const lightWorkbenchSemanticTokens = {
 const darkWorkbenchSemanticTokens = {
   windowBackground: 'transparent',
   workbenchBackground: 'transparent',
-  shellChromeSurface: 'rgb(38 40 44 / 0.98)',
+  shellChromeSurface: 'transparent',
   paneSurface: '#191a1c',
   paneSurfaceRaised: 'rgb(31 33 36 / 0.96)',
   paneInset: '#191a1c',

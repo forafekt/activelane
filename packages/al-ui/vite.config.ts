@@ -9,6 +9,7 @@ export default defineConfig({
   root: packageRoot,
   plugins: [vue()],
   build: {
+    target: ['safari15'],
     emptyOutDir: false,
     outDir: fileURLToPath(new URL('./dist', import.meta.url)),
     cssCodeSplit: false,

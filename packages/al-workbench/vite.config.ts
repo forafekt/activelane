@@ -6,6 +6,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [tailwindcss(), vue()],
   build: {
+    target: ['safari15'],
     emptyOutDir: true,
     lib: {
       entry: {
