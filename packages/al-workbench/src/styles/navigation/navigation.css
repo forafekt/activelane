@@ -98,7 +98,7 @@
   gap: 0.125rem;
   background: transparent;
   padding: 0.25rem 0.375rem 0.375rem;
-  transition: width 160ms ease;
+  /* transition: width 0.1ms ease-in-out; */
 }
 .wb-activity-bar--expanded {
   width: clamp(16rem, 22vw, 24rem);

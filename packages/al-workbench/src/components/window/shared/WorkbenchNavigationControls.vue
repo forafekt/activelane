@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { getIcon } from '@activelane/icons'
+import { getComponent } from '@activelane/ui'
 import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
+
 
 defineOptions({ name: 'WorkbenchNavigationControls' })
 
@@ -8,9 +11,18 @@ const runtime = useWorkbenchRuntime()
 const canGoBack = computed(() => runtime.workbench.state.navigation.back.length > 0)
 const canGoForward = computed(() => runtime.workbench.state.navigation.forward.length > 0)
 
-const ChevronLeft = runtime.workbench.ui.getIcon('lucide:chevron-left')
-const ChevronRight = runtime.workbench.ui.getIcon('lucide:chevron-right')
-const [IconButton] = runtime.workbench.ui.getComponents(['IconButton'])
+const ChevronLeft = getIcon('lucide:arrow-left')
+const ChevronRight = getIcon('lucide:arrow-right')
+const IconButton = getComponent('icon-button')
+
+function navigateBack() {
+  void runtime.workbench.navigateBack()
+}
+
+function navigateForward() {
+  void runtime.workbench.navigateForward()
+}
+
 </script>
 
 <template>
@@ -18,18 +30,18 @@ const [IconButton] = runtime.workbench.ui.getComponents(['IconButton'])
     <IconButton
       label="Back"
       :icon="ChevronLeft"
-      size="icon-xs"
+      size="tiny"
       variant="ghost"
       :disabled="!canGoBack"
-      @click="runtime.workbench.navigateBack()"
+      @click="navigateBack"
     />
     <IconButton
       label="Forward"
       :icon="ChevronRight"
-      size="icon-xs"
+      size="tiny"
       variant="ghost"
       :disabled="!canGoForward"
-      @click="runtime.workbench.navigateForward()"
+      @click="navigateForward"
     />
   </div>
 </template>

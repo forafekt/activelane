@@ -1,12 +1,22 @@
 <script setup lang="ts">
+import { getIcon } from '@activelane/icons'
+import { getComponent } from '@activelane/ui'
 import { useWorkbenchRuntime } from '../../composables/useWorkbenchRuntime'
-import { getWorkbenchIcon } from '../../workbenchIcons'
+
 
 defineOptions({ name: 'WorkbenchLayoutControls' })
 
 const runtime = useWorkbenchRuntime()
 
-const [IconButton] = runtime.workbench.ui.getComponents(['IconButton'])
+const IconButton = getComponent('icon-button')
+const PanelLeft = getIcon('mynaui:panel-left')
+const PanelLeftAlt = getIcon('mynaui:panel-left-solid')
+const PanelRight = getIcon('mynaui:panel-right')
+const PanelRightAlt = getIcon('mynaui:panel-right-solid')
+const PanelBottom = getIcon('mynaui:panel-bottom')
+const PanelBottomAlt = getIcon('mynaui:panel-bottom-solid')
+
+
 
 function toggleSidebar() {
   runtime.workbench.setSidebarCollapsed(!runtime.workbench.state.sidebar.collapsed)
@@ -28,24 +38,27 @@ function toggleInspector() {
   <div class="wb-layout-controls">
     <IconButton
       label="Toggle sidebar"
-      :icon="getWorkbenchIcon('PanelLeft' , 'PanelLeftFill', !runtime.workbench.state.sidebar.collapsed)"
-      size="icon-xs"
-      variant="ghost"
+      size="tiny"
       @click="toggleSidebar"
-    />
+    >
+      <PanelLeft v-if="runtime.workbench.state.sidebar.collapsed" />
+      <PanelLeftAlt v-else />
+  </IconButton>
     <IconButton
       label="Toggle bottom panel"
-      :icon="getWorkbenchIcon( 'PanelBottom', 'PanelBottomFill', runtime.workbench.state.bottomPanel.open)"
-      size="icon-xs"
-      variant="ghost"
+      size="tiny"
       @click="toggleBottomPanel"
-    />
+    >
+      <PanelBottom v-if="runtime.workbench.state.bottomPanel.open" />
+      <PanelBottomAlt v-else />
+  </IconButton>
     <IconButton
       label="Toggle inspector"
-      :icon="getWorkbenchIcon('PanelRight', 'PanelRightFill', !runtime.workbench.state.inspector.collapsed)"
-      size="icon-xs"
-      variant="ghost"
+      size="tiny"
       @click="toggleInspector"
-    />
+    >
+      <PanelRight v-if="runtime.workbench.state.inspector.collapsed" />
+      <PanelRightAlt v-else />
+    </IconButton>
   </div>
 </template>

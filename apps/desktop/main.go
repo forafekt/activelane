@@ -54,14 +54,16 @@ func main() {
 	}()
 
 	window := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Name:      "workbench",
-		Title:     "ActiveLane Workbench",
-		Width:     1440,
-		Height:    900,
-		MinWidth:  900,
-		MinHeight: 600,
-		Frameless: !isMac, // Native-default frameless windows retain the AppKit frame
-		URL:       "/",
+		Name:             "workbench",
+		Title:            "ActiveLane Workbench",
+		Width:            1440,
+		Height:           900,
+		MinWidth:         900,
+		MinHeight:        600,
+		Frameless:        !isMac, // Native-default frameless windows retain the AppKit frame
+		URL:              "/",
+		BackgroundColour: application.NewRGB(255, 255, 255),
+		BackgroundType:   application.BackgroundTypeTranslucent,
 		Mac: application.MacWindow{
 			TitleBar: application.MacTitleBar{
 				AppearsTransparent: true, // Merges the titlebar into the window body

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ButtonSize, NButton } from 'naive-ui'
+import { type ButtonSize, NButton, NIcon } from 'naive-ui'
 import type { Component } from 'vue'
 
 withDefaults(
@@ -26,8 +26,10 @@ withDefaults(
     native-focus-behavior
   >
     <template #icon>
-      <component v-if="icon" :is="icon" />
-      <slot v-else />
+      <NIcon>
+        <component v-if="icon" :is="icon" />
+        <slot v-else />
+      </NIcon>
     </template>
   </NButton>
 </template>

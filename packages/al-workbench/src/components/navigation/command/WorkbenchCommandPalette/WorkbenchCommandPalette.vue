@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getIcon } from '@activelane/icons'
+import { getComponent } from '@activelane/ui'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useWorkbenchCommands } from '../../../../composables/useWorkbenchCommands'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
@@ -12,8 +14,8 @@ const props = defineProps<{
 
 const runtime = useWorkbenchRuntime()
 
-const ScrollArea = runtime.workbench.ui.getComponent('ScrollArea')
-const Search = runtime.workbench.ui.getIcon('lucide:search')
+const ScrollBar = getComponent('scrollbar')
+const Search = getIcon('lucide:search')
 
 const commands = useWorkbenchCommands()
 
@@ -157,6 +159,12 @@ onUnmounted(() => {
   window.removeEventListener('keydown', handleGlobalKeydown)
   window.removeEventListener('resize', handleResize)
 })
+
+const computedSectionStyle = computed(() => ({
+  left: `${x.value}px`,
+  top: `${y.value}px`,
+  width: `${width.value}px`,
+}))
 </script>
 
 <template>
@@ -170,11 +178,7 @@ onUnmounted(() => {
         role="dialog"
         aria-modal="true"
         aria-label="Command palette"
-        :style="{
-          left: `${x}px`,
-          top: `${y}px`,
-          width: `${width}px`,
-        }"
+        :style="computedSectionStyle"
       >
         <div
           class="wb-command-palette__input-wrap"
@@ -183,7 +187,7 @@ onUnmounted(() => {
           @pointerup="stopDrag"
           @pointercancel="stopDrag"
         >
-          <Search class="size-3.5 text-muted-foreground" />
+          <Search />
 
           <input
             ref="inputRef"
@@ -201,7 +205,7 @@ onUnmounted(() => {
           >
         </div>
 
-        <ScrollArea orientation="vertical">
+        <div style="height: 420px; overflow: auto;">
           <WorkbenchCommandBarResults
             id="workbench-command-results"
             :items="results"
@@ -209,7 +213,7 @@ onUnmounted(() => {
             @hover="selectedIndex = $event"
             @select="commands.execute"
           />
-        </ScrollArea>
+        </div>
       </section>
     </div>
   </Teleport>
@@ -227,9 +231,10 @@ onUnmounted(() => {
   position: fixed;
   overflow: hidden;
   max-height: min(34rem, calc(100vh - 1rem));
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: var(--surface);
+  background: var(--surface-raised);
+  backdrop-filter: blur(8px);
   color: var(--text-primary);
   box-shadow:
     0 24px 80px rgb(0 0 0 / 55%),
@@ -242,6 +247,7 @@ onUnmounted(() => {
   height: 2.65rem;
   border-bottom: 1px solid var(--border);
   background: var(--surface-raised);
+  backdrop-filter: blur(8px);
   padding: 0 0.875rem;
   cursor: grab;
   user-select: none;

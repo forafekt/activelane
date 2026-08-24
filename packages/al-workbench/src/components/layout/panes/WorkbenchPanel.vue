@@ -2,6 +2,8 @@
 import { computed, watch } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 import IsolatedViewHost from '../../../views/IsolatedViewHost.vue'
+import { getBlock, getComponent } from '@activelane/ui';
+import { getIcon } from '@activelane/icons';
 
 defineOptions({ name: 'WorkbenchPanel' })
 
@@ -11,7 +13,9 @@ defineProps<{
 
 const runtime = useWorkbenchRuntime()
 
-const [EmptyState, IconButton] = runtime.workbench.ui.getComponents(['EmptyState', 'IconButton'])
+// const [EmptyState, IconButton] = runtime.workbench.ui.getComponents(['EmptyState', 'IconButton'])
+const EmptyState = getBlock('empty-state-panel')
+const IconButton = getComponent('icon-button')
 
 const views = computed(() => [...runtime.registry.bottomPaneViews])
 const isolatedViews = computed(() =>
@@ -76,9 +80,8 @@ watch(
       <div class="wb-shell__bottom-panel-actions">
         <IconButton
           label="Close bottom pane"
-          :icon="runtime.workbench.ui.getIcon('lucide:x')"
-          size="icon-xs"
-          variant="ghost"
+          :icon="getIcon('lucide:x')"
+          size="tiny"
           @click="closeBottomPane"
         />
       </div>

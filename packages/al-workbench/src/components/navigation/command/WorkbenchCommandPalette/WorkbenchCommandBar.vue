@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getIcon } from '@activelane/icons'
+import { getComponent } from '@activelane/ui'
 import { computed, ref } from 'vue'
 import { useWorkbenchCommands } from '../../../../composables/useWorkbenchCommands'
 import { useWorkbenchRuntime } from '../../../../composables/useWorkbenchRuntime'
@@ -13,6 +14,8 @@ const runtime = useWorkbenchRuntime()
 const commands = useWorkbenchCommands()
 const launcherRef = ref<HTMLButtonElement | null>(null)
 
+const Button = getComponent('button')
+
 const isOpen = computed(() => runtime.workbench.state.commandPaletteOpen)
 
 function open() {
@@ -20,7 +23,7 @@ function open() {
 }
 </script>
 
-<template>
+<!-- <template>
   <button
     ref="launcherRef"
     class="wb-command-bar"
@@ -34,6 +37,26 @@ function open() {
   </button>
 
   <WorkbenchCommandPalette :anchor-el="launcherRef" />
+</template> -->
+
+<template>
+  <div ref="launcherRef">
+    <Button
+      class="wb-command-bar"
+      aria-label="Open command palette"
+      :aria-expanded="isOpen"
+      @click="open"
+      tertiary
+      size="tiny"
+    >
+      <template #icon>
+        <Search />
+      </template>
+      <span class="wb-command-bar__placeholder">Search commands</span>
+    </Button>
+  </div>
+
+  <WorkbenchCommandPalette :anchor-el="launcherRef" />
 </template>
 
 <style scoped>
@@ -42,13 +65,9 @@ function open() {
   align-items: center;
   min-width: 0;
   width: 100%;
-  height: 1.8rem;
   border: 1px solid var(--border);
-  border-radius: 7px;
   background: color-mix(in srgb, var(--surface-raised) 82%, transparent);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 5%, transparent);
-  padding: 0 0.5rem;
-  cursor: pointer;
   text-align: left;
   transition:
     border-color 120ms ease,
