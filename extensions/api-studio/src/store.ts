@@ -11,6 +11,7 @@ import {
 } from './model'
 
 const STATE_KEY = 'api-studio.state.v2'
+
 const FREE_HISTORY_LIMIT = 25
 
 export interface ApiResponseSnapshot {

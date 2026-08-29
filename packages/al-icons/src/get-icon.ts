@@ -6,6 +6,7 @@ import { type IconReference, normalizeIconReference } from './icon-reference'
 addCollection(lucide)
 
 const fallback = 'lucide:circle-slash'
+
 const cache = new Map<IconReference, ReturnType<typeof defineComponent>>()
 
 export function getIcon(reference: IconReference) {

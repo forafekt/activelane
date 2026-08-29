@@ -5,11 +5,15 @@ import type { workbenchComponentRegistry } from '../../ui/registry/components'
 // Opaque UI handles owned by integration packages. The core runtime stores and
 // forwards them without importing a framework-specific component type.
 export type WorkbenchComponent = import('vue').Component
+
 export type WorkbenchIcon = WorkbenchComponent
 
 export type WorkbenchComponentMap = typeof workbenchComponentRegistry
+
 export type WorkbenchBlockMap = typeof workbenchBlockRegistry
+
 export type WorkbenchComponentId = keyof WorkbenchComponentMap
+
 export type WorkbenchBlockId = keyof WorkbenchBlockMap
 
 export type WorkbenchUIBulkResult<

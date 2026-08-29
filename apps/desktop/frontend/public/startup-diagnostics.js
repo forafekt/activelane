@@ -1,4 +1,4 @@
-(function () {
+;(() => {
   var enabled = true
 
   function serializeError(error) {
@@ -40,8 +40,8 @@
   function sourceContext(url, line, column) {
     if (!url || !window.fetch) return
     fetch(url, { cache: 'no-store' })
-      .then(function (response) {
-        return response.text().then(function (text) {
+      .then((response) =>
+        response.text().then((text) => {
           var lines = text.split(/\r?\n/)
           var lineNumber = Number(line) || 1
           var start = Math.max(1, lineNumber - 2)
@@ -66,9 +66,9 @@
             firstCharacters: text.slice(0, 200),
             context: context,
           })
-        })
-      })
-      .catch(function (error) {
+        }),
+      )
+      .catch((error) => {
         log('[ActiveLane source context unavailable]', {
           url: url,
           error: serializeError(error),
@@ -77,9 +77,7 @@
   }
 
   function stripComments(source) {
-    return source
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/(^|[^:])\/\/.*$/gm, '$1')
+    return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1')
   }
 
   function moduleSpecifiers(source) {
@@ -93,7 +91,8 @@
   }
 
   function resolveModuleUrl(specifier, fromUrl) {
-    if (!specifier || specifier.indexOf('data:') === 0 || specifier.indexOf('blob:') === 0) return ''
+    if (!specifier || specifier.indexOf('data:') === 0 || specifier.indexOf('blob:') === 0)
+      return ''
     try {
       return new URL(specifier, fromUrl).href
     } catch (_) {
@@ -116,8 +115,8 @@
       visitedUrls.push(url)
       visited += 1
       return fetch(url, { cache: 'no-store' })
-        .then(function (response) {
-          return response.text().then(function (text) {
+        .then((response) =>
+          response.text().then((text) => {
             var contentType = response.headers.get('content-type') || ''
             var firstCharacters = text.trim().slice(0, 200)
             if (
@@ -134,18 +133,18 @@
               })
             }
             if (contentType.indexOf('javascript') >= 0) {
-              moduleSpecifiers(text).forEach(function (specifier) {
+              moduleSpecifiers(text).forEach((specifier) => {
                 var nextUrl = resolveModuleUrl(specifier, url)
                 if (nextUrl && !seen[nextUrl]) queue.push(nextUrl)
               })
             }
-          })
-        })
+          }),
+        )
         .then(next)
     }
 
     next()
-      .then(function () {
+      .then(() => {
         log('[ActiveLane module graph context]', {
           entryUrl: entryUrl,
           visited: visited,
@@ -153,7 +152,7 @@
           suspicious: suspicious,
         })
       })
-      .catch(function (error) {
+      .catch((error) => {
         log('[ActiveLane module graph context unavailable]', {
           entryUrl: entryUrl,
           error: serializeError(error),
@@ -167,11 +166,11 @@
   }
 
   window.__ACTIVELANE_DIAGNOSTICS__ = {
-    mark: function (phase, detail) {
+    mark: (phase, detail) => {
       if (!enabled) return
       console.error('[ActiveLane startup]', { phase: phase, detail: detail || '' })
     },
-    moduleImport: function (specifier, phase) {
+    moduleImport: (specifier, phase) => {
       if (!enabled) return
       console.error('[ActiveLane module import]', { phase: phase, specifier: specifier })
     },
@@ -179,7 +178,7 @@
 
   window.addEventListener(
     'error',
-    function (event) {
+    (event) => {
       var target = event.target
       if (target && target !== window && (target.src || target.href)) {
         log('[ActiveLane resource error]', {
@@ -207,7 +206,7 @@
     true,
   )
 
-  window.addEventListener('unhandledrejection', function (event) {
+  window.addEventListener('unhandledrejection', (event) => {
     var reason = event.reason
     var url = reason && (reason.fileName || reason.filename)
     log('[ActiveLane unhandled rejection]', {

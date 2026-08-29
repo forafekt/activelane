@@ -1,8 +1,8 @@
-import type { WorkbenchSubscriptionProvider } from './types'
 import type {
   WorkbenchEntitlementResolution,
   WorkbenchEntitlementService,
   WorkbenchExtensionEntitlements,
+  WorkbenchSubscriptionProvider,
 } from './types'
 
 const emptyResolution = (extensionId: string): WorkbenchEntitlementResolution => ({
@@ -17,10 +17,7 @@ export function createEntitlementService(
   provider?: WorkbenchSubscriptionProvider,
 ): WorkbenchEntitlementService {
   const resolutions = new Map<string, WorkbenchEntitlementResolution>()
-  const listeners = new Map<
-    string,
-    Set<(resolution: WorkbenchEntitlementResolution) => void>
-  >()
+  const listeners = new Map<string, Set<(resolution: WorkbenchEntitlementResolution) => void>>()
 
   async function refresh(extensionId: string) {
     const resolution = provider

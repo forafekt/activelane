@@ -12,6 +12,9 @@ const result = await build({
   write: false,
   external: ['vue', 'naive-ui', 'naive-ui/*'],
 })
+
 const bytes = result.outputFiles.reduce((sum, file) => sum + file.contents.byteLength, 0)
+
 assert.ok(bytes < 12_000, `isolated component entry was ${bytes} bytes`)
+
 console.log(`isolated Button import: ${bytes} bytes (Vue and Naive UI external)`)

@@ -1,7 +1,11 @@
 export type MaybePromise<T> = T | Promise<T>
 
-export interface Disposable { dispose(): void }
+export interface Disposable {
+  dispose(): void
+}
+
 export type ViewOpenPolicy = 'reveal-or-create' | 'always-new' | 'singleton'
+
 export interface OpenViewOptions<TContext = unknown> {
   title?: string
   context?: TContext
@@ -10,6 +14,7 @@ export interface OpenViewOptions<TContext = unknown> {
   preview?: boolean
   groupId?: string
 }
+
 export interface ViewInstance<TContext = unknown> {
   id: string
   definitionId: string
@@ -20,8 +25,12 @@ export interface ViewInstance<TContext = unknown> {
   dirty: boolean
   createdAt: number
 }
+
 export interface ExtensionWorkbenchApi {
-  openView<TContext = unknown>(definitionId: string, options?: OpenViewOptions<TContext>): ViewInstance<TContext>
+  openView<TContext = unknown>(
+    definitionId: string,
+    options?: OpenViewOptions<TContext>,
+  ): ViewInstance<TContext>
   openTab(input: Record<string, unknown>, behavior?: Record<string, unknown>): unknown
   getActiveTab(): { id: string; input?: Record<string, unknown> } | undefined
   setActiveSidebarView(viewId: string): void
@@ -29,23 +38,27 @@ export interface ExtensionWorkbenchApi {
   setBottomPanelOpen(open: boolean): void
   [member: string]: unknown
 }
+
 export interface ExtensionStorage {
   get<T = unknown>(key: string): Promise<T | undefined>
   set<T = unknown>(key: string, value: T): Promise<void>
   delete?(key: string): Promise<void>
 }
+
 export interface ExtensionCapability {
   id: string
   title: string
   kind: string
   [field: string]: unknown
 }
+
 export interface ExtensionCapabilityService {
   register<TInput = unknown, TResult = unknown>(
     capability: ExtensionCapability,
     handler?: (invocation: { input: TInput; [field: string]: unknown }) => MaybePromise<TResult>,
   ): Disposable
 }
+
 export interface ExtensionContributionRegistrar {
   containers(...items: Array<Record<string, unknown>>): Disposable
   views(...items: Array<Record<string, unknown>>): Disposable
@@ -59,6 +72,7 @@ export interface ExtensionContributionRegistrar {
   commandPalette(...items: Array<Record<string, unknown>>): Disposable
   [kind: string]: unknown
 }
+
 export interface ExtensionManifest {
   id: string
   name: string
@@ -70,6 +84,7 @@ export interface ExtensionManifest {
   contributes?: Record<string, unknown>
   [field: string]: unknown
 }
+
 export interface ExtensionContext {
   extensionId: string
   manifest: ExtensionManifest
@@ -87,10 +102,17 @@ export interface ExtensionContext {
   commands: { execute(commandId: string): Promise<void> }
   [service: string]: unknown
 }
+
 export interface ExtensionDefinition {
   manifest: ExtensionManifest
   activate?(context: ExtensionContext): MaybePromise<undefined | void | Disposable>
   deactivate?(context: ExtensionContext): MaybePromise<void>
 }
-export function defineExtension<T extends ExtensionDefinition>(definition: T): T { return definition }
-export function defineManifest<T extends ExtensionManifest>(manifest: T): T { return manifest }
+
+export function defineExtension<T extends ExtensionDefinition>(definition: T): T {
+  return definition
+}
+
+export function defineManifest<T extends ExtensionManifest>(manifest: T): T {
+  return manifest
+}

@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 
 const entries = ['index', 'components', 'blocks', 'theme', 'providers', 'composables', 'catalog']
+
 const packageRoot = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineConfig({

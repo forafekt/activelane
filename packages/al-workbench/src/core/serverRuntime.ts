@@ -16,10 +16,15 @@ export type ServerExtensionStatus =
   | 'disabled'
 
 export type ServerExtensionMode = 'in-process' | 'worker' | 'subprocess' | 'container' | 'remote'
+
 export type ServerExtensionRuntime = 'node' | 'deno' | 'bun' | 'python' | 'binary' | 'remote'
+
 export type ServerExtensionStartupMode = 'auto' | 'manual' | 'disabled'
+
 export type ServerExtensionRestartPolicy = 'never' | 'on-failure' | 'always' | 'unless-disabled'
+
 export type ServerExtensionPortStrategy = 'dynamic' | 'fixed' | 'none'
+
 export type ServerLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error'
 
 export interface ServerExtensionHealthDeclaration {
@@ -209,6 +214,7 @@ const modes = new Set<ServerExtensionMode>([
   'container',
   'remote',
 ])
+
 const runtimes = new Set<ServerExtensionRuntime>([
   'node',
   'deno',
@@ -217,13 +223,16 @@ const runtimes = new Set<ServerExtensionRuntime>([
   'binary',
   'remote',
 ])
+
 const policies = new Set<ServerExtensionRestartPolicy>([
   'never',
   'on-failure',
   'always',
   'unless-disabled',
 ])
+
 const portStrategies = new Set<ServerExtensionPortStrategy>(['dynamic', 'fixed', 'none'])
+
 const startupModes = new Set<ServerExtensionStartupMode>(['auto', 'manual', 'disabled'])
 
 function isObject(value: unknown): value is Record<string, unknown> {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { getIcon } from '@activelane/icons'
+import { getBlock, getComponent } from '@activelane/ui'
 import { computed, watch } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 import IsolatedViewHost from '../../../views/IsolatedViewHost.vue'
-import { getBlock, getComponent } from '@activelane/ui';
-import { getIcon } from '@activelane/icons';
 
 defineOptions({ name: 'WorkbenchPanel' })
 

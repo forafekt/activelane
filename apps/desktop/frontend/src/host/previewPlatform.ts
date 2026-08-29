@@ -23,7 +23,10 @@ export async function createDesktopPreviewPlatform() {
       registry: {
         status: async () => ({ registries: [], mode: 'local-only', publicRegistryEnabled: false }),
         search: async () => ({
-          items: [], failures: [], mode: 'local-only', publicRegistryEnabled: false,
+          items: [],
+          failures: [],
+          mode: 'local-only',
+          publicRegistryEnabled: false,
         }),
       },
     },

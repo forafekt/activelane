@@ -1,6 +1,11 @@
 export * from './blocks'
+
 export * from './catalog'
+
 export * from './components'
+
 export * from './composables'
+
 export * from './providers'
+
 export * from './theme'

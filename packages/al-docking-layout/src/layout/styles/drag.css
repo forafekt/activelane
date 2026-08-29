@@ -1,0 +1,56 @@
+.drag-preview {
+  position: fixed;
+  z-index: 200;
+  left: var(--drag-x);
+  top: var(--drag-y);
+  padding: 8px 12px;
+  border: 1px solid var(--dock-accent);
+  border-radius: 6px;
+  color: white;
+  background: #172a46e8;
+  box-shadow: var(--dock-shadow);
+  transform: translate(12px, 12px);
+  pointer-events: none;
+}
+.dock-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--dock-bg) 42%, transparent);
+  touch-action: none;
+}
+.dock-preview {
+  position: absolute;
+  inset: 25%;
+  border: 2px solid var(--dock-accent);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--dock-accent) 28%, transparent);
+  pointer-events: none;
+}
+.dock-preview--left {
+  inset: 0 50% 0 0;
+}
+.dock-preview--right {
+  inset: 0 0 0 50%;
+}
+.dock-preview--top {
+  inset: 0 0 50%;
+}
+.dock-preview--bottom {
+  inset: 50% 0 0;
+}
+.dock-preview--center {
+  inset: 18%;
+}
+.dock-overlay__label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  padding: 4px 7px;
+  border-radius: 4px;
+  color: var(--dock-text);
+  background: var(--dock-surface-raised);
+  transform: translate(-50%, -50%);
+  text-transform: capitalize;
+  pointer-events: none;
+}

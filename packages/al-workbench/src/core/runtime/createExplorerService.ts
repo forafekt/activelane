@@ -11,6 +11,7 @@ import type { Disposable } from '../shared/types'
 import { resolveWorkbenchReactivity, type WorkbenchReactivityAdapter } from './reactivity'
 
 const EXPLORER_STORAGE_KEY = 'explorer.state.v1'
+
 const ROOT_NODE_ID = '__root__'
 
 interface PersistedExplorerState {

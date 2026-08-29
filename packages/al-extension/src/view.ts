@@ -10,6 +10,7 @@ export * from './view-protocol'
 export interface Disposable {
   dispose(): void
 }
+
 export interface ActiveLaneTheme {
   kind: string
   tokens: Record<string, string>

@@ -11,7 +11,9 @@ import { normalizeTab, normalizeTabs } from './tabs'
 import { clamp, createId } from './utils'
 
 export const DEFAULT_GROUP_ID = 'group:root'
+
 export const DEFAULT_LAYOUT_SPLIT_ID = 'split:root'
+
 export const DEFAULT_LAYOUT_PREFERENCE = {
   activityRailLocation: 'left',
   activityOrder: [] as string[],

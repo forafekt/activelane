@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "outDir": "./dist",
+    "rootDir": "./src/layout",
+    "tsBuildInfoFile": "./node_modules/.cache/docking-layout.tsbuildinfo"
+  },
+  "include": ["src/layout/**/*.ts", "src/layout/**/*.vue"]
+}

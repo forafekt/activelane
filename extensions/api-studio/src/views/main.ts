@@ -2,12 +2,19 @@ import { connectActiveLaneView } from '@activelane/extension/view'
 import './view.css'
 
 const root = document.querySelector<HTMLElement>('#app')
+
 if (!root) throw new Error('API Studio view root is missing.')
+
 const surface = document.body.dataset.surface ?? 'view'
+
 const activelane = await connectActiveLaneView()
+
 const context = await activelane.view.getContext<Record<string, unknown>>()
+
 const theme = await activelane.theme.getCurrent()
+
 applyTheme(theme.tokens)
+
 activelane.theme.onDidChange((next) => applyTheme(next.tokens))
 
 if (surface === 'sidebar') {
@@ -64,6 +71,7 @@ function applyTheme(tokens: Record<string, string>) {
   for (const [name, value] of Object.entries(tokens))
     document.documentElement.style.setProperty(name, value)
 }
+
 function escapeHtml(value: string) {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 }

@@ -3,7 +3,6 @@ import { getIcon } from '@activelane/icons'
 import { getComponent } from '@activelane/ui'
 import { useWorkbenchRuntime } from '../../composables/useWorkbenchRuntime'
 
-
 defineOptions({ name: 'WorkbenchLayoutControls' })
 
 const runtime = useWorkbenchRuntime()
@@ -15,8 +14,6 @@ const PanelRight = getIcon('mynaui:panel-right')
 const PanelRightAlt = getIcon('mynaui:panel-right-solid')
 const PanelBottom = getIcon('mynaui:panel-bottom')
 const PanelBottomAlt = getIcon('mynaui:panel-bottom-solid')
-
-
 
 function toggleSidebar() {
   runtime.workbench.setSidebarCollapsed(!runtime.workbench.state.sidebar.collapsed)
@@ -36,27 +33,15 @@ function toggleInspector() {
 
 <template>
   <div class="wb-layout-controls">
-    <IconButton
-      label="Toggle sidebar"
-      size="tiny"
-      @click="toggleSidebar"
-    >
+    <IconButton label="Toggle sidebar" size="tiny" @click="toggleSidebar">
       <PanelLeft v-if="runtime.workbench.state.sidebar.collapsed" />
       <PanelLeftAlt v-else />
-  </IconButton>
-    <IconButton
-      label="Toggle bottom panel"
-      size="tiny"
-      @click="toggleBottomPanel"
-    >
+    </IconButton>
+    <IconButton label="Toggle bottom panel" size="tiny" @click="toggleBottomPanel">
       <PanelBottom v-if="runtime.workbench.state.bottomPanel.open" />
       <PanelBottomAlt v-else />
-  </IconButton>
-    <IconButton
-      label="Toggle inspector"
-      size="tiny"
-      @click="toggleInspector"
-    >
+    </IconButton>
+    <IconButton label="Toggle inspector" size="tiny" @click="toggleInspector">
       <PanelRight v-if="runtime.workbench.state.inspector.collapsed" />
       <PanelRightAlt v-else />
     </IconButton>

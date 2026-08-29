@@ -32,7 +32,6 @@ function maximizeWindow() {
 function closeWindow() {
   props.windowHost.close()
 }
-
 </script>
 
 <template>
@@ -45,7 +44,7 @@ function closeWindow() {
     @dblclick="handleDoubleClick"
   >
     <!-- Window Action Buttons -->
-      <!-- <div class="window-controls">
+    <!-- <div class="window-controls">
         <button @click="closeWindow" class="control-btn close-btn"></button>
 
         <button @click="minimizeWindow" class="control-btn min-btn"></button>
@@ -82,18 +81,18 @@ header {
   display: flex;
   align-items: center;
   padding-left: 12px;
-  
+
   /* Tells Wails this whole area moves the window */
-  --wails-draggable: drag; 
+  --wails-draggable: drag;
 }
 
 .window-controls {
   display: flex;
   gap: 8px;
   padding-right: 12px;
-  
+
   /* CRITICAL: Overrides dragging so buttons can be clicked */
-  --wails-draggable: no-drag; 
+  --wails-draggable: no-drag;
 }
 
 .control-btn {
@@ -105,8 +104,13 @@ header {
 }
 
 /* Optional: Match macOS Traffic Light Palette */
-.close-btn { background-color: #ff5f56; }
-.min-btn { background-color: #ffbd2e; }
-.max-btn { background-color: #27c93f; }
-
+.close-btn {
+  background-color: #ff5f56;
+}
+.min-btn {
+  background-color: #ffbd2e;
+}
+.max-btn {
+  background-color: #27c93f;
+}
 </style>

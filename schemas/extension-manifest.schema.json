@@ -61,14 +61,43 @@
     "contributes": {
       "type": "object",
       "properties": {
-        "containers": { "type": "array", "items": { "type": "object", "required": ["id", "title", "location"], "properties": {
-          "id": { "type": "string", "minLength": 1 }, "title": { "type": "string", "minLength": 1 },
-          "location": { "enum": ["primary-sidebar", "secondary-sidebar", "editor", "panel", "auxiliary"] }
-        } } },
-        "views": { "type": "array", "items": { "type": "object", "required": ["id", "title", "container", "renderer"], "properties": {
-          "id": { "type": "string", "minLength": 1 }, "title": { "type": "string", "minLength": 1 }, "container": { "type": "string", "minLength": 1 },
-          "renderer": { "type": "object", "required": ["type", "entry"], "properties": { "type": { "const": "isolated" }, "entry": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).*\\.html$" } } }
-        } } }
+        "containers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "location"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "title": { "type": "string", "minLength": 1 },
+              "location": {
+                "enum": ["primary-sidebar", "secondary-sidebar", "editor", "panel", "auxiliary"]
+              }
+            }
+          }
+        },
+        "views": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "container", "renderer"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "title": { "type": "string", "minLength": 1 },
+              "container": { "type": "string", "minLength": 1 },
+              "renderer": {
+                "type": "object",
+                "required": ["type", "entry"],
+                "properties": {
+                  "type": { "const": "isolated" },
+                  "entry": {
+                    "type": "string",
+                    "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).*\\.html$"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

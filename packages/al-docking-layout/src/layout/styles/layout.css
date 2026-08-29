@@ -1,0 +1,180 @@
+.dock-layout,
+.dock-layout * {
+  box-sizing: border-box;
+}
+.dock-layout {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--dock-text);
+  background: var(--dock-bg);
+  font-family: var(--dock-font);
+}
+.dock-split-host,
+.dock-split,
+.dock-split__child {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.dock-split {
+  display: grid;
+}
+.dock-split--row {
+  grid-template-columns: var(--dock-columns);
+  grid-auto-flow: column;
+}
+.dock-split--column {
+  grid-template-rows: var(--dock-rows);
+  grid-auto-flow: row;
+}
+.dock-split--row > .dock-resizer {
+  width: var(--dock-handle);
+  height: 100%;
+  cursor: col-resize;
+  z-index: 8;
+}
+.dock-split--column > .dock-resizer {
+  height: var(--dock-handle);
+  width: 100%;
+  cursor: row-resize;
+  z-index: 8;
+}
+.dock-resizer {
+  position: relative;
+  background: transparent;
+  touch-action: none;
+}
+.dock-resizer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--dock-line);
+  opacity: 0.8;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
+}
+.dock-resizer:is(:hover, :focus-visible)::after {
+  background: var(--dock-accent);
+  opacity: 1;
+}
+.intersection-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+.intersection-handle {
+  position: absolute;
+  left: var(--corner-x);
+  top: var(--corner-y);
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: 2px solid var(--dock-bg);
+  border-radius: 4px;
+  background: var(--dock-line-strong);
+  transform: translate(-50%, -50%);
+  cursor: nwse-resize;
+  pointer-events: auto;
+  touch-action: none;
+  opacity: 0.2;
+}
+.intersection-handle:hover {
+  background: var(--dock-accent);
+  opacity: 1;
+}
+.is-layout-hidden {
+  visibility: hidden;
+}
+.dock-fullscreen {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+}
+.edge-drawer {
+  position: absolute;
+  z-index: 30;
+  display: flex;
+  gap: 3px;
+  pointer-events: none;
+}
+.edge-drawer:has(button) {
+  padding: 4px;
+  background: color-mix(in srgb, var(--dock-surface) 92%, transparent);
+  pointer-events: auto;
+}
+.edge-drawer--left,
+.edge-drawer--right {
+  top: 44px;
+  bottom: 44px;
+  flex-direction: column;
+}
+.edge-drawer--left {
+  left: 0;
+}
+.edge-drawer--right {
+  right: 0;
+}
+.edge-drawer--top,
+.edge-drawer--bottom {
+  left: 44px;
+  right: 44px;
+}
+.edge-drawer--top {
+  top: 0;
+}
+.edge-drawer--bottom {
+  bottom: 0;
+}
+.edge-drawer button {
+  border: 0;
+  border-radius: 4px;
+  padding: 7px 9px;
+  color: var(--dock-muted);
+  background: var(--dock-surface-raised);
+  writing-mode: horizontal-tb;
+  cursor: pointer;
+}
+.edge-drawer--left button,
+.edge-drawer--right button {
+  writing-mode: vertical-rl;
+}
+.drawer-preview {
+  position: absolute;
+  z-index: 35;
+  display: grid;
+  gap: 8px;
+  width: min(320px, 42%);
+  min-height: 140px;
+  padding: 18px;
+  border: 1px solid var(--dock-line);
+  background: var(--dock-surface);
+  box-shadow: var(--dock-shadow);
+  color: var(--dock-muted);
+}
+.drawer-preview--left {
+  inset: 40px auto 40px 34px;
+}
+.drawer-preview--right {
+  inset: 40px 34px 40px auto;
+}
+.drawer-preview--top {
+  inset: 34px 40px auto;
+  width: auto;
+}
+.drawer-preview--bottom {
+  inset: auto 40px 34px;
+  width: auto;
+}
+.drawer-preview strong {
+  color: var(--dock-text);
+}

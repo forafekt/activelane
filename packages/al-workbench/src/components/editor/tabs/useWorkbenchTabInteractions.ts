@@ -13,8 +13,11 @@ import type {
 import type { WorkbenchTabGroupNode, WorkbenchTabRailGroup } from '../../../core/workbench/shell'
 
 type TabTarget = { kind: 'tab'; id: string }
+
 type GroupTarget = { kind: 'group'; id: string }
+
 type NewGroupTarget = { kind: 'new-group-from-tab'; id: string }
+
 type ProtectionMode = 'set' | 'change' | 'remove' | 'reset'
 
 export interface RenameDialogState {

@@ -63,7 +63,7 @@ async function prepare() {
       source: 'asset',
       code: 'VIEW_ASSET_RESOLUTION_FAILED',
       message: 'The isolated view asset could not be resolved.',
-      detail: error instanceof Error ? error.stack ?? error.message : String(error),
+      detail: error instanceof Error ? (error.stack ?? error.message) : String(error),
       viewDefinitionId: instance.value.definitionId,
       viewInstanceId: instance.value.id,
     }).id

@@ -204,16 +204,19 @@ function objectParameters(value: unknown): Record<string, unknown> {
     throw new ViewBridgeError('INVALID_PARAMS', 'Request parameters must be an object.')
   return value as Record<string, unknown>
 }
+
 function requiredString(value: Record<string, unknown>, key: string) {
   if (typeof value[key] !== 'string' || !value[key])
     throw new ViewBridgeError('INVALID_PARAMS', `${key} must be a non-empty string.`)
   return value[key] as string
 }
+
 function requiredBoolean(value: Record<string, unknown>, key: string) {
   if (typeof value[key] !== 'boolean')
     throw new ViewBridgeError('INVALID_PARAMS', `${key} must be a boolean.`)
   return value[key] as boolean
 }
+
 function currentTheme(runtime: WorkbenchRuntimeApi) {
   const theme = runtime.themes.getActiveTheme()
   return {

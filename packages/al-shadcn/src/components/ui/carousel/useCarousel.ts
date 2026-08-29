@@ -63,6 +63,7 @@ const [provideCarouselState, injectCarouselState] = createInjectionState(
 
 const useProvideCarousel: (props: CarouselProps, emits: CarouselEmits) => CarouselState =
   provideCarouselState as never
+
 const useInjectCarousel: () => CarouselState | undefined = injectCarouselState as never
 
 function useCarousel(): CarouselState {

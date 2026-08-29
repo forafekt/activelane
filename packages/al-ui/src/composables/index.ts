@@ -12,9 +12,13 @@ import type { ComputedRef } from 'vue'
 
 /** Provider-bound services. These throw a useful upstream error when UiProvider is absent. */
 export const useDialog = useNaiveDialog
+
 export const useLoadingBar = useNaiveLoadingBar
+
 export const useMessages = useNaiveMessage
+
 export const useModal = useNaiveModal
+
 export const useNotifications = useNaiveNotification
 
 export interface StandaloneServicesOptions {

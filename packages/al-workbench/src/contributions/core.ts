@@ -1,10 +1,9 @@
+import ExtensionDiagnosticsView from '../components/developer/ExtensionDiagnosticsView.vue'
 import { defineWorkbenchExtension } from '../core/extensions/helpers'
 import type { WorkbenchExtensionDefinition } from '../core/extensions/types'
 import type { MaybePromise } from '../core/shared/types'
 import type { WorkbenchCommandExecutionContext } from '../core/workbench/contributions'
-
 import { builtinWorkbenchSettings } from '../settings/defaults'
-import ExtensionDiagnosticsView from '../components/developer/ExtensionDiagnosticsView.vue'
 
 function workbenchCommand(
   id: string,

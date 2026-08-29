@@ -2,6 +2,7 @@ import type { IconReference } from '@activelane/icons'
 import type { WorkbenchComponent } from '../workbench/ui'
 
 export type ActiveLaneRuntimePlatform = 'web' | 'desktop' | 'browser-extension'
+
 export type ActiveLaneOperatingSystem = 'macos' | 'windows' | 'linux' | 'unknown'
 
 export type WorkbenchMenuPlacement =

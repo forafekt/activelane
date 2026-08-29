@@ -126,11 +126,7 @@ onBeforeUnmount(() => {
         :options="toDropdownOptions(group.items)"
         @select="handleSelect"
       >
-        <Button
-          type="button"
-          quaternary
-          size="tiny"
-        >
+        <Button type="button" quaternary size="tiny">
           {{ group.label }}
         </Button>
       </Dropdown>

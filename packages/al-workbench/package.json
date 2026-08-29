@@ -46,6 +46,7 @@
     "vue": "^3.5.0"
   },
   "dependencies": {
+    "@activelane/docking-layout": "workspace:*",
     "@activelane/icons": "workspace:*",
     "@activelane/shadcn": "workspace:*",
     "@activelane/ui": "workspace:*",

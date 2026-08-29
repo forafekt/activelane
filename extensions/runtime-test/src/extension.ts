@@ -1,7 +1,4 @@
-import type {
-  ExtensionContext,
-  ExtensionDefinition,
-} from '@activelane/extension'
+import type { ExtensionContext, ExtensionDefinition } from '@activelane/extension'
 import { defineComponent, h } from 'vue'
 
 const RuntimeTestView = defineComponent({

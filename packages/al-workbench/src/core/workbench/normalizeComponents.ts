@@ -19,6 +19,7 @@ import type {
 import type { WorkbenchRegisteredContributions } from './shell'
 
 type MarkRaw = <T>(value: T) => T
+
 type ContributionKey = keyof WorkbenchRegisteredContributions
 
 function rawValue<T>(value: T | undefined, markRaw: MarkRaw): T | undefined {

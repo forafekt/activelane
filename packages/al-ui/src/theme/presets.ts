@@ -39,6 +39,7 @@ export const lightTheme: UiThemePreset = {
     },
   },
 }
+
 export const darkTheme: UiThemePreset = {
   id: 'activelane-dark',
   label: 'ActiveLane Dark',
@@ -66,6 +67,7 @@ export const darkTheme: UiThemePreset = {
     },
   },
 }
+
 export const highContrastTheme: UiThemePreset = {
   id: 'activelane-high-contrast',
   label: 'ActiveLane High Contrast',
@@ -86,6 +88,7 @@ export const highContrastTheme: UiThemePreset = {
     },
   },
 }
+
 export const themePresets = {
   light: lightTheme,
   dark: darkTheme,

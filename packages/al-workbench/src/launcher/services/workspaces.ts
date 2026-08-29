@@ -3,6 +3,7 @@ import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 import type { LauncherWorkspace, LauncherWorkspaceService } from '../types'
 
 const WORKSPACE_STORAGE_KEY = 'workspaces'
+
 const CURRENT_WORKSPACE_STORAGE_KEY = 'current-workspace'
 
 function now() {

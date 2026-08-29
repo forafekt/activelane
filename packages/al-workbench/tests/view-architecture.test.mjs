@@ -5,6 +5,7 @@ import { ViewInstanceRegistry } from '../src/views/instances.ts'
 import { validateViewContributions } from '../src/views/manifest.ts'
 
 const containers = [{ id: 'sample.editors', title: 'Editors', location: 'editor' }]
+
 const views = [
   {
     id: 'sample.editor',

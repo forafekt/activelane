@@ -1,5 +1,5 @@
-import type { ViewContainer, ViewDefinition } from '../../views/model'
 import { ViewInstanceRegistry } from '../../views/instances'
+import type { ViewContainer, ViewDefinition } from '../../views/model'
 import type {
   ActiveLaneCapability,
   ActiveLaneCapabilityHandler,
@@ -71,6 +71,7 @@ import { resolveWorkbenchReactivity } from './reactivity'
 import type { CreateWorkbenchRuntimeOptions, WorkbenchRuntimeApi } from './types'
 
 type ContributionKey = keyof WorkbenchRegisteredContributions
+
 type RegistrableContribution = WorkbenchRegisteredContributions[ContributionKey][number]
 
 interface ActiveExtensionState {
@@ -1250,9 +1251,7 @@ export async function createExtensionRuntime(
         }
 
         for (const next of latest) {
-          const previous = installedRecords.find(
-            (item) => item.extensionId === next.extensionId,
-          )
+          const previous = installedRecords.find((item) => item.extensionId === next.extensionId)
           const changed =
             !previous ||
             previous.version !== next.version ||
@@ -1510,7 +1509,7 @@ export async function createExtensionRuntime(
             source: 'lifecycle',
             code: 'EXT_RUNTIME_DEACTIVATION_FAILED',
             message: `Extension ${definition.manifest.displayName} failed to deactivate cleanly.`,
-            detail: error instanceof Error ? error.stack ?? error.message : String(error),
+            detail: error instanceof Error ? (error.stack ?? error.message) : String(error),
           })
           console.error(
             `[extensions] ${extensionId}@${definition.manifest.version} failed during deactivate:`,

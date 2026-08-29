@@ -45,4 +45,3 @@ test('rejects JSON extension entrypoints before WebKit parses them as modules', 
     },
   )
 })
-

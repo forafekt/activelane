@@ -76,6 +76,7 @@ export type {
   UploadInst,
   UploadProps,
 } from 'naive-ui'
+
 export {
   NAffix as Affix,
   NAlert as Alert,
@@ -211,4 +212,5 @@ export {
   NVirtualList as VirtualList,
   NWatermark as Watermark,
 } from 'naive-ui'
+
 export { default as IconButton } from './IconButton.vue'

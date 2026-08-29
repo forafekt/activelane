@@ -1,7 +1,8 @@
+import type { OpenViewOptions, ViewInstance } from '../../views/model'
 import type { ActiveLaneCapabilityService } from '../capabilities/types'
 import type { ExtensionDiagnosticsService } from '../diagnostics/types'
-import type { ExplorerRuntime } from '../explorer/types'
 import type { WorkbenchEntitlementService } from '../entitlements/types'
+import type { ExplorerRuntime } from '../explorer/types'
 import type {
   InstalledExtensionRecord,
   WorkbenchExtensionCatalogEntry,
@@ -10,7 +11,6 @@ import type {
 } from '../extensions/types'
 import type { WorkbenchHostAdapter } from '../host/types'
 import type { ActiveLaneServerRuntime, ActiveLaneServerRuntimeOptions } from '../serverRuntime'
-import type { OpenViewOptions, ViewInstance } from '../../views/model'
 import type { WorkbenchCommandSearchService } from '../workbench/commands'
 import type { WorkbenchApplicationContribution } from '../workbench/contributions'
 import type { FileOpenerService } from '../workbench/fileOpeners'

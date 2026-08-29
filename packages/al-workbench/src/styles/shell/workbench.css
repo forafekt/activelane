@@ -112,3 +112,18 @@
     display: none;
   }
 }
+.wb-shell__docking-body {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.wb-shell__docking-body .dock-layout {
+  --dock-bg: var(--al-color-bg-base, #10151d);
+  --dock-surface: var(--al-color-bg-surface, #151c26);
+  --dock-surface-raised: var(--al-color-bg-elevated, #1c2633);
+  --dock-text: var(--al-color-text-primary, #e6edf5);
+  --dock-muted: var(--al-color-text-secondary, #91a0b3);
+  --dock-accent: var(--al-color-accent, #4c9ffe);
+  --dock-line: var(--al-color-border, #2c3745);
+}

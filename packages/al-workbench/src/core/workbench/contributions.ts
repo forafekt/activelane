@@ -47,6 +47,7 @@ export type WorkbenchPart =
 export type WorkbenchZone = 'top' | 'left' | 'center' | 'right' | 'bottom' | 'status'
 
 export type WorkbenchActivityRailLocation = 'left' | 'right' | 'top'
+
 export type WorkbenchCommandBarLocation = 'workbench-top' | 'titlebar'
 
 export interface WorkbenchPartContribution extends WorkbenchContributionBase {
@@ -193,7 +194,9 @@ export interface WorkbenchCommandPaletteContribution extends WorkbenchContributi
 }
 
 export type WorkbenchTabLifecycle = 'preview' | 'persistent' | 'pinned' | 'dirty'
+
 export type WorkbenchOpenTabMode = 'preview' | 'persistent' | 'pinned'
+
 export type WorkbenchTabColorId =
   | 'default'
   | 'blue'

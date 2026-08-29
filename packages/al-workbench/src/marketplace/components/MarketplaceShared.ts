@@ -38,6 +38,7 @@ export function statusTone(
 function isIconSvgFile(value: string) {
   return (value.startsWith('/') || value.startsWith('data:')) && value.endsWith('.svg')
 }
+
 function isIconSvgRemoteUrl(value: string) {
   return value.startsWith('http')
 }

@@ -1,9 +1,9 @@
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import wails from '@wailsio/runtime/plugins/vite'
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
-import { defineConfig, transformWithEsbuild, type Plugin } from 'vite'
+import { defineConfig, type Plugin, transformWithEsbuild } from 'vite'
 
 function safariDevDependencyTarget(): Plugin {
   // Only execute the plugin logic if the host machine is macOS
@@ -12,7 +12,7 @@ function safariDevDependencyTarget(): Plugin {
   return {
     name: 'activelane:safari-dev-dependency-target',
     // Ensures it only executes during 'npm run dev'
-    apply: 'serve', 
+    apply: 'serve',
     configureServer(server) {
       // Completely skip adding the middleware if not on macOS
       if (!isMac) return

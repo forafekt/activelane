@@ -15,7 +15,15 @@
   "activationEvents": ["onStartup", "onCommand", "onView"],
   "contributes": {
     "containers": [{ "id": "scratchpad.editors", "title": "Scratchpad", "location": "editor" }],
-    "views": [{ "id": "scratchpad.editor", "container": "scratchpad.editors", "title": "Scratchpad", "multiple": true, "renderer": { "type": "isolated", "entry": "dist/views/editor/index.html" } }],
+    "views": [
+      {
+        "id": "scratchpad.editor",
+        "container": "scratchpad.editors",
+        "title": "Scratchpad",
+        "multiple": true,
+        "renderer": { "type": "isolated", "entry": "dist/views/editor/index.html" }
+      }
+    ],
     "commands": [{ "id": "scratchpad.new", "title": "Scratchpad: New Note" }]
   }
 }

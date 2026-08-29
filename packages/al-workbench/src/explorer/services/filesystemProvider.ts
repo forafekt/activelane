@@ -3,6 +3,7 @@ import type { WorkbenchFileSystemEntry } from '../../core/host/types'
 import type { WorkbenchRuntimeApi } from '../../core/runtime/types'
 
 const FILE_PROVIDER_ID = 'workbench.files'
+
 const DEFAULT_EXCLUDES = new Set([
   'node_modules',
   '.git',

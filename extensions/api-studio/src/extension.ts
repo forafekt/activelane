@@ -3,6 +3,7 @@ import { defineExtension } from '@activelane/extension'
 // `alx dev` bundles and reloads this lifecycle module independently from isolated-view HMR.
 
 const extensionId = '@activelane/api-studio'
+
 const requests = [
   { id: 'users', method: 'GET', url: 'https://api.example.com/users' },
   { id: 'orders', method: 'POST', url: 'https://api.example.com/orders' },

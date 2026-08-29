@@ -5,8 +5,8 @@ import { useWorkbenchRuntime } from '../../composables/useWorkbenchRuntime'
 import { getWorkbenchIcon } from '../../workbenchIcons'
 import { WorkbenchCommandBar } from '../navigation/command/WorkbenchCommandPalette'
 import { WorkbenchGlobalMenuLauncher } from '../navigation/menus'
-import WorkbenchLayoutControls from './WorkbenchLayoutControls.vue'
 import WorkbenchTitleBarBrand from './shared/WorkbenchTitleBarBrand.vue'
+import WorkbenchLayoutControls from './WorkbenchLayoutControls.vue'
 
 defineOptions({ name: 'WebWindowHeader' })
 

@@ -14,14 +14,21 @@ import MarketplaceSidebarView from './components/MarketplaceSidebarView.vue'
 import MarketplaceTabView from './components/MarketplaceTabView.vue'
 
 const Check = getIcon('lucide:check')
+
 const Layers3 = getIcon('lucide:layers-3')
+
 const Search = getIcon('lucide:search')
+
 const Settings2 = getIcon('lucide:settings-2')
+
 const X = getIcon('lucide:x')
 
 const MARKETPLACE_TAB_KIND = 'extensions.marketplace.home'
+
 const MARKETPLACE_DETAILS_TAB_KIND = 'extensions.marketplace.details'
+
 const MARKETPLACE_SURFACE_ID = 'extensions.marketplace.surface'
+
 const MARKETPLACE_DETAILS_SURFACE_ID = 'extensions.marketplace.details.surface'
 
 function openMarketplace(

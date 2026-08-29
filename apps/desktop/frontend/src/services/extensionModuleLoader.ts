@@ -1,8 +1,8 @@
+import type { InstalledExtensionRecord } from '@activelane/workbench'
 import {
   resolveWorkbenchExtensionModule,
   type WorkbenchExtensionDefinition,
 } from '@activelane/workbench'
-import type { InstalledExtensionRecord } from '@activelane/workbench'
 
 export interface NativeExtensionModulePayload {
   source?: string
@@ -47,8 +47,11 @@ function wrapExtensionModuleError(
   cause: unknown,
 ) {
   const causeMessage = cause instanceof Error ? `${cause.name}: ${cause.message}` : String(cause)
-  const error = new Error(`${extensionBoundary(descriptor)}\nPhase: ${phase}\nCause: ${causeMessage}`)
-  if (cause instanceof Error && cause.stack) error.stack = `${error.message}\nCaused by: ${cause.stack}`
+  const error = new Error(
+    `${extensionBoundary(descriptor)}\nPhase: ${phase}\nCause: ${causeMessage}`,
+  )
+  if (cause instanceof Error && cause.stack)
+    error.stack = `${error.message}\nCaused by: ${cause.stack}`
   return error
 }
 

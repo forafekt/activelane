@@ -43,7 +43,7 @@ importers:
         version: link:../../../packages/al-workbench
       '@wailsio/runtime':
         specifier: latest
-        version: 3.0.0-beta.12
+        version: 3.0.0-beta.15
       vue:
         specifier: ^3.5.32
         version: 3.5.41(typescript@5.9.3)
@@ -117,6 +117,28 @@ importers:
       vite:
         specifier: ^8.0.0
         version: 8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(stylus@0.57.0)(tsx@4.23.12)
+
+  packages/al-docking-layout:
+    dependencies:
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.41(typescript@5.9.3)
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.0
+        version: 6.0.8(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(stylus@0.57.0)(tsx@4.23.12))(vue@3.5.41(typescript@5.9.3))
+      tsx:
+        specifier: ^4.21.0
+        version: 4.23.12
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.2.0
+        version: 8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(stylus@0.57.0)(tsx@4.23.12)
+      vue-tsc:
+        specifier: ^3.3.0
+        version: 3.3.11(typescript@5.9.3)
 
   packages/al-extension:
     devDependencies:
@@ -297,6 +319,9 @@ importers:
 
   packages/al-workbench:
     dependencies:
+      '@activelane/docking-layout':
+        specifier: workspace:*
+        version: link:../al-docking-layout
       '@activelane/extension':
         specifier: workspace:*
         version: link:../al-extension
@@ -1632,8 +1657,8 @@ packages:
     peerDependencies:
       vue: ^3.5.0
 
-  '@wailsio/runtime@3.0.0-beta.12':
-    resolution: {integrity: sha512-2B456rspX5rDXYhNjRqXNDOPkRXjletGJ4R3beF2FGs7K67MTovLy9acXHYb8nolzL96kygyJ622RIjB45oumg==}
+  '@wailsio/runtime@3.0.0-beta.15':
+    resolution: {integrity: sha512-dFFc+Dggb1fK8OYNBjztAG08rKccF3/zxNR6qab0DUCGFtm6M4/hJ4LKd0vNbcriUhyJHAb1Xgn7OqRhzGH1pg==}
 
   abbrev@2.0.0:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
@@ -5262,7 +5287,7 @@ snapshots:
     dependencies:
       vue: 3.5.41(typescript@6.0.3)
 
-  '@wailsio/runtime@3.0.0-beta.12': {}
+  '@wailsio/runtime@3.0.0-beta.15': {}
 
   abbrev@2.0.0: {}
 

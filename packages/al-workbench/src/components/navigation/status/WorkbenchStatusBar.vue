@@ -53,7 +53,13 @@ function activate(item: ResolvedWorkbenchStatusBarItem) {
   <footer class="wb-status-bar">
     <div class="wb-status-bar__group">
       <div v-for="item in itemsLeft" :key="item.id" class="flex items-center">
-        <Button :disabled="item.disabled" :title="item.tooltip" @click="activate(item)" size="tiny" quaternary>
+        <Button
+          :disabled="item.disabled"
+          :title="item.tooltip"
+          @click="activate(item)"
+          size="tiny"
+          quaternary
+        >
           <template #icon>
             <component v-if="item.icon" :is="item.icon" />
           </template>

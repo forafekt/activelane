@@ -84,6 +84,7 @@ export const componentIds = [
   'upload',
   'virtual-list',
 ] as const
+
 export type ComponentId = (typeof componentIds)[number]
 
 export const componentCatalog: Readonly<Record<ComponentId, Component>> = {
@@ -177,7 +178,9 @@ export const blockIds = [
   'toolbar',
   'toolbar-group',
 ] as const
+
 export type BlockId = (typeof blockIds)[number]
+
 export const blockCatalog: Readonly<Record<BlockId, Component>> = {
   'empty-state-panel': Blocks.EmptyStatePanel,
   'property-row': Blocks.PropertyRow,
@@ -188,6 +191,7 @@ export const blockCatalog: Readonly<Record<BlockId, Component>> = {
 }
 
 export type ComponentCatalog = typeof componentCatalog
+
 export type BlockCatalog = typeof blockCatalog
 
 export const catalogEntries = [
@@ -201,6 +205,7 @@ export const catalogEntries = [
 export function getCatalogComponent<K extends ComponentId>(id: K): ComponentCatalog[K] {
   return componentCatalog[id]
 }
+
 export function getCatalogBlock<K extends BlockId>(id: K): BlockCatalog[K] {
   return blockCatalog[id]
 }
@@ -208,6 +213,7 @@ export function getCatalogBlock<K extends BlockId>(id: K): BlockCatalog[K] {
 export function getComponent<K extends ComponentId>(id: K): ComponentCatalog[K] {
   return componentCatalog[id]
 }
+
 export function getBlock<K extends BlockId>(id: K): BlockCatalog[K] {
   return blockCatalog[id]
 }

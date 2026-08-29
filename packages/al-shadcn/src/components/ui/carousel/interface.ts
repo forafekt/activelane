@@ -2,7 +2,9 @@ import type useEmblaCarousel from 'embla-carousel-vue'
 import type { HTMLAttributes } from 'vue'
 
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
+
 type CarouselOptions = UseCarouselParameters[0]
+
 type CarouselPlugin = UseCarouselParameters[1]
 
 export type UnwrapRefCarouselApi = any

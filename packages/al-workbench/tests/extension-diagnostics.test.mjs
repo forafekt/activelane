@@ -29,8 +29,25 @@ test('diagnostics are bounded, deduplicated, and clear by owner lifecycle', () =
   diagnostics.clearView('view-one')
   assert.equal(active.length, 0)
 
-  diagnostics.report({ extensionId: '@sample/tools', generation: 1, severity: 'warning', source: 'runtime', code: 'EXT_RUNTIME_BUILD_FAILED', message: 'generation one' })
-  diagnostics.report({ extensionId: '@sample/tools', generation: 2, severity: 'warning', source: 'runtime', code: 'EXT_RUNTIME_BUILD_FAILED', message: 'generation two' })
+  diagnostics.report({
+    extensionId: '@sample/tools',
+    generation: 1,
+    severity: 'warning',
+    source: 'runtime',
+    code: 'EXT_RUNTIME_BUILD_FAILED',
+    message: 'generation one',
+  })
+  diagnostics.report({
+    extensionId: '@sample/tools',
+    generation: 2,
+    severity: 'warning',
+    source: 'runtime',
+    code: 'EXT_RUNTIME_BUILD_FAILED',
+    message: 'generation two',
+  })
   diagnostics.clearExtension('@sample/tools', 1)
-  assert.deepEqual(active.map((item) => item.generation), [2])
+  assert.deepEqual(
+    active.map((item) => item.generation),
+    [2],
+  )
 })

@@ -4,7 +4,6 @@ import { getComponent } from '@activelane/ui'
 import { computed } from 'vue'
 import { useWorkbenchRuntime } from '../../../composables/useWorkbenchRuntime'
 
-
 defineOptions({ name: 'WorkbenchNavigationControls' })
 
 const runtime = useWorkbenchRuntime()
@@ -22,7 +21,6 @@ function navigateBack() {
 function navigateForward() {
   void runtime.workbench.navigateForward()
 }
-
 </script>
 
 <template>

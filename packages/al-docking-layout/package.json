@@ -1,0 +1,45 @@
+{
+  "name": "@activelane/docking-layout",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "development": "./src/layout/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": {
+      "development": "./src/layout/styles/index.css",
+      "default": "./dist/index.css"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && vue-tsc -p tsconfig.build.json",
+    "build:types": "vue-tsc -p tsconfig.build.json",
+    "typecheck": "vue-tsc -p tsconfig.app.json --noEmit",
+    "test": "tsx --test tests/*.test.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "~5.9.3",
+    "vite": "^8.2.0",
+    "vue-tsc": "^3.3.0"
+  }
+}

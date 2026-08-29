@@ -1,5 +1,9 @@
 export * from './assets'
+
 export * from './bridge'
+
 export * from './instances'
+
 export * from './manifest'
+
 export * from './model'

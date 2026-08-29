@@ -1,11 +1,17 @@
 import type { Component } from 'vue'
 
 export type Density = 'compact' | 'comfortable' | 'touch'
+
 export type Orientation = 'horizontal' | 'vertical'
+
 export type ComponentSize = 'xs' | 'sm' | 'md' | 'lg'
+
 export type Intent = 'neutral' | 'success' | 'warning' | 'destructive' | 'error' | 'info'
+
 export type Tone = Intent | 'primary'
+
 export type ResolvedTheme = 'light' | 'dark' | 'high-contrast'
+
 export type IconComponent = Component
 
 export interface SelectOption<TValue extends string = string> {

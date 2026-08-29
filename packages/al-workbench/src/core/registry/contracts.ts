@@ -8,6 +8,7 @@ import type {
 } from '../extensions/types'
 
 export const ACTIVELANE_REGISTRY_API_VERSION = 'v1'
+
 export const ACTIVELANE_REGISTRY_API_PREFIX = `/${ACTIVELANE_REGISTRY_API_VERSION}`
 
 export const registryRoutePatterns = {
@@ -114,13 +115,21 @@ export interface RegistryListExtensionsQuery {
 }
 
 export type RegistryListExtensionsResponse = RegistryExtensionRecord[]
+
 export type RegistryListInstalledExtensionsResponse = InstalledExtensionRecord[]
+
 export type RegistryGetExtensionResponse = RegistryExtensionRecord
+
 export type RegistryListVersionsResponse = ExtensionVersionMetadata[]
+
 export type RegistryGetVersionResponse = ExtensionVersionMetadata
+
 export type RegistryDownloadVersionResponse = Uint8Array
+
 export type RegistryPublishExtensionRequest = Uint8Array
+
 export type RegistryPublishExtensionResponse = ExtensionVersionMetadata
+
 export type RegistryListPublishersResponse = ExtensionPublisher[]
 
 export interface RegistryCreatePublisherRequest {
@@ -129,9 +138,13 @@ export interface RegistryCreatePublisherRequest {
 }
 
 export type RegistryCreatePublisherResponse = ExtensionPublisher
+
 export type RegistryYankVersionResponse = ExtensionVersionMetadata
+
 export type RegistryBlockVersionResponse = ExtensionVersionMetadata
+
 export type RegistryExportBundleResponse = Uint8Array
+
 export type RegistryImportBundleResponse = undefined
 
 export interface RegistryBundle {

@@ -11,7 +11,9 @@ import { searchLauncherApps } from './search'
 import { createWorkspaceSwitcherService } from './workspaces'
 
 const STORAGE_KEY = 'launcher-state'
+
 const OWNER_ID = 'activelane.launcher'
+
 const LAUNCH_COMMAND_PREFIX = 'workbench.launcher.launchApp.'
 
 interface LauncherPersistedState {

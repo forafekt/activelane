@@ -68,7 +68,7 @@ export class ViewInstanceRegistry {
   prune(retain: (instance: ViewInstance) => boolean) {
     for (const [id, instance] of this.instances) {
       if (!retain(instance)) this.instances.delete(id)
-	}
+    }
   }
 }
 
@@ -87,6 +87,6 @@ function deepFreeze<T>(value: T): Readonly<T> {
   if (value && typeof value === 'object') {
     Object.freeze(value)
     for (const nested of Object.values(value as Record<string, unknown>)) deepFreeze(nested)
-	}
+  }
   return value
 }

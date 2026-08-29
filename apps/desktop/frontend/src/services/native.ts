@@ -2,6 +2,7 @@ import type {
   ActiveLaneExtensionManifest,
   InstalledExtensionRecord,
   WorkbenchDialogOptions,
+  WorkbenchExtensionDefinition,
   WorkbenchFileHandle,
   WorkbenchFileSystemEntry,
   WorkbenchHostCapabilities,
@@ -10,7 +11,6 @@ import type {
   WorkbenchRegistryStatusResponse,
   WorkbenchSubscriptionProvider,
 } from '@activelane/workbench'
-import type { WorkbenchExtensionDefinition } from '@activelane/workbench'
 import { Clipboard, Dialogs, System, Window as WailsWindow } from '@wailsio/runtime'
 import {
   Disable as DisableExtension,
@@ -57,7 +57,7 @@ function throwNativeError(error?: DesktopError | null): void {
 }
 
 function mapInstalled(record: InstalledExtension): InstalledExtensionRecord {
-	const development = record.installSource === 'development'
+  const development = record.installSource === 'development'
   return {
     id: record.id,
     extensionId: record.extensionId,
@@ -65,14 +65,14 @@ function mapInstalled(record: InstalledExtension): InstalledExtensionRecord {
     version: record.version,
     enabled: record.enabled,
     state: record.enabled ? 'enabled' : 'disabled',
-	installSource: development ? 'development' : 'marketplace',
+    installSource: development ? 'development' : 'marketplace',
     installedAt: record.installedAt,
     updatedAt: record.updatedAt,
     manifest: record.manifest as unknown as ActiveLaneExtensionManifest,
     resolvedPath: record.installPath,
-	source: development
-	  ? { type: 'development' }
-	  : { type: 'registry', registryId: record.registryId },
+    source: development
+      ? { type: 'development' }
+      : { type: 'registry', registryId: record.registryId },
     digest: record.packageDigest,
     manifestDigest: record.manifestDigest,
     integrityState: record.integrityState as InstalledExtensionRecord['integrityState'],
@@ -204,10 +204,10 @@ export function createNativeCapabilities(): WorkbenchHostCapabilities {
           (item) => item.extensionId === extensionId && item.enabled,
         )
         if (!installed) throw new Error(`Enabled extension ${extensionId} is not installed.`)
-		const resolved = await ResolveExtensionAsset(extensionId, installed.version, resourcePath)
-		throwNativeError(resolved.error)
-		if (!resolved.url) throw new Error(`No asset URL was returned for ${extensionId}.`)
-		return { url: resolved.url }
+        const resolved = await ResolveExtensionAsset(extensionId, installed.version, resourcePath)
+        throwNativeError(resolved.error)
+        if (!resolved.url) throw new Error(`No asset URL was returned for ${extensionId}.`)
+        return { url: resolved.url }
       },
     },
     lifecycle: { closeWindow: () => workbenchWindow.Close() },

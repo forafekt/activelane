@@ -154,6 +154,7 @@ export interface WorkbenchHostAdapter {
 }
 
 export type WorkbenchPlatform = 'macos' | 'windows' | 'linux' | 'web'
+
 export type WorkbenchNativePlatform = Exclude<WorkbenchPlatform, 'web'>
 
 export interface WorkbenchWindowHost {

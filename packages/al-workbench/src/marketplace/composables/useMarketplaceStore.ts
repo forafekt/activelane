@@ -9,9 +9,13 @@ import type {
 } from '../types/marketplace'
 
 export const MARKETPLACE_TAB_KIND = 'extensions.marketplace.home'
+
 export const MARKETPLACE_DETAILS_TAB_KIND = 'extensions.marketplace.details'
+
 export const MARKETPLACE_SURFACE_ID = 'extensions.marketplace.surface'
+
 export const MARKETPLACE_DETAILS_SURFACE_ID = 'extensions.marketplace.details.surface'
+
 export type MarketplacePage = 'discover' | 'browse' | 'installed' | 'updates' | 'subscriptions'
 
 export interface UseMarketplaceOptions {
@@ -19,23 +23,39 @@ export interface UseMarketplaceOptions {
 }
 
 const revision = ref(0)
+
 const selectedExtensionId = ref<string | null>(null)
+
 const activePage = ref<MarketplacePage>('discover')
+
 const searchQuery = ref('')
+
 const selectedCategories = ref<string[]>([])
+
 const selectedStatuses = ref<MarketplaceExtensionStatus[]>([])
+
 const showFeaturedOnly = ref(false)
+
 const showRecommendedOnly = ref(false)
+
 const updatesOnly = ref(false)
+
 const pricingFilter = ref<MarketplaceExtension['pricingModel'] | 'all'>('all')
+
 const compatibilityFilter = ref<MarketplaceExtension['compatibility'] | 'all'>('compatible')
+
 const verifiedPublisherOnly = ref(false)
+
 const sortBy = ref<MarketplaceSortOption>('recommended')
+
 const sortOrder = ref<'asc' | 'desc'>('desc')
+
 const isLoading = ref(false)
+
 const activeOperations = ref<
   Record<string, 'install' | 'uninstall' | 'enable' | 'disable' | 'update'>
 >({})
+
 const error = ref<string | null>(null)
 
 function bump() {

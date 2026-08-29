@@ -8,6 +8,7 @@ export interface BrowserUrlResult {
 }
 
 export const DEFAULT_BROWSER_HOME_URL = 'https://www.google.com'
+
 export const DEFAULT_SEARCH_PROVIDER_URL = 'https://www.google.com/search?q={query}'
 
 export function isLoopbackHost(hostname: string) {

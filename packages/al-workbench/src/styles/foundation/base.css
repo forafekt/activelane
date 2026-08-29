@@ -6,12 +6,22 @@
 }
 
 /* Remove default margin */
-body, h1, h2, h3, h4, p, figure, blockquote, dl, dd {
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
   margin: 0;
 }
 
 /* Set core root defaults */
-html, body {
+html,
+body {
   height: 100%;
   width: 100%;
   overflow: hidden; /* Prevents outer window scrolling */
@@ -24,10 +34,12 @@ body {
 }
 
 /* Inherit fonts for inputs and buttons */
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
 }
-
 
 .wb-shell,
 .wb-shell *,

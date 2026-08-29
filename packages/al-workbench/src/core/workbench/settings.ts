@@ -7,6 +7,7 @@ export type WorkbenchSettingScope =
   | 'project'
   | 'extension'
   | 'session'
+
 export type WorkbenchSettingType =
   | 'boolean'
   | 'string'

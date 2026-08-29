@@ -6,12 +6,15 @@ export type {
   ActiveLaneCapabilityKind,
   ActiveLaneCapabilityRisk,
 } from '../core/capabilities/types'
+
 export type {
   WorkbenchEntitlementResolution,
   WorkbenchExtensionEntitlements,
   WorkbenchSubscription,
 } from '../core/entitlements/types'
+
 export type { ExplorerNode, ExplorerProvider } from '../core/explorer/types'
+
 export {
   defineExtension,
   defineManifest,
@@ -20,11 +23,14 @@ export {
   defineWorkbenchManifest,
   registerCapability,
 } from '../core/extensions/helpers'
+
 export {
   resolveWorkbenchExtensionModule,
   type WorkbenchExtensionModuleDescriptor,
 } from '../core/extensions/module'
+
 export type {
+  ActiveLaneExtensionPermission,
   ServerExtensionContext,
   ServerExtensionDefinition,
   WorkbenchActivationEvent,
@@ -33,29 +39,36 @@ export type {
   WorkbenchExtensionContext,
   WorkbenchExtensionDefinition,
   WorkbenchExtensionManifest,
-  ActiveLaneExtensionPermission,
   WorkbenchExtensionType,
 } from '../core/extensions/types'
+
 export type {
   WorkbenchContextExpressionScope,
   WorkbenchContextValue,
 } from '../core/menus/context'
+
 export type { Disposable, MaybePromise } from '../core/shared/types'
+
 export type * from '../core/workbench/contributions'
+
 export type {
   FileOpenerContribution,
   FileOpenerResolutionOptions,
   FileOpenIntent,
   ResolvedFileOpener,
 } from '../core/workbench/fileOpeners'
+
 export {
   createFileOpenIntent,
   getFileExtension,
   preferenceKeyForFileOpenIntent,
   resolveFileOpeners,
 } from '../core/workbench/fileOpeners'
+
 export type * from '../core/workbench/settings'
+
 export type * from '../core/workbench/surfaces'
+
 export type {
   WorkbenchRegisteredTabAction,
   WorkbenchRegisteredTabGroupAction,
@@ -65,7 +78,9 @@ export type {
   WorkbenchTabIndicator,
   WorkbenchTabIndicatorSeverity,
 } from '../core/workbench/tabWorkspace'
+
 export type * from '../core/workbench/themes'
+
 export type {
   WorkbenchBlockId,
   WorkbenchBlockMap,

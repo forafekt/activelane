@@ -125,6 +125,7 @@ export interface WorkbenchContributions {
 }
 
 export type WorkbenchActivationEvent = 'onStartup' | 'onCommand' | 'onView' | 'onTab' | 'onDemand'
+
 export type WorkbenchExtensionType = 'ui' | 'server' | 'hybrid'
 
 export interface ServerExtensionPermissions {
@@ -154,12 +155,17 @@ export interface WorkbenchExtensionManifest {
 }
 
 export type ActiveLaneExtensionVisibility = 'public' | 'private' | 'unlisted' | 'company'
+
 export type ActiveLaneHostSupport = 'webapp' | 'desktop' | 'browser-extension' | 'server'
+
 export type ActiveLaneExtensionKind = 'workbench' | 'server'
+
 export type ExtensionVersionStatus = 'draft' | 'published' | 'yanked' | 'blocked'
+
 export type ActiveLaneExtensionPermission = 'extension-storage'
 
-export interface ActiveLaneExtensionManifest extends Omit<WorkbenchExtensionManifest, 'dependencies'> {
+export interface ActiveLaneExtensionManifest
+  extends Omit<WorkbenchExtensionManifest, 'dependencies'> {
   schemaVersion?: '1.0.0'
   publisher?: string
   entry?: string

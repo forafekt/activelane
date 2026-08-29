@@ -9,6 +9,7 @@ import type {
 } from './types'
 
 export const ACTIVELANE_MANIFEST_FILE = 'activelane.manifest.json'
+
 export const ACTIVELANE_MANIFEST_SCHEMA_VERSION = '1.0.0'
 
 export interface ManifestValidationIssue {
@@ -34,14 +35,18 @@ const visibilityValues = new Set<ActiveLaneExtensionVisibility>([
   'unlisted',
   'company',
 ])
+
 const hostValues = new Set<ActiveLaneHostSupport>([
   'webapp',
   'desktop',
   'browser-extension',
   'server',
 ])
+
 const kindValues = new Set<ActiveLaneExtensionKind>(['workbench', 'server'])
+
 const operatingSystemValues = new Set(['linux', 'darwin', 'windows'] as const)
+
 const architectureValues = new Set(['amd64', 'arm64', '386'] as const)
 
 function isObject(value: unknown): value is Record<string, unknown> {

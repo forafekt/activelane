@@ -1,7 +1,9 @@
 import type { Ref } from 'vue'
 
 export type ThemeMode = 'light' | 'dark' | 'system' | 'high-contrast'
+
 export type ResolvedThemeMode = Exclude<ThemeMode, 'system'>
+
 export type Density = 'compact' | 'comfortable'
 
 export interface UiThemeTokens {
@@ -36,4 +38,5 @@ export interface UiThemePreset {
   mode: ResolvedThemeMode
   tokens: UiThemeTokens
 }
+
 export type MaybeRef<T> = T | Ref<T>

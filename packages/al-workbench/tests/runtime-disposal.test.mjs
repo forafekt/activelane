@@ -55,40 +55,52 @@ test('restored resource views receive a fresh runtime identity and reveal withou
         id: 'workbench.group.main',
         activeTabId: persistedTabId,
         tabGroups: [],
-        tabs: [{
-          id: persistedTabId,
-          kind: 'requests.editor',
-          title: 'GET /users',
-          surfaceId: 'requests.editor',
-          ownerExtensionId: '@sample/requests',
-          closable: true,
-          pinned: false,
-          preview: false,
-          lifecycle: 'persistent',
-          dirty: false,
-          groupId: 'workbench.group.main',
-          resource: 'request:users',
-          input: { requestId: 'users' },
-        }],
+        tabs: [
+          {
+            id: persistedTabId,
+            kind: 'requests.editor',
+            title: 'GET /users',
+            surfaceId: 'requests.editor',
+            ownerExtensionId: '@sample/requests',
+            closable: true,
+            pinned: false,
+            preview: false,
+            lifecycle: 'persistent',
+            dirty: false,
+            groupId: 'workbench.group.main',
+            resource: 'request:users',
+            input: { requestId: 'users' },
+          },
+        ],
       },
     },
-    extensions: [{
-      source: 'builtin',
-      definition: {
-        manifest: {
-          id: '@sample/requests',
-          name: 'requests',
-          displayName: 'Requests',
-          version: '1.0.0',
-          builtin: true,
-          activationEvents: ['onStartup'],
-          contributes: {
-            containers: [{ id: 'requests.editors', title: 'Requests', location: 'editor' }],
-            views: [{ id: 'requests.editor', title: 'Request', container: 'requests.editors', multiple: true, renderer: { type: 'isolated', entry: 'dist/editor.html' } }],
+    extensions: [
+      {
+        source: 'builtin',
+        definition: {
+          manifest: {
+            id: '@sample/requests',
+            name: 'requests',
+            displayName: 'Requests',
+            version: '1.0.0',
+            builtin: true,
+            activationEvents: ['onStartup'],
+            contributes: {
+              containers: [{ id: 'requests.editors', title: 'Requests', location: 'editor' }],
+              views: [
+                {
+                  id: 'requests.editor',
+                  title: 'Request',
+                  container: 'requests.editors',
+                  multiple: true,
+                  renderer: { type: 'isolated', entry: 'dist/editor.html' },
+                },
+              ],
+            },
           },
         },
       },
-    }],
+    ],
   })
 
   const revealed = runtime.views.open('@sample/requests', 'requests.editor', {
@@ -162,7 +174,10 @@ test('install dynamically loads, enables, and activates an undiscovered extensio
   assert.equal(record?.enabled, true)
   assert.equal(record?.active, true)
   assert.equal(activations, 1)
-  assert.equal(runtime.registry.commands.some((item) => item.id === 'example.manifest-command'), true)
+  assert.equal(
+    runtime.registry.commands.some((item) => item.id === 'example.manifest-command'),
+    true,
+  )
   await runtime.dispose()
 })
 
@@ -484,7 +499,10 @@ test('development synchronization replaces one owned generation without duplicat
           load: async () => ({
             manifest: installed().manifest,
             activate(context) {
-              context.contribute.activityRail({ id: 'development.activity', title: `Generation ${generation}` })
+              context.contribute.activityRail({
+                id: 'development.activity',
+                title: `Generation ${generation}`,
+              })
               return { dispose: () => disposals++ }
             },
           }),
@@ -493,11 +511,17 @@ test('development synchronization replaces one owned generation without duplicat
     },
   })
 
-  assert.deepEqual(runtime.registry.activityRail.map((item) => item.title), ['Generation 1'])
+  assert.deepEqual(
+    runtime.registry.activityRail.map((item) => item.title),
+    ['Generation 1'],
+  )
   generation = 2
   await runtime.extensions.syncInstalled()
   assert.equal(disposals, 1)
-  assert.deepEqual(runtime.registry.activityRail.map((item) => item.title), ['Generation 2'])
+  assert.deepEqual(
+    runtime.registry.activityRail.map((item) => item.title),
+    ['Generation 2'],
+  )
   await runtime.dispose()
 })
 

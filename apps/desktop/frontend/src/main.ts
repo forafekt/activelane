@@ -1,16 +1,18 @@
-import  '@activelane/workbench/styles.css'
-import { createApp } from 'vue'
+import '@activelane/workbench/styles.css'
 import { Events } from '@wailsio/runtime'
+import { createApp } from 'vue'
 import App from './App.vue'
 import { createDesktopPreviewPlatform, previewWorkbenchHost } from './host/previewPlatform'
 
 function diagnostics() {
-  return (globalThis as typeof globalThis & {
-    __ACTIVELANE_DIAGNOSTICS__?: {
-      mark?: (phase: string, detail?: unknown) => void
-      moduleImport?: (specifier: string, phase: string) => void
+  return (
+    globalThis as typeof globalThis & {
+      __ACTIVELANE_DIAGNOSTICS__?: {
+        mark?: (phase: string, detail?: unknown) => void
+        moduleImport?: (specifier: string, phase: string) => void
+      }
     }
-  }).__ACTIVELANE_DIAGNOSTICS__
+  ).__ACTIVELANE_DIAGNOSTICS__
 }
 
 async function diagnosticImport<T>(specifier: string, load: () => Promise<T>): Promise<T> {
@@ -37,16 +39,16 @@ async function start() {
         await diagnosticImport('./host/platform', () => import('./host/platform'))
       ).createDesktopPlatform()
   diagnostics()?.mark?.('runtime created')
-	if (!browserPreview) {
-		let synchronization = Promise.resolve()
-		Events.On('activelane:development-extensions-changed', () => {
-			synchronization = synchronization
-				.then(async () => {
-					await runtime.extensions.syncInstalled()
-				})
-				.catch((error) => console.error('Failed to synchronize development extensions:', error))
-		})
-	}
+  if (!browserPreview) {
+    let synchronization = Promise.resolve()
+    Events.On('activelane:development-extensions-changed', () => {
+      synchronization = synchronization
+        .then(async () => {
+          await runtime.extensions.syncInstalled()
+        })
+        .catch((error) => console.error('Failed to synchronize development extensions:', error))
+    })
+  }
   const host = browserPreview
     ? previewWorkbenchHost
     : (

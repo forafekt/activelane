@@ -21,11 +21,13 @@ export interface ApiCollection {
   name: string
   requests: ApiRequest[]
 }
+
 export interface ApiEnvironment {
   id: string
   name: string
   variables: Record<string, string>
 }
+
 export interface RequestHistoryEntry {
   id: string
   requestId: string

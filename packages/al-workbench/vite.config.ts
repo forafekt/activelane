@@ -18,7 +18,7 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['vue', '@activelane/shadcn', '@activelane/icons'],
+      external: ['vue', '@activelane/docking-layout', '@activelane/shadcn', '@activelane/icons'],
       output: {
         globals: {
           vue: 'Vue',

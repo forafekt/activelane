@@ -3,6 +3,7 @@ import { type App, defineAsyncComponent } from 'vue'
 export const WorkbenchActivityRail = defineAsyncComponent(
   () => import(/* webpackPrefetch: true, vitePrefetch: true */ './WorkbenchActivityRail.vue'),
 )
+
 export const WorkbenchActivityItem = defineAsyncComponent(
   () => import(/* webpackPrefetch: true, vitePrefetch: true */ './WorkbenchActivityItem.vue'),
 )

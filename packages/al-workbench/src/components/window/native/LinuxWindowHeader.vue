@@ -4,9 +4,9 @@ import type { WorkbenchWindowHost } from '../../../core/host/types'
 import WorkbenchCommandCenter from '../shared/WorkbenchCommandCenter.vue'
 import WorkbenchMenuBar from '../shared/WorkbenchMenuBar.vue'
 import WorkbenchNavigationControls from '../shared/WorkbenchNavigationControls.vue'
+import WorkbenchTitleBarBrand from '../shared/WorkbenchTitleBarBrand.vue'
 import WorkbenchWindowControls from '../shared/WorkbenchWindowControls.vue'
 import WorkbenchLayoutControls from '../WorkbenchLayoutControls.vue'
-import WorkbenchTitleBarBrand from '../shared/WorkbenchTitleBarBrand.vue'
 
 defineOptions({ name: 'LinuxWindowHeader' })
 

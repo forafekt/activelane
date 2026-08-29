@@ -90,7 +90,9 @@ export interface MarketplaceListInput {
 }
 
 export type MarketplaceListListingsResponse = MarketplaceListing[]
+
 export type MarketplaceGetListingResponse = MarketplaceListing
+
 export type MarketplaceListInstalledResponse = InstalledExtensionRecord[]
 
 export interface EntitlementCheckRequest {

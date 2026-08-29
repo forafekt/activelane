@@ -1,13 +1,18 @@
 import WorkbenchShell from './components/shell/WorkbenchShell.vue'
 
 export { createWorkbenchBuiltinExtensions } from './contributions'
+
 export type { ActiveLaneCapabilityRecord } from './core/capabilities/types'
+
 export type {
   WorkbenchEntitlementResolution,
   WorkbenchEntitlementService,
   WorkbenchSubscription,
   WorkbenchSubscriptionProvider,
 } from './core/entitlements/types'
+export type { WorkbenchExtensionModuleDescriptor } from './core/extensions/module'
+
+export { resolveWorkbenchExtensionModule } from './core/extensions/module'
 export type {
   ActiveLaneExtensionManifest,
   InstalledExtensionRecord,
@@ -16,8 +21,7 @@ export type {
   WorkbenchRegistrySearchResponse,
   WorkbenchRegistryStatusResponse,
 } from './core/extensions/types'
-export { resolveWorkbenchExtensionModule } from './core/extensions/module'
-export type { WorkbenchExtensionModuleDescriptor } from './core/extensions/module'
+
 export type {
   WorkbenchDialogOptions,
   WorkbenchFileHandle,
@@ -29,14 +33,23 @@ export type {
   WorkbenchPlatform,
   WorkbenchWindowHost,
 } from './core/host/types'
+
 export type { WorkbenchNativeApplicationMenuSnapshot } from './core/menus/menuContracts'
+
 export { createNativeWorkbenchHost } from './core/runtime/hosts/native'
+
 export { createWorkbenchRuntimeHttpClient } from './core/runtime/httpClient'
+
 export type { WorkbenchRuntimeApi } from './core/runtime/types'
+
 export type { ServerExtensionHandle } from './core/serverRuntime'
+
 export { createVueExtensionRuntime } from './core/vueRuntime'
+
 export type { WorkbenchTab } from './core/workbench/contributions'
+
 export type { WorkbenchShellState } from './core/workbench/shell'
+
 export type {
   WorkbenchBlockId,
   WorkbenchBlockMap,
@@ -44,8 +57,10 @@ export type {
   WorkbenchComponentMap,
   WorkbenchUI,
 } from './core/workbench/ui'
+
 export {
   createDesktopNativeMenuSnapshot,
   resolveApplicationMenus,
 } from './runtime/menus/menuRegistry'
+
 export { WorkbenchShell }
